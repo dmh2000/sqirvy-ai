@@ -1,14 +1,20 @@
 import anthropic
 import time
 import sys
+import yaml
+from pathlib import Path
 from common.fetch import fetch_code
 
+# Load config
+config_path = Path('.sqirvy_ai.config.yml')
+with open(config_path) as f:
+    config = yaml.safe_load(f)
+
 # create a new claude instance
-# claude = anthropic.Claude(max_tokens_to_sample=1000, stop_sequences=["\n"])
 client = anthropic.Anthropic()
-MODEL_NAME = "claude-3-5-sonnet-20241022"
-PROMPT_CACHE = "prompt-caching-2024-07-31"
-TOKEN_LIMIT = 2048
+MODEL_NAME = config['anthropic']['MODEL_NAME']
+PROMPT_CACHE = config['anthropic']['PROMPT_CACHE'] 
+TOKEN_LIMIT = config['anthropic']['TOKEN_LIMIT']
 
 def _review_message(code):
     """Create a message for reviewing a code file"""

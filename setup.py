@@ -9,6 +9,7 @@ setup(
     url="https://github.com/dmh2000/sqirvy_ai",
     install_requires=[
         "anthropic",
+        "pyyaml",
     ],
     packages=find_packages(where="src"),
     entry_points={
