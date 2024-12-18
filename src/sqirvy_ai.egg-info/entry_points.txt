@@ -1,0 +1,3 @@
+[console_scripts]
+sqirvy-doc = sqirvy_doc.main:main
+sqirvy-review = sqirvy_review.main:main

@@ -1,0 +1,4 @@
+---
+anthropic:
+  TOKEN_LIMIT: 2048
+  MODEL_NAME: claude-3-5-sonnet-20241022 # must be an Anthropic model

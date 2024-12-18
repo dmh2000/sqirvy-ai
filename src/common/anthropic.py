@@ -3,7 +3,7 @@ import time
 import sys
 from  yaml import safe_load
 from pathlib import Path
-from common.fetch import fetch_code
+from .fetch import fetch_code
 
 # Load config
 config_path = Path('.sqirvy_ai.config.yml')

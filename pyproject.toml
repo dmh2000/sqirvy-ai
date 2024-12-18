@@ -1,3 +1,19 @@
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "sqirvy_ai"
+version = "0.1"
+dependencies = [
+  "anthropic",
+  "pyyaml",
+]
+description = "An AI tool for reviewing and documenting code."
+authors = [
+  { name = "David Howard", email = "dmh2000@gmail.com" },
+]
+
+[project.scripts]
+sqirvy-doc = "sqirvy_doc.main:main"
+sqirvy-review = "sqirvy_review.main:main"
