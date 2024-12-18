@@ -1,7 +1,7 @@
 import anthropic
 import time
 import sys
-from sqirvy_ai.fetch import fetch_code
+from common.fetch import fetch_code
 
 # create a new claude instance
 # claude = anthropic.Claude(max_tokens_to_sample=1000, stop_sequences=["\n"])
