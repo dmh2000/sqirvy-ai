@@ -1,7 +1,7 @@
 import sys
 import os
 
-from sqirvy_ai.anthropic import review
+from common.anthropic import review
 
 def main():
     if len(sys.argv) != 2:

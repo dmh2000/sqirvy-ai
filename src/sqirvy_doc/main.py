@@ -1,6 +1,6 @@
 import sys
 
-from sqirvy_ai.anthropic import doc
+from common.anthropic import doc
 
 def main():
     if len(sys.argv) != 2:
