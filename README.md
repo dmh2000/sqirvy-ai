@@ -20,40 +20,55 @@ pip install -e .
 ```bash
 sqirvy-review <filename>
 ```
+This will analyze the given file and output a markdown-formatted review including:
+- Bug detection
+- Security analysis 
+- Style recommendations
+- Idiomatic improvements
 
-### Documentation Generation
+The tool will also display:
+- API call timing
+- Input/output token usage
+- Cache status
+
+### Documentation Generation 
 
 ```bash
 sqirvy-doc <filename>
 ```
-
-## Project Structure
-
-### Main Components
-
-- `src/sqirvy_review/main.py`: Entry point for the code review functionality. Processes command line arguments and displays results including token usage and API call timing.
-
-- `src/sqirvy_doc/main.py`: Entry point for the documentation generation functionality. Handles command line input and outputs generated documentation with performance metrics.
-
-### Common Utilities
-
-- `src/common/anthropic.py`: Core functionality for interacting with Claude AI:
-  - Message formatting for reviews and documentation
-  - API call handling with token limits
-  - Response processing and error handling
-  - Performance metrics tracking
-- `src/common/fetch.py`: File handling utility that:
-  - Reads source code files
-  - Preprocesses content for AI analysis
-  - Handles file not found errors
-
-## Dependencies
-
-- anthropic: Python client for the Anthropic Claude API
+This generates README-style documentation in markdown format, along with performance metrics.
 
 ## Configuration
 
-The tool uses Claude 3 Sonnet (version 20241022) with:
+Configuration is managed through `.sqirvy_ai.config.yml`:
 
-- Maximum token limit: 2048
-- Prompt caching enabled
+```yaml
+anthropic:
+  TOKEN_LIMIT: 2048  # Maximum tokens per request
+  MODEL_NAME: claude-3-5-sonnet-20241022  # Anthropic model to use
+```
+
+## Project Structure
+
+### Core Components
+
+- `src/common/anthropic.py`: Handles Claude AI integration:
+  - API interaction and response processing
+  - Message formatting for reviews/docs
+  - Token management and caching
+  - Performance metrics
+
+- `src/common/fetch.py`: File processing utility:
+  - Code file reading
+  - Content preprocessing
+  - Error handling
+
+### CLI Tools
+
+- `src/sqirvy_review/main.py`: Code review entry point
+- `src/sqirvy_doc/main.py`: Documentation generator entry point
+
+## Dependencies
+
+- `anthropic`: Official Python client for Claude AI
+- `pyyaml`: YAML configuration parsing
