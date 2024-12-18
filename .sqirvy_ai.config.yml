@@ -1,0 +1,5 @@
+---
+anthropic:
+  TOKEN_LIMIT: 2048
+  PROMPT_CACHE: prompt-caching-2024-07-31
+  MODEL_NAME: claude-3-5-sonnet-20241022

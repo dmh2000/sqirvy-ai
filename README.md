@@ -16,11 +16,13 @@ pip install -e .
 ## Usage
 
 ### Code Review
+
 ```bash
 sqirvy-review <filename>
 ```
 
 ### Documentation Generation
+
 ```bash
 sqirvy-doc <filename>
 ```
@@ -40,7 +42,6 @@ sqirvy-doc <filename>
   - API call handling with token limits
   - Response processing and error handling
   - Performance metrics tracking
-  
 - `src/common/fetch.py`: File handling utility that:
   - Reads source code files
   - Preprocesses content for AI analysis
@@ -53,5 +54,6 @@ sqirvy-doc <filename>
 ## Configuration
 
 The tool uses Claude 3 Sonnet (version 20241022) with:
+
 - Maximum token limit: 2048
 - Prompt caching enabled
