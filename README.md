@@ -1,6 +1,6 @@
 # Sqirvy AI - Code Review and Documentation Tool
 
-Sqirvy AI is a command-line tool that leverages Anthropic's Claude AI model to automatically review and document code files. It provides two main functionalities: code review and documentation generation.
+Sqirvy AI is a command-line tool that leverages Anthropic's Claude AI model to automatically review and create document code files. It provides two main functionalities: code review and documentation generation.
 
 ## Features
 
@@ -20,22 +20,26 @@ pip install -e .
 ```bash
 sqirvy-review <filename>
 ```
+
 This will analyze the given file and output a markdown-formatted review including:
+
 - Bug detection
-- Security analysis 
+- Security analysis
 - Style recommendations
 - Idiomatic improvements
 
 The tool will also display:
+
 - API call timing
 - Input/output token usage
 - Cache status
 
-### Documentation Generation 
+### Documentation Generation
 
 ```bash
 sqirvy-doc <filename>
 ```
+
 This generates README-style documentation in markdown format, along with performance metrics.
 
 ## Configuration
@@ -44,8 +48,8 @@ Configuration is managed through `.sqirvy_ai.config.yml`:
 
 ```yaml
 anthropic:
-  TOKEN_LIMIT: 2048  # Maximum tokens per request
-  MODEL_NAME: claude-3-5-sonnet-20241022  # Anthropic model to use
+  TOKEN_LIMIT: 2048 # Maximum tokens per request
+  MODEL_NAME: claude-3-5-sonnet-20241022 # Anthropic model to use
 ```
 
 ## Project Structure
@@ -53,6 +57,7 @@ anthropic:
 ### Core Components
 
 - `src/common/anthropic.py`: Handles Claude AI integration:
+
   - API interaction and response processing
   - Message formatting for reviews/docs
   - Token management and caching
