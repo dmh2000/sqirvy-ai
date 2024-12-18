@@ -1,5 +1,4 @@
 from setuptools import setup
-from setuptools import find_packages
 setup(
     name="sqirvy_ai",
     version="0.1",
@@ -11,11 +10,13 @@ setup(
         "anthropic",
         "pyyaml",
     ],
-    packages=find_packages(where="src"),
+    packages=[
+        "src/common",
+    ],
     entry_points={
         "console_scripts": [
-            "sqirvy-doc=sqirvy_doc.main:main",
-            "sqirvy-review=sqirvy_review.main:main",
+            "sqirvy-doc=sqirvy_doc:main",
+            "sqirvy-review=sqirvy_review:main",
         ]
     },
 )

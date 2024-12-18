@@ -1,20 +1,35 @@
 import anthropic
 import time
 import sys
-import yaml
+from  yaml import safe_load
 from pathlib import Path
 from common.fetch import fetch_code
 
 # Load config
 config_path = Path('.sqirvy_ai.config.yml')
 with open(config_path) as f:
-    config = yaml.safe_load(f)
+    config = safe_load(f)
 
 # create a new claude instance
 client = anthropic.Anthropic()
-MODEL_NAME = config['anthropic']['MODEL_NAME']
-PROMPT_CACHE = config['anthropic']['PROMPT_CACHE'] 
-TOKEN_LIMIT = config['anthropic']['TOKEN_LIMIT']
+
+# initialize config constants
+
+# MODEL defaults to 3-5-sonnet-20241022
+if "MODEL_NAME" in config['anthropic']:
+    MODEL_NAME = config['anthropic']['MODEL_NAME']
+else:
+    MODEL_NAME = "claude-3-5-sonnet-20241022"
+
+# always prompt caching
+PROMPT_CACHE = "prompt-caching-2024-07-31"
+
+# specify token limit or default to 2048
+if "TOKEN_LIMIT" in config['anthropic']:
+    TOKEN_LIMIT = config['anthropic']['TOKEN_LIMIT']
+else :
+    TOKEN_LIMIT = 2048
+    
 
 def _review_message(code):
     """Create a message for reviewing a code file"""
@@ -30,7 +45,7 @@ def _review_message(code):
                 {
                     "type": "text",
                     "text": """
-                    Review this code for bugs, security issues, style and idiomatic structure.
+                    Review this code for bugs, security , style and idiomatic syntax
                     Suggest improvements to the code.
                     Output is markdown.
                     """
