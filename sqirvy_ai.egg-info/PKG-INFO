@@ -1,9 +1,0 @@
-Metadata-Version: 2.1
-Name: sqirvy_ai
-Version: 0.1
-Summary: An AI tool for reviewing and documenting code.
-Home-page: https://github.com/dmh2000/sqirvy_ai
-Author: David Howard
-Author-email: dmh2000@gmail.com
-Requires-Dist: anthropic
-Requires-Dist: pyyaml

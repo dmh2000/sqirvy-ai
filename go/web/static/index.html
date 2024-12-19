@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Password Generator</h1>
+        <h2 class="subtitle"><a href="https://github.com/dmh2000/passwordgen">https://github.com/dmh2000/passwordgen</a></h2>
+        <div class="controls">
+            <div class="input-group">
+                <label for="length">Password Length:</label>
+                <input type="number" id="length" value="24" min="24">
+            </div>
+            <div class="input-group">
+                <label for="count">Number of Passwords:</label>
+                <input type="number" id="count" value="1" min="1">
+            </div>
+            <div class="input-group">
+                <label for="symbols">Include Symbols:</label>
+                <input type="checkbox" id="symbols">
+            </div>
+            <button onclick="generatePasswords()">Generate</button>
+        </div>
+        <div id="results"></div>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html>

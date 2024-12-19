@@ -1,0 +1,21 @@
+Right then, let me tell you about this document I've been looking at. It appears I've gotten myself in a bit of a state after reading some rather dodgy password advice. I've decided to take matters into my own hands, and frankly, I reckon it's about time.
+
+I begin by stating that the common guidance about long passwords being too hard to remember is rubbish. I reckon that a minimum length of 20 characters is probably a good starting point, and maybe a little short for the future. I’m particularly aghast at the idea of using an XKCD-style password of words strung together with hyphens, and the cardinal sin of using the same "my password" across all accounts. Simply atrocious, I say, and I'm sure you'd agree.
+
+I then lay out my own guidelines for creating secure passwords. These are, I must say, considerably more sensible. First, I warn against using the same password across multiple accounts and suggest a minimum length of 24 characters, preferably 30 or more. I advocate for the use of cryptographically random passwords, made up of letters, numbers and optionally symbols. I explicitly reject using recognisable words or what I term ‘garbled words’. I note that NIST indicates that if a password of over 24 characters is used symbols are not required but I use them anyway if I must. I quite rightly point out that expecting one to remember a long random password is a bit ludicrous and suggests a password manager as an alternative. I even suggest the old fashioned method of a secure printed list. I’m right that the combination of password manager and MFA is the preferred route.
+
+My frustration with password generation leads me to the crux of the matter: I don’t know if the online web app I usually use is saving passwords for less than scrupulous purposes. Given the track record of some password managers, I decide to create my own.
+
+I go on to describe how I've built my own command-line password generator in Go. I've used an AI code generation tool, specifically, 'Aider' and 'Anthropic Claude', which I've run from the terminal and also within VSCode. I have given the model precise instructions: The generator must be capable of producing multiple passwords. It must allow users to specify the length of the password, with a default of 24 characters. Users can also specify the number of passwords to generate, with a default of one. And an argument must be allowed to specify if symbols are included. In keeping with the above, there is a minimum length of 24 characters and passwords must be cryptographically random. Crucially, I've ensured that the output is easily readable with two lines per password: the first line is the full password, and the second, a broken-up version with 3 character sections, separated by spaces.
+
+The code seems to be working as expected on Linux without modification but I make a note of adding some further prompts. I’ve created a Makefile for building the app across various operating systems, fixed an associated warning, and written a test file to ensure everything functions correctly.
+
+Being a conscientious sort of fellow, I also performed a code review, using a different AI tool, ‘Codeium’. This review didn’t reveal any glaring issues or stylistic concerns. I even reviewed the code by hand, and was satisfied that the random number generator was behaving as expected.
+
+I then decided to refine the output of my password generator adding hyphens for clarity in the output.
+
+Not content with just a command line interface, I developed a web app with similar functionality. Once again, ‘Aider’ and ‘Anthropic Claude’ were deployed to create this web version.
+
+In conclusion, I have now created my very own password generator. I note that passwords are never stored on my computer, opting to print them out and store them securely. I advise that, when adding a new account, I would generate a new password from my pregenerated list, noting the site or app the password is used for, then adding it to my password manager.
+
+So, there you have it - a rather comprehensive approach to password management, driven by a healthy dose of skepticism and a desire for complete control over the process. I do say, a fine piece of work indeed.
