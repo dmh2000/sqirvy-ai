@@ -1,5 +1,5 @@
 # Binary name
-BINARY=passwordgen-web
+BINARY=pgen-web
 
 # Default OS is linux
 OS ?= linux

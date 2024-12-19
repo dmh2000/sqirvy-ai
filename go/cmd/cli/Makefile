@@ -1,5 +1,5 @@
 # Binary name
-BINARY=passwordgen
+BINARY=pgen
 
 # Default OS is linux
 OS ?= linux
