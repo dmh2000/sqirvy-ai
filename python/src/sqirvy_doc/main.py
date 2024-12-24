@@ -6,7 +6,7 @@ from common.anthropic import doc
 
 def main():
     if len(sys.argv) != 2:
-        sys.stderr.write("Usage: sqirvy-doc <filename>\n")
+        print("Usage: sqirvy-doc <filename>", file=sys.stderr)
         sys.exit(1)
     md, time, input_tokens, output_tokens = doc(sys.argv[1])
     sys.stderr.write(f"Cached API call time: {time:.2f} seconds\n")

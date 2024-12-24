@@ -42,14 +42,14 @@ func TestGeneratePassword(t *testing.T) {
 			if !hasNumbers {
 				t.Error("Password should contain numbers")
 			}
-			if tt.includeSymbols && !hasSymbols {
-				t.Error("Password should contain symbols when includeSymbols is true")
-			}
-			if !tt.includeSymbols && hasSymbols {
-				t.Error("Password should not contain symbols when includeSymbols is false")
-			}
-		})
-	}
+            if tt.includeSymbols && !hasSymbols {
+                t.Errorf("Password should contain symbols when includeSymbols is true, but does not: %s", password)
+            }
+            if !tt.includeSymbols && hasSymbols {
+                t.Errorf("Password should not contain symbols when includeSymbols is false, but does: %s", password)
+            }
+        })
+    }
 }
 
 // TestFormatPassword tests the FormatPassword function.

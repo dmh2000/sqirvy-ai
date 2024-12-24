@@ -12,7 +12,7 @@ def fetch_code(fname):
             # filter out empty chunks
             text = '\n'.join(chunk for chunk in chunks if chunk)
     except FileNotFoundError:
-        sys.stderr.write(f"File {fname} not found\n")
+        print(f"File {fname} not found", file=sys.stderr)
         sys.exit(1)
     return text
 

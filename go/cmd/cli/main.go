@@ -39,24 +39,24 @@ func main() {
 		os.Exit(0)
 	}
 
-	// Validate minimum length
-	if *length < minLength {
-		log.Fatalf("Password length must be at least %d characters\n", minLength)
-	}
+    // Validate minimum length
+    if *length < minLength {
+        log.Fatalf("Password length must be at least %d characters\n", minLength)
+    }
 
-	// Generate passwords
-	for i := 0; i < *count; i++ {
-		password, err := pwd.GeneratePassword(*length, *symbols)
-		if err != nil {
-			log.Fatalf("Error generating password: %v\n", err)
-		}
-		fmt.Println()
-		fmt.Println(strings.Repeat("-", 40))
-		fmt.Println(password)
-		formatted, err := pwd.FormatPassword(password)
-		if err != nil {
-			log.Fatalf("Error formatting password: %v\n", err)
-		}
-		fmt.Println(formatted)
-	}
+    // Generate passwords
+    for i := 0; i < *count; i++ {
+        password, err := pwd.GeneratePassword(*length, *symbols)
+        if err != nil {
+            log.Fatalf("Error generating password: %v\n", err)
+        }
+        fmt.Println()
+        fmt.Println(strings.Repeat("-", 40))
+        fmt.Println("Raw: ", password)
+        formatted, err := pwd.FormatPassword(password)
+        if err != nil {
+            log.Fatalf("Error formatting password: %v\n", err)
+        }
+        fmt.Println("Formatted: ", formatted)
+    }
 }

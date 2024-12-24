@@ -6,7 +6,7 @@ from common.anthropic import review
 
 def main():
     if len(sys.argv) != 2:
-        sys.stderr.write("Usage: sqirvy-review <filename>\n")
+        print("Usage: sqirvy-review <filename>", file=sys.stderr)
         sys.exit(1)
 
     md, time, input_tokens, output_tokens = review(sys.argv[1])

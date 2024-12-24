@@ -92,8 +92,8 @@ def _execute(fname, message):
 
     cached_response, cached_time = _call_claude(text,message)
 
-    if len(cached_response.content) == 0:
-        sys.stderr.write("No code found in response")
+    if not cached_response.content:
+        print("No content found in response", file=sys.stderr)
         sys.exit(1)
 
     doc_text = cached_response.content[0].text
