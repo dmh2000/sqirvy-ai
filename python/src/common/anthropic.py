@@ -1,35 +1,28 @@
 import anthropic
 import time
 import sys
-from  yaml import safe_load
+from yaml import safe_load
 from pathlib import Path
 from .fetch import fetch_code
 
-# Load config
-config_path = Path('~/.config/.sqirvy_ai.config.yml')
-with open(config_path) as f:
-    config = safe_load(f)
+# Default values
+MODEL_NAME = "claude-3-5-sonnet-20241022"
+PROMPT_CACHE = "prompt-caching-2024-07-31"
+TOKEN_LIMIT = 2048
 
+# Try to load config if it exists
+config_path = Path('~/.config/.sqirvy_ai.config.yml').expanduser()
+if config_path.exists():
+    with open(config_path) as f:
+        config = safe_load(f)
+        if 'anthropic' in config:
+            if "MODEL_NAME" in config['anthropic']:
+                MODEL_NAME = config['anthropic']['MODEL_NAME']
+            if "TOKEN_LIMIT" in config['anthropic']:
+                TOKEN_LIMIT = config['anthropic']['TOKEN_LIMIT']
 
 # create a new claude instance
 client = anthropic.Anthropic()
-
-# initialize config constants
-
-# MODEL defaults to 3-5-sonnet-20241022
-if "MODEL_NAME" in config['anthropic']:
-    MODEL_NAME = config['anthropic']['MODEL_NAME']
-else:
-    MODEL_NAME = "claude-3-5-sonnet-20241022"
-
-# always prompt caching
-PROMPT_CACHE = "prompt-caching-2024-07-31"
-
-# specify token limit or default to 2048
-if "TOKEN_LIMIT" in config['anthropic']:
-    TOKEN_LIMIT = config['anthropic']['TOKEN_LIMIT']
-else :
-    TOKEN_LIMIT = 2048
     
 
 def _review_message(code):
