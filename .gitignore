@@ -3,3 +3,4 @@
 .aider.tags.cache.v3
 .env
 __pycache__
+.aider*

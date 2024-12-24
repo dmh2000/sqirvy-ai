@@ -19,8 +19,8 @@ const (
 
 func main() {
 	// Define command line flags
-	length := flag.Int("length", defaultLength, "Length of password (minimum 20)")
-	flag.IntVar(length, "l", defaultLength, "Length of password (minimum 20)")
+	length := flag.Int("length", defaultLength, "Length of password (minimum 24)")
+	flag.IntVar(length, "l", defaultLength, "Length of password (minimum 24)")
 
 	count := flag.Int("count", defaultCount, "Number of passwords to generate")
 	flag.IntVar(count, "c", defaultCount, "Number of passwords to generate")
@@ -38,7 +38,6 @@ func main() {
 		flag.Usage()
 		os.Exit(0)
 	}
-
 
 	// Validate minimum length
 	if *length < minLength {
