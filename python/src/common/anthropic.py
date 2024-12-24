@@ -6,9 +6,10 @@ from pathlib import Path
 from .fetch import fetch_code
 
 # Load config
-config_path = Path('.sqirvy_ai.config.yml')
+config_path = Path('~/.config/.sqirvy_ai.config.yml')
 with open(config_path) as f:
     config = safe_load(f)
+
 
 # create a new claude instance
 client = anthropic.Anthropic()
