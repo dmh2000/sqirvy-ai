@@ -33,14 +33,14 @@ func GeneratePassword(length int, includeSymbols bool) (string, error) {
 	password := make([]byte, length)
 	charsetLen := len(charset)
 
-    randomBytes := make([]byte, length)
-    _, err := rand.Read(randomBytes)
-    if err != nil {
-        return "", fmt.Errorf("error reading random bytes: %w", err)
-    }
-    for i := 0; i < length; i++ {
-        password[i] = charset[int(randomBytes[i])%charsetLen]
-    }
+	randomBytes := make([]byte, length)
+	_, err := rand.Read(randomBytes)
+	if err != nil {
+		return "", fmt.Errorf("error reading random bytes: %w", err)
+	}
+	for i := 0; i < length; i++ {
+		password[i] = charset[int(randomBytes[i])%charsetLen]
+	}
 
 	return string(password), nil
 }
