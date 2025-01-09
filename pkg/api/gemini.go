@@ -15,10 +15,6 @@ type GeminiClient struct {
 }
 
 func (c *GeminiClient) initClient() error {
-	if c.client != nil {
-		return nil
-	}
-
 	var err error
 	c.ctx = context.Background()
 	c.client, err = genai.NewClient(c.ctx, option.WithAPIKey(os.Getenv("GEMINI_API_KEY")))
@@ -36,7 +32,7 @@ func (c *GeminiClient) QueryText(prompt string) (string, error) {
 
 	model := c.client.GenerativeModel("gemini-2.0-flash-exp")
 	model.ResponseMIMEType = "text/plain"
-	
+
 	resp, err := model.GenerateContent(c.ctx, genai.Text(prompt))
 	if err != nil {
 		return "", fmt.Errorf("failed to generate content: %v", err)
@@ -62,7 +58,7 @@ func (c *GeminiClient) QueryJSON(prompt string) (string, error) {
 
 	model := c.client.GenerativeModel("gemini-2.0-flash-exp")
 	model.ResponseMIMEType = "application/json"
-	
+
 	resp, err := model.GenerateContent(c.ctx, genai.Text(prompt))
 	if err != nil {
 		return "", fmt.Errorf("failed to generate content: %v", err)
