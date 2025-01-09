@@ -14,18 +14,16 @@ func TestOpenAIClient_QueryText(t *testing.T) {
 	client := &OpenAIClient{}
 
 	tests := []struct {
-		name    string
-		prompt  string
+		name   string
+		prompt string
 	}{
 		{
-			name:    "Basic prompt",
-			prompt:  "Say 'Hello, World!'",
-			wantErr: false,
+			name:   "Basic prompt",
+			prompt: "Say 'Hello, World!'",
 		},
 		{
-			name:    "Empty prompt",
-			prompt:  "",
-			wantErr: true,
+			name:   "Empty prompt",
+			prompt: "",
 		},
 	}
 
@@ -56,12 +54,12 @@ func TestOpenAIClient_QueryJSON(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:    "JSON request",
-			prompt:  "Return a JSON object with a greeting field containing 'Hello, World!'",
+			name:   "JSON request",
+			prompt: "Return a JSON object with a greeting field containing 'Hello, World!'",
 		},
 		{
-			name:    "JSON Empty prompt",
-			prompt:  "",
+			name:   "JSON Empty prompt",
+			prompt: "",
 		},
 	}
 

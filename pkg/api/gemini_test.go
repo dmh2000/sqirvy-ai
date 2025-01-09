@@ -12,18 +12,16 @@ func TestGeminiClient_QueryText(t *testing.T) {
 	}
 
 	tests := []struct {
-		name    string
-		prompt  string
+		name   string
+		prompt string
 	}{
 		{
-			name:    "Basic prompt",
-			prompt:  "Say 'Hello, World!'",
-			wantErr: false,
+			name:   "Basic prompt",
+			prompt: "Say 'Hello, World!'",
 		},
 		{
-			name:    "Empty prompt",
-			prompt:  "hello world",
-			wantErr: true,
+			name:   "Empty prompt",
+			prompt: "hello world",
 		},
 	}
 
@@ -55,12 +53,12 @@ func TestGeminiClient_QueryJSON(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:    "JSON request",
-			prompt:  "Return a JSON object with a greeting field containing 'Hello, World!'",
+			name:   "JSON request",
+			prompt: "Return a JSON object with a greeting field containing 'Hello, World!'",
 		},
 		{
-			name:    "Empty prompt",
-			prompt:  "",
+			name:   "Empty prompt",
+			prompt: "",
 		},
 	}
 
