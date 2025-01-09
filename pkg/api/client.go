@@ -9,14 +9,19 @@ type Provider string
 
 const (
 	Anthropic Provider = "anthropic"
-	Gemini   Provider = "gemini"
-	OpenAI   Provider = "openai"
+	Gemini    Provider = "gemini"
+	OpenAI    Provider = "openai"
 )
+
+type Options struct {
+	// open ai supports specifying a json response format
+	OpenAIResponseFormat string
+}
 
 // Client provides a unified interface for AI operations
 type Client interface {
-	QueryText(prompt string, model string) (string, error)
-	QueryJSON(prompt string, model string) (string, error)
+	QueryText(prompt string, model string, options Options) (string, error)
+	QueryJSON(prompt string, model string, options Options) (string, error)
 }
 
 // NewClient creates a new AI client for the specified provider
