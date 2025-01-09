@@ -61,7 +61,7 @@ func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (
 // QueryJSON sends a JSON query to OpenAI and returns the response
 // using json has some options, see:
 // https://platform.openai.com/docs/guides/structured-outputs#examples
-func (c *OpenAIClient) QueryJSON(prompt string, model string, options Options) (string, error) {
+func (c *OpenAIClient) QueryJSON(prompt string, model string) (string, error) {
 	if prompt == "" {
 		return "", fmt.Errorf("prompt cannot be empty for json query")
 	}
@@ -80,7 +80,6 @@ func (c *OpenAIClient) QueryJSON(prompt string, model string, options Options) (
 			{Role: "user", Content: prompt},
 		},
 		MaxTokens:      1024,
-		ResponseFormat: options.OpenAIResponseFormat,
 	}
 
 	return c.makeRequest(reqBody)
