@@ -31,9 +31,9 @@ func (c *GeminiClient) QueryText(prompt string, model string) (string, error) {
 	defer c.client.Close()
 
 	genModel := c.client.GenerativeModel(model)
-	model.ResponseMIMEType = "text/plain"
+	genModel.ResponseMIMEType = "text/plain"
 
-	resp, err := model.GenerateContent(c.ctx, genai.Text(prompt))
+	resp, err := genModel.GenerateContent(c.ctx, genai.Text(prompt))
 	if err != nil {
 		return "", fmt.Errorf("failed to generate content: %v", err)
 	}
@@ -57,9 +57,9 @@ func (c *GeminiClient) QueryJSON(prompt string, model string) (string, error) {
 	defer c.client.Close()
 
 	genModel := c.client.GenerativeModel(model)
-	model.ResponseMIMEType = "application/json"
+	genModel.ResponseMIMEType = "application/json"
 
-	resp, err := model.GenerateContent(c.ctx, genai.Text(prompt))
+	resp, err := genModel.GenerateContent(c.ctx, genai.Text(prompt))
 	if err != nil {
 		return "", fmt.Errorf("failed to generate content: %v", err)
 	}
