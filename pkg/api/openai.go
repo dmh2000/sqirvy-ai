@@ -22,9 +22,7 @@ type openAIRequest struct {
 	Model          string          `json:"model"`
 	Messages       []openAIMessage `json:"messages"`
 	MaxTokens      int             `json:"max_tokens"`
-	ResponseFormat *struct {
-		Type string `json:"type,omitempty"`
-	} `json:"response_format,omitempty"`
+	ResponseFormat string          `json:"response_format,omitempty"`
 }
 
 type openAIMessage struct {
@@ -81,12 +79,8 @@ func (c *OpenAIClient) QueryJSON(prompt string, model string, options Options) (
 		Messages: []openAIMessage{
 			{Role: "user", Content: prompt},
 		},
-		MaxTokens: 1024,
-		ResponseFormat: &struct {
-			Type string `json:"type,omitempty"`
-		}{
-			Type: "json_object",
-		},
+		MaxTokens:      1024,
+		ResponseFormat: options.OpenAIResponseFormat,
 	}
 
 	return c.makeRequest(reqBody)
