@@ -1,106 +1,127 @@
 package ai
 
 import (
-	"context"
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
+)
 
-	"github.com/Azure/azure-sdk-for-go/sdk/ai/azopenai"
-	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
+const (
+	openAIEndpoint = "https://api.openai.com/v1/chat/completions"
 )
 
 type OpenAIClient struct {
-	client *azopenai.Client
-	ctx    context.Context
+	apiKey string
+	client *http.Client
 }
 
-func (c *OpenAIClient) initClient() error {
-	if c.client != nil {
-		return nil
-	}
+type openAIRequest struct {
+	Model          string         `json:"model"`
+	Messages       []openAIMessage `json:"messages"`
+	MaxTokens      int            `json:"max_tokens"`
+	ResponseFormat *struct {
+		Type string `json:"type,omitempty"`
+	} `json:"response_format,omitempty"`
+}
 
-	var err error
-	c.ctx = context.Background()
+type openAIMessage struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
 
-	key := os.Getenv("AZURE_OPENAI_KEY")
-	endpoint := os.Getenv("AZURE_OPENAI_ENDPOINT")
-
-	keyCredential := azcore.NewKeyCredential(key)
-	c.client, err = azopenai.NewClientForOpenAI(endpoint, keyCredential, nil)
-	if err != nil {
-		return fmt.Errorf("failed to create client: %v", err)
-	}
-	return nil
+type openAIResponse struct {
+	Choices []struct {
+		Message struct {
+			Content string `json:"content"`
+		} `json:"message"`
+	} `json:"choices"`
 }
 
 func (c *OpenAIClient) QueryText(prompt string) (string, error) {
-	if err := c.initClient(); err != nil {
-		return "", err
+	if c.client == nil {
+		c.client = &http.Client{}
+		c.apiKey = os.Getenv("OPENAI_API_KEY")
+		if c.apiKey == "" {
+			return "", fmt.Errorf("OPENAI_API_KEY environment variable not set")
+		}
 	}
 
-	deploymentID := os.Getenv("AZURE_OPENAI_DEPLOYMENT_ID")
-
-	resp, err := c.client.GetChatCompletions(
-		c.ctx,
-		azopenai.ChatCompletionsOptions{
-			Messages: []azopenai.ChatMessage{
-				{
-					Role:    azopenai.ChatRoleUser,
-					Content: prompt,
-				},
-			},
-			MaxTokens: pointer(int32(1024)),
+	reqBody := openAIRequest{
+		Model: "gpt-4-turbo-preview",
+		Messages: []openAIMessage{
+			{Role: "user", Content: prompt},
 		},
-		deploymentID,
-		nil,
-	)
-	if err != nil {
-		return "", fmt.Errorf("failed to generate completion: %v", err)
+		MaxTokens: 1024,
 	}
 
-	if len(resp.Choices) == 0 {
-		return "", fmt.Errorf("no content in response")
-	}
-
-	return resp.Choices[0].Message.Content, nil
+	return c.makeRequest(reqBody)
 }
 
 func (c *OpenAIClient) QueryJSON(prompt string) (string, error) {
-	if err := c.initClient(); err != nil {
-		return "", err
+	if c.client == nil {
+		c.client = &http.Client{}
+		c.apiKey = os.Getenv("OPENAI_API_KEY")
+		if c.apiKey == "" {
+			return "", fmt.Errorf("OPENAI_API_KEY environment variable not set")
+		}
 	}
 
-	deploymentID := os.Getenv("AZURE_OPENAI_DEPLOYMENT_ID")
-
-	resp, err := c.client.GetChatCompletions(
-		c.ctx,
-		azopenai.ChatCompletionsOptions{
-			Messages: []azopenai.ChatMessage{
-				{
-					Role:    azopenai.ChatRoleUser,
-					Content: prompt,
-				},
-			},
-			MaxTokens: pointer(int32(1024)),
-			ResponseFormat: &azopenai.ChatCompletionsResponseFormat{
-				Type: azopenai.ChatCompletionsResponseFormatTypeJSONObject,
-			},
+	reqBody := openAIRequest{
+		Model: "gpt-4-turbo-preview",
+		Messages: []openAIMessage{
+			{Role: "user", Content: prompt},
 		},
-		deploymentID,
-		nil,
-	)
-	if err != nil {
-		return "", fmt.Errorf("failed to generate completion: %v", err)
+		MaxTokens: 1024,
+		ResponseFormat: &struct {
+			Type string `json:"type,omitempty"`
+		}{
+			Type: "json_object",
+		},
 	}
 
-	if len(resp.Choices) == 0 {
+	return c.makeRequest(reqBody)
+}
+
+func (c *OpenAIClient) makeRequest(reqBody openAIRequest) (string, error) {
+	jsonBody, err := json.Marshal(reqBody)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal request: %v", err)
+	}
+
+	req, err := http.NewRequest("POST", openAIEndpoint, bytes.NewBuffer(jsonBody))
+	if err != nil {
+		return "", fmt.Errorf("failed to create request: %v", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+c.apiKey)
+
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("failed to make request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("failed to read response body: %v", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(body))
+	}
+
+	var openAIResp openAIResponse
+	if err := json.Unmarshal(body, &openAIResp); err != nil {
+		return "", fmt.Errorf("failed to unmarshal response: %v", err)
+	}
+
+	if len(openAIResp.Choices) == 0 {
 		return "", fmt.Errorf("no content in response")
 	}
 
-	return resp.Choices[0].Message.Content, nil
-}
-
-// Helper function to create pointer to int32
-func pointer(i int32) *int32 {
-	return &i
+	return openAIResp.Choices[0].Message.Content, nil
 }
