@@ -10,6 +10,7 @@ type Provider string
 const (
 	Anthropic Provider = "anthropic"
 	Gemini   Provider = "gemini"
+	OpenAI   Provider = "openai"
 )
 
 // Client provides a unified interface for AI operations
@@ -25,6 +26,8 @@ func NewClient(provider Provider) (Client, error) {
 		return &AnthropicClient{}, nil
 	case Gemini:
 		return &GeminiClient{}, nil
+	case OpenAI:
+		return &OpenAIClient{}, nil
 	default:
 		return nil, fmt.Errorf("unsupported provider: %s", provider)
 	}
