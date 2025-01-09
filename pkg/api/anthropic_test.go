@@ -32,7 +32,7 @@ func TestAnthropicClient_QueryText(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := client.QueryText(tt.prompt, "claude-3-sonnet-20240229")
+			got, err := client.QueryText(tt.prompt, "claude-3-sonnet-20240229", Options{})
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AnthropicClient.QueryText() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -70,7 +70,7 @@ func TestAnthropicClient_QueryJSON(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := client.QueryJSON(tt.prompt, "claude-3-sonnet-20240229")
+			got, err := client.QueryJSON(tt.prompt, "claude-3-sonnet-20240229", Options{})
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AnthropicClient.QueryJSON() error = %v, wantErr %v", err, tt.wantErr)
 				return

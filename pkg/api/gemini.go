@@ -24,7 +24,7 @@ func (c *GeminiClient) initClient() error {
 	return nil
 }
 
-func (c *GeminiClient) QueryText(prompt string, model string) (string, error) {
+func (c *GeminiClient) QueryText(prompt string, model string, options Options) (string, error) {
 	if err := c.initClient(); err != nil {
 		return "", err
 	}
@@ -50,7 +50,7 @@ func (c *GeminiClient) QueryText(prompt string, model string) (string, error) {
 	return result, nil
 }
 
-func (c *GeminiClient) QueryJSON(prompt string, model string) (string, error) {
+func (c *GeminiClient) QueryJSON(prompt string, model string, options Options) (string, error) {
 	if err := c.initClient(); err != nil {
 		return "", err
 	}
