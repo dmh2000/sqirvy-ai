@@ -16,7 +16,6 @@ func TestAnthropicClient_QueryText(t *testing.T) {
 	tests := []struct {
 		name    string
 		prompt  string
-		wantErr bool
 	}{
 		{
 			name:    "Basic prompt",
@@ -59,12 +58,10 @@ func TestAnthropicClient_QueryJSON(t *testing.T) {
 		{
 			name:    "JSON request",
 			prompt:  "Return a JSON object with a greeting field containing 'Hello, World!'",
-			wantErr: false,
 		},
 		{
 			name:    "Empty prompt",
 			prompt:  "",
-			wantErr: true,
 		},
 	}
 
