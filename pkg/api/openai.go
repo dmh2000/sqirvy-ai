@@ -19,9 +19,9 @@ type OpenAIClient struct {
 }
 
 type openAIRequest struct {
-	Model          string         `json:"model"`
+	Model          string          `json:"model"`
 	Messages       []openAIMessage `json:"messages"`
-	MaxTokens      int            `json:"max_tokens"`
+	MaxTokens      int             `json:"max_tokens"`
 	ResponseFormat *struct {
 		Type string `json:"type,omitempty"`
 	} `json:"response_format,omitempty"`
@@ -60,7 +60,14 @@ func (c *OpenAIClient) QueryText(prompt string) (string, error) {
 	return c.makeRequest(reqBody)
 }
 
+// QueryJSON sends a JSON query to OpenAI and returns the response
+// using json has some options, see:
+// https://platform.openai.com/docs/guides/structured-outputs#examples
 func (c *OpenAIClient) QueryJSON(prompt string) (string, error) {
+	if prompt == "" {
+		return "", fmt.Errorf("prompt cannot be empty for json query")
+	}
+
 	if c.client == nil {
 		c.client = &http.Client{}
 		c.apiKey = os.Getenv("OPENAI_API_KEY")

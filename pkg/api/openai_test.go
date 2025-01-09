@@ -12,7 +12,7 @@ func TestOpenAIClient_QueryText(t *testing.T) {
 	}
 
 	client := &OpenAIClient{}
-	
+
 	tests := []struct {
 		name    string
 		prompt  string
@@ -33,11 +33,11 @@ func TestOpenAIClient_QueryText(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := client.QueryText(tt.prompt)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("OpenAIClient.QueryText() error = %v, wantErr %v", err, tt.wantErr)
+			if err != nil {
+				t.Errorf("OpenAIClient.QueryText() error = %v", err)
 				return
 			}
-			if !tt.wantErr && len(got) == 0 {
+			if len(got) == 0 {
 				t.Error("OpenAIClient.QueryText() returned empty response")
 			}
 		})
@@ -50,7 +50,7 @@ func TestOpenAIClient_QueryJSON(t *testing.T) {
 	}
 
 	client := &OpenAIClient{}
-	
+
 	tests := []struct {
 		name    string
 		prompt  string
@@ -62,24 +62,30 @@ func TestOpenAIClient_QueryJSON(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "Empty prompt",
+			name:    "JSON Empty prompt",
 			prompt:  "",
 			wantErr: true,
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := client.QueryJSON(tt.prompt)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("OpenAIClient.QueryJSON() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !tt.wantErr {
-				if !strings.Contains(got, "{") || !strings.Contains(got, "}") {
-					t.Errorf("OpenAIClient.QueryJSON() = %v, expected JSON response", got)
-				}
-			}
-		})
-	}
+	tt := tests[0]
+	t.Run(tt.name, func(t *testing.T) {
+		got, err := client.QueryJSON(tt.prompt)
+		if err != nil {
+			t.Errorf("OpenAIClient.QueryJSON() error = %v", err)
+			return
+		}
+		if !strings.Contains(got, "{") || !strings.Contains(got, "}") {
+			t.Errorf("OpenAIClient.QueryJSON() = %v, expected JSON response", got)
+		}
+	})
+	// empty prompt should fail
+	tt = tests[1]
+	t.Run(tt.name, func(t *testing.T) {
+		_, err := client.QueryJSON(tt.prompt)
+		if err == nil {
+			t.Errorf("OpenAIClient.QueryJSON() : should have failed due to no 'json' in prompt")
+			return
+		}
+	})
 }
