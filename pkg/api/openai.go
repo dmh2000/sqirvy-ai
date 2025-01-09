@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/ai/azopenai"
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
 )
 
 type OpenAIClient struct {
@@ -20,12 +21,12 @@ func (c *OpenAIClient) initClient() error {
 
 	var err error
 	c.ctx = context.Background()
-	
+
 	key := os.Getenv("AZURE_OPENAI_KEY")
 	endpoint := os.Getenv("AZURE_OPENAI_ENDPOINT")
-	
-	keyCredential := azopenai.NewKeyCredential(key)
-	c.client, err = azopenai.NewClient(endpoint, keyCredential, nil)
+
+	keyCredential := azcore.NewKeyCredential(key)
+	c.client, err = azopenai.NewClientForOpenAI(endpoint, keyCredential, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create client: %v", err)
 	}
@@ -38,7 +39,7 @@ func (c *OpenAIClient) QueryText(prompt string) (string, error) {
 	}
 
 	deploymentID := os.Getenv("AZURE_OPENAI_DEPLOYMENT_ID")
-	
+
 	resp, err := c.client.GetChatCompletions(
 		c.ctx,
 		azopenai.ChatCompletionsOptions{
@@ -70,7 +71,7 @@ func (c *OpenAIClient) QueryJSON(prompt string) (string, error) {
 	}
 
 	deploymentID := os.Getenv("AZURE_OPENAI_DEPLOYMENT_ID")
-	
+
 	resp, err := c.client.GetChatCompletions(
 		c.ctx,
 		azopenai.ChatCompletionsOptions{
@@ -80,7 +81,7 @@ func (c *OpenAIClient) QueryJSON(prompt string) (string, error) {
 					Content: prompt,
 				},
 			},
-			MaxTokens:       pointer(int32(1024)),
+			MaxTokens: pointer(int32(1024)),
 			ResponseFormat: &azopenai.ChatCompletionsResponseFormat{
 				Type: azopenai.ChatCompletionsResponseFormatTypeJSONObject,
 			},
