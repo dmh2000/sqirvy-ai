@@ -31,7 +31,7 @@ func TestGeminiClient_QueryText(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			client := &GeminiClient{}
-			got, err := client.QueryText(tt.prompt)
+			got, err := client.QueryText(tt.prompt, "gemini-2.0-flash-exp")
 			if err != nil {
 				t.Errorf("GeminiClient.QueryText() error = %v", err)
 				return
@@ -69,7 +69,7 @@ func TestGeminiClient_QueryJSON(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := client.QueryJSON(tt.prompt)
+			got, err := client.QueryJSON(tt.prompt, "gemini-2.0-flash-exp")
 			if err != nil {
 				t.Errorf("GeminiClient.QueryJSON() error = %v", err)
 				return

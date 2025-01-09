@@ -13,14 +13,14 @@ type AnthropicClient struct {
 	client *anthropic.Client
 }
 
-func (c *AnthropicClient) QueryText(prompt string) (string, error) {
+func (c *AnthropicClient) QueryText(prompt string, model string) (string, error) {
 	if c.client == nil {
 		c.client = anthropic.NewClient()
 	}
 
 	answer := ""
 	message, err := c.client.Messages.New(context.TODO(), anthropic.MessageNewParams{
-		Model:     anthropic.F(anthropic.ModelClaude3_5SonnetLatest),
+		Model:     anthropic.F(model),
 		MaxTokens: anthropic.F(int64(1024)),
 		Messages: anthropic.F([]anthropic.MessageParam{
 			anthropic.NewUserMessage(anthropic.NewTextBlock(prompt)),
@@ -38,13 +38,13 @@ func (c *AnthropicClient) QueryText(prompt string) (string, error) {
 	return answer, nil
 }
 
-func (c *AnthropicClient) QueryJSON(prompt string) (string, error) {
+func (c *AnthropicClient) QueryJSON(prompt string, model string) (string, error) {
 	if c.client == nil {
 		c.client = anthropic.NewClient()
 	}
 
 	message, err := c.client.Messages.New(context.TODO(), anthropic.MessageNewParams{
-		Model:     anthropic.F(anthropic.ModelClaude3_5SonnetLatest),
+		Model:     anthropic.F(model),
 		MaxTokens: anthropic.F(int64(MAX_TOKENS)),
 		Messages: anthropic.F([]anthropic.MessageParam{
 			anthropic.NewUserMessage(anthropic.NewTextBlock(prompt)),

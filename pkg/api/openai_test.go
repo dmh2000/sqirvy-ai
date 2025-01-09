@@ -32,7 +32,7 @@ func TestOpenAIClient_QueryText(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := client.QueryText(tt.prompt)
+			got, err := client.QueryText(tt.prompt, "gpt-4-turbo-preview")
 			if err != nil {
 				t.Errorf("OpenAIClient.QueryText() error = %v", err)
 				return
@@ -70,7 +70,7 @@ func TestOpenAIClient_QueryJSON(t *testing.T) {
 
 	tt := tests[0]
 	t.Run(tt.name, func(t *testing.T) {
-		got, err := client.QueryJSON(tt.prompt)
+		got, err := client.QueryJSON(tt.prompt, "gpt-4-turbo-preview")
 		if err != nil {
 			t.Errorf("OpenAIClient.QueryJSON() error = %v", err)
 			return

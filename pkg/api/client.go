@@ -15,8 +15,8 @@ const (
 
 // Client provides a unified interface for AI operations
 type Client interface {
-	QueryText(prompt string) (string, error)
-	QueryJSON(prompt string) (string, error)
+	QueryText(prompt string, model string) (string, error)
+	QueryJSON(prompt string, model string) (string, error)
 }
 
 // NewClient creates a new AI client for the specified provider

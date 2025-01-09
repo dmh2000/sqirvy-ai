@@ -40,7 +40,7 @@ type openAIResponse struct {
 	} `json:"choices"`
 }
 
-func (c *OpenAIClient) QueryText(prompt string) (string, error) {
+func (c *OpenAIClient) QueryText(prompt string, model string) (string, error) {
 	if c.client == nil {
 		c.client = &http.Client{}
 		c.apiKey = os.Getenv("OPENAI_API_KEY")
@@ -50,7 +50,7 @@ func (c *OpenAIClient) QueryText(prompt string) (string, error) {
 	}
 
 	reqBody := openAIRequest{
-		Model: "gpt-4-turbo-preview",
+		Model: model,
 		Messages: []openAIMessage{
 			{Role: "user", Content: prompt},
 		},
@@ -63,7 +63,7 @@ func (c *OpenAIClient) QueryText(prompt string) (string, error) {
 // QueryJSON sends a JSON query to OpenAI and returns the response
 // using json has some options, see:
 // https://platform.openai.com/docs/guides/structured-outputs#examples
-func (c *OpenAIClient) QueryJSON(prompt string) (string, error) {
+func (c *OpenAIClient) QueryJSON(prompt string, model string) (string, error) {
 	if prompt == "" {
 		return "", fmt.Errorf("prompt cannot be empty for json query")
 	}
@@ -77,7 +77,7 @@ func (c *OpenAIClient) QueryJSON(prompt string) (string, error) {
 	}
 
 	reqBody := openAIRequest{
-		Model: "gpt-4-turbo-preview",
+		Model: model,
 		Messages: []openAIMessage{
 			{Role: "user", Content: prompt},
 		},

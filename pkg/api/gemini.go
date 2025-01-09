@@ -24,13 +24,13 @@ func (c *GeminiClient) initClient() error {
 	return nil
 }
 
-func (c *GeminiClient) QueryText(prompt string) (string, error) {
+func (c *GeminiClient) QueryText(prompt string, model string) (string, error) {
 	if err := c.initClient(); err != nil {
 		return "", err
 	}
 	defer c.client.Close()
 
-	model := c.client.GenerativeModel("gemini-2.0-flash-exp")
+	genModel := c.client.GenerativeModel(model)
 	model.ResponseMIMEType = "text/plain"
 
 	resp, err := model.GenerateContent(c.ctx, genai.Text(prompt))
@@ -50,13 +50,13 @@ func (c *GeminiClient) QueryText(prompt string) (string, error) {
 	return result, nil
 }
 
-func (c *GeminiClient) QueryJSON(prompt string) (string, error) {
+func (c *GeminiClient) QueryJSON(prompt string, model string) (string, error) {
 	if err := c.initClient(); err != nil {
 		return "", err
 	}
 	defer c.client.Close()
 
-	model := c.client.GenerativeModel("gemini-2.0-flash-exp")
+	genModel := c.client.GenerativeModel(model)
 	model.ResponseMIMEType = "application/json"
 
 	resp, err := model.GenerateContent(c.ctx, genai.Text(prompt))
