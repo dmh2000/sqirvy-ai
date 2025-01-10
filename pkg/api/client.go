@@ -14,17 +14,15 @@ const (
 )
 
 type AnthropicOptions struct {
-	// Anthropic supports specifying a json response format
-
+	// placeholder for options
 }
-type GeminiOptions struct {
-	// Gemini supports specifying a json response format
 
+type GeminiOptions struct {
+	// placeholder for options
 }
 
 type OpenAIOptions struct {
-	// open ai supports specifying a json response format
-	OpenAIResponseFormat string
+	// placeholder for options
 }
 
 type Options struct {
