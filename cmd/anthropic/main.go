@@ -3,9 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 
-	"sqirvyllm/pkg/api"
+	api "sqirvyllm/pkg/api"
 )
 
 func main() {
