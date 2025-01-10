@@ -65,7 +65,7 @@ func TestOpenAIClient_QueryJSON(t *testing.T) {
 
 	tt := tests[0]
 	t.Run(tt.name, func(t *testing.T) {
-		got, err := client.QueryJSON(tt.prompt, "gpt-4-turbo-preview")
+		got, err := client.QueryJSON(tt.prompt, "gpt-4-turbo-preview", Options{})
 		if err != nil {
 			t.Errorf("OpenAIClient.QueryJSON() error = %v", err)
 			return
@@ -77,7 +77,7 @@ func TestOpenAIClient_QueryJSON(t *testing.T) {
 	// empty prompt should fail
 	tt = tests[1]
 	t.Run(tt.name, func(t *testing.T) {
-		_, err := client.QueryJSON(tt.prompt, "gpt-4-turbo-preview")
+		_, err := client.QueryJSON(tt.prompt, "gpt-4-turbo-preview", Options{})
 		if err == nil {
 			t.Errorf("OpenAIClient.QueryJSON() : should have failed due to no 'json' in prompt")
 			return

@@ -73,7 +73,7 @@ func TestAnthropicClient_QueryJSON(t *testing.T) {
 
 	tt := tests[0]
 	t.Run(tt.name, func(t *testing.T) {
-		got, err := client.QueryJSON(tt.prompt, "claude-3-sonnet-20240229")
+		got, err := client.QueryJSON(tt.prompt, "claude-3-sonnet-20240229", Options{})
 		if err != nil {
 			t.Errorf("AnthropicClient.QueryJSON() error = %v", err)
 			return
@@ -85,7 +85,7 @@ func TestAnthropicClient_QueryJSON(t *testing.T) {
 
 	tt = tests[1]
 	t.Run(tt.name, func(t *testing.T) {
-		_, err := client.QueryJSON(tt.prompt, "claude-3-sonnet-20240229")
+		_, err := client.QueryJSON(tt.prompt, "claude-3-sonnet-20240229", Options{})
 		if err == nil {
 			t.Errorf("AnthropicClient.QueryJSON() empty prompt should have failed")
 			return

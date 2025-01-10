@@ -38,7 +38,7 @@ func (c *AnthropicClient) QueryText(prompt string, model string, options Options
 	return answer, nil
 }
 
-func (c *AnthropicClient) QueryJSON(prompt string, model string) (string, error) {
+func (c *AnthropicClient) QueryJSON(prompt string, model string, options Options) (string, error) {
 	if c.client == nil {
 		c.client = anthropic.NewClient()
 	}
