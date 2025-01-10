@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const providerSelect = document.getElementById('provider');
     const promptTextarea = document.getElementById('prompt');
     const submitButton = document.getElementById('submit');
-    const responseDiv = document.getElementById('response');
+    const anthropicResponse = document.getElementById('anthropic-response');
+    const openaiResponse = document.getElementById('openai-response');
+    const geminiResponse = document.getElementById('gemini-response');
 
     submitButton.addEventListener('click', async () => {
-        const provider = providerSelect.value;
         const prompt = promptTextarea.value.trim();
         
         if (!prompt) {
@@ -14,19 +14,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         submitButton.disabled = true;
-        responseDiv.textContent = 'Loading...';
+        anthropicResponse.textContent = 'Loading...';
+        openaiResponse.textContent = 'Loading...';
+        geminiResponse.textContent = 'Loading...';
 
         try {
-            const response = await fetch(`/api/${provider}?prompt=${encodeURIComponent(prompt)}`);
+            const response = await fetch(`/api/query?prompt=${encodeURIComponent(prompt)}`);
             const data = await response.json();
             
-            if (data.error) {
-                responseDiv.textContent = `Error: ${data.error}`;
+            // Update Anthropic response
+            if (data.anthropic.error) {
+                anthropicResponse.textContent = `Error: ${data.anthropic.error}`;
             } else {
-                responseDiv.textContent = data.result;
+                anthropicResponse.textContent = data.anthropic.result;
+            }
+
+            // Update OpenAI response
+            if (data.openai.error) {
+                openaiResponse.textContent = `Error: ${data.openai.error}`;
+            } else {
+                openaiResponse.textContent = data.openai.result;
+            }
+
+            // Update Gemini response
+            if (data.gemini.error) {
+                geminiResponse.textContent = `Error: ${data.gemini.error}`;
+            } else {
+                geminiResponse.textContent = data.gemini.result;
             }
         } catch (error) {
-            responseDiv.textContent = `Error: ${error.message}`;
+            anthropicResponse.textContent = `Error: ${error.message}`;
+            openaiResponse.textContent = `Error: ${error.message}`;
+            geminiResponse.textContent = `Error: ${error.message}`;
         } finally {
             submitButton.disabled = false;
         }
