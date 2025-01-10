@@ -14,7 +14,7 @@ type QueryResponse struct {
 
 func main() {
 	// Serve static files from the static directory
-	fs := http.FileServer(http.Dir("web/query/static"))
+	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fs)
 
 	// Handle API requests for each provider
