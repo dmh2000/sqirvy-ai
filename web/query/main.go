@@ -7,9 +7,15 @@ import (
 	api "sqirvyllm/pkg/api"
 )
 
-type QueryResponse struct {
+type ProviderResponse struct {
 	Result string `json:"result"`
 	Error  string `json:"error,omitempty"`
+}
+
+type QueryResponse struct {
+	Anthropic ProviderResponse `json:"anthropic"`
+	OpenAI    ProviderResponse `json:"openai"`
+	Gemini    ProviderResponse `json:"gemini"`
 }
 
 func main() {
@@ -17,10 +23,8 @@ func main() {
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fs)
 
-	// Handle API requests for each provider
-	http.HandleFunc("/api/anthropic", handleAnthropicQuery)
-	http.HandleFunc("/api/openai", handleOpenAIQuery)
-	http.HandleFunc("/api/gemini", handleGeminiQuery)
+	// Handle API requests
+	http.HandleFunc("/api/query", handleQuery)
 
 	log.Println("Server starting on http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
@@ -28,19 +32,7 @@ func main() {
 	}
 }
 
-func handleAnthropicQuery(w http.ResponseWriter, r *http.Request) {
-	handleQuery(w, r, api.Anthropic, "claude-3-sonnet-20240229")
-}
-
-func handleOpenAIQuery(w http.ResponseWriter, r *http.Request) {
-	handleQuery(w, r, api.OpenAI, "gpt-4-turbo-preview")
-}
-
-func handleGeminiQuery(w http.ResponseWriter, r *http.Request) {
-	handleQuery(w, r, api.Gemini, "gemini-2.0-flash-exp")
-}
-
-func handleQuery(w http.ResponseWriter, r *http.Request, provider api.Provider, model string) {
+func handleQuery(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -52,19 +44,42 @@ func handleQuery(w http.ResponseWriter, r *http.Request, provider api.Provider, 
 		return
 	}
 
-	client, err := api.NewClient(provider)
-	if err != nil {
-		sendJSONResponse(w, QueryResponse{Error: err.Error()}, http.StatusInternalServerError)
-		return
+	response := QueryResponse{}
+
+	// Query Anthropic
+	if client, err := api.NewClient(api.Anthropic); err == nil {
+		if result, err := client.QueryText(prompt, "claude-3-sonnet-20240229", api.Options{}); err == nil {
+			response.Anthropic.Result = result
+		} else {
+			response.Anthropic.Error = err.Error()
+		}
+	} else {
+		response.Anthropic.Error = err.Error()
 	}
 
-	result, err := client.QueryText(prompt, model, api.Options{})
-	if err != nil {
-		sendJSONResponse(w, QueryResponse{Error: err.Error()}, http.StatusInternalServerError)
-		return
+	// Query OpenAI
+	if client, err := api.NewClient(api.OpenAI); err == nil {
+		if result, err := client.QueryText(prompt, "gpt-4-turbo-preview", api.Options{}); err == nil {
+			response.OpenAI.Result = result
+		} else {
+			response.OpenAI.Error = err.Error()
+		}
+	} else {
+		response.OpenAI.Error = err.Error()
 	}
 
-	sendJSONResponse(w, QueryResponse{Result: result}, http.StatusOK)
+	// Query Gemini
+	if client, err := api.NewClient(api.Gemini); err == nil {
+		if result, err := client.QueryText(prompt, "gemini-2.0-flash-exp", api.Options{}); err == nil {
+			response.Gemini.Result = result
+		} else {
+			response.Gemini.Error = err.Error()
+		}
+	} else {
+		response.Gemini.Error = err.Error()
+	}
+
+	sendJSONResponse(w, response, http.StatusOK)
 }
 
 func sendJSONResponse(w http.ResponseWriter, response QueryResponse, status int) {
