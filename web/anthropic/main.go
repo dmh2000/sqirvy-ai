@@ -31,14 +31,14 @@ func main() {
 }
 
 func handleQuery(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	var req QueryRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	prompt := r.URL.Query().Get("prompt")
+	if prompt == "" {
+		http.Error(w, "Prompt parameter is required", http.StatusBadRequest)
 		return
 	}
 
@@ -48,7 +48,7 @@ func handleQuery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := client.QueryText(req.Prompt, "claude-3-sonnet-20240229", api.Options{})
+	result, err := client.QueryText(prompt, "claude-3-sonnet-20240229", api.Options{})
 	if err != nil {
 		sendJSONResponse(w, QueryResponse{Error: err.Error()}, http.StatusInternalServerError)
 		return

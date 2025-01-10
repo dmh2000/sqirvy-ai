@@ -14,13 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
         responseDiv.textContent = 'Loading...';
 
         try {
-            const response = await fetch('/api/query', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ prompt }),
-            });
+            const response = await fetch(`/api/query?prompt=${encodeURIComponent(prompt)}`);
 
             const data = await response.json();
             
