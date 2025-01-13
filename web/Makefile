@@ -1,6 +1,6 @@
 .PHONY: build test clean
 
-SUBDIRS = sqirvy-query
+SUBDIRS = sqirvy-web
 
 build:
 	for dir in $(SUBDIRS); do \

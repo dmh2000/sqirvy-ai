@@ -46,4 +46,3 @@ create a makefile as follows:
 - in directory web, create a makefile that invokes the lower level makefiles
   - build, test and clean rules for each lower level makefile
 - in the top level directory, create a makefile that invokes the lower level makefiles
-  - build, test and clean rules for each lower level makefile
