@@ -5,7 +5,7 @@ build:
 	go build -o ../build/sqirvy-query .
 
 test:
-	echo "Skipping tests for sqirvy-query"
+	@./test.sh >/dev/null
 
 clean:
 	rm -f ../build/sqirvy-query

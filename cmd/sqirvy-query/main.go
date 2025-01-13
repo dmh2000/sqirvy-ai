@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 
 	api "sqirvyllm/pkg/api"
 )
@@ -12,9 +13,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	if prompt == "" {
+		log.Fatal("no prompt provided")
+	}
 
 	// Use default model if none specified
-	model := "claude-3.5-sonnet"
+	model := "claude-3-5-sonnet-latest"
 	if modelFlag != "" {
 		model = modelFlag
 	}
@@ -39,4 +43,6 @@ func main() {
 
 	// Print response to stdout
 	fmt.Print(response)
+
+	os.Exit(0)
 }

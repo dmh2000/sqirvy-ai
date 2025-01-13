@@ -7,13 +7,36 @@ import (
 	"os"
 )
 
+func helpMessage() {
+	fmt.Println("Usage: sqirvy-query [options] files...")
+	fmt.Println("concatenates prompt from stdin and/or files and sends it to the specified AI model")
+	fmt.Println("Options:")
+	fmt.Println("  -h    print this help message")
+	fmt.Println("  -m    AI model to use (default: claude-3-5-sonnet-latest)")
+}
+
+// isInputFromPipe determines if the program is receiving piped input on stdin
+func isInputFromPipe() bool {
+	fileInfo, _ := os.Stdin.Stat()
+	return (fileInfo.Mode() & os.ModeCharDevice) == 0
+}
+
 func processCommandLine() (prompt string, model string, err error) {
-	flag.StringVar(&model, "model", "", "AI model to use (default: claude-3.5-sonnet)")
+	// suppress the default help message
+	flag.Usage = func() {}
+	// add a -h flag
+	var help bool
+	flag.BoolVar(&help, "h", false, "print help message")
+	flag.StringVar(&model, "m", "", "AI model to use (default: claude-3.5-sonnet)")
 	flag.Parse()
+	if help {
+		helpMessage()
+		os.Exit(0)
+	}
 
 	// Check if we have data from stdin
-	stat, _ := os.Stdin.Stat()
-	if (stat.Mode() & os.ModeCharDevice) == 0 {
+	prompt = ""
+	if isInputFromPipe() {
 		stdinBytes, err := io.ReadAll(os.Stdin)
 		if err != nil {
 			return "", "", fmt.Errorf("error reading from stdin: %v", err)
@@ -27,7 +50,7 @@ func processCommandLine() (prompt string, model string, err error) {
 		if err != nil {
 			return "", "", fmt.Errorf("error reading file %s: %v", filename, err)
 		}
-		prompt += string(data)
+		prompt += string(data) + "\n\n"
 	}
 
 	// Check if we have any input
@@ -37,3 +60,5 @@ func processCommandLine() (prompt string, model string, err error) {
 
 	return prompt, model, nil
 }
+
+//"hello\n\ngoodbye\n\n"
