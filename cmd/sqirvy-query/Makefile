@@ -5,7 +5,8 @@ build:
 	go build -o ../build/sqirvy-query .
 
 test:
-	@./test.sh >/dev/null
+	@./test_query.sh >/dev/null
+	@./test_models.sh >/dev/null
 
 clean:
 	rm -f ../build/sqirvy-query

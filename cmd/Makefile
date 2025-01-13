@@ -4,16 +4,16 @@ SUBDIRS = sqirvy-query gemini openai anthropic
 
 build:
 	@for dir in $(SUBDIRS); do \
-		$(MAKE) -C $$dir build; \
+		$(MAKE) -s  -C $$dir build; \
 	done
 
 test:
 	@for dir in $(SUBDIRS); do \
-		$(MAKE) -C $$dir test; \
+		$(MAKE) -s  -C $$dir test; \
 	done
 
 clean:
 	@for dir in $(SUBDIRS); do \
-		$(MAKE) -C $$dir clean; \
+		$(MAKE) -s  -C $$dir clean; \
 	done
 	rm -rf build

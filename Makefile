@@ -4,16 +4,16 @@ SUBDIRS = cmd web pkg/api
 
 build:
 	@for dir in $(SUBDIRS); do \
-		$(MAKE) -C $$dir build; \
+		$(MAKE) -s  -C $$dir build; \
 	done
 
 test:
 	@for dir in $(SUBDIRS); do \
-		$(MAKE) -C $$dir test; \
+		$(MAKE) -s  -C $$dir test; \
 	done
 	@echo "Tests passed"
 
 clean:
 	@for dir in $(SUBDIRS); do \
-		$(MAKE) -C $$dir clean; \
+		$(MAKE) -s  -C $$dir clean; \
 	done

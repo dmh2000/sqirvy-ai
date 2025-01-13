@@ -24,7 +24,7 @@ ignore_return_code() {
 
 make build 
 echo "-------------------------------"
-echo "sqiry-query"
+echo "sqiry-query (should fail)"
 ignore_return_code ../build/sqirvy-query
 echo "-------------------------------"
 echo "sqiry-query -h"
@@ -46,12 +46,12 @@ echo "-------------------------------"
 echo "../build/sqirvy-query  -m gemini-2.0-flash-exp < hello.txt goodbye.txt"
 check_return_code ../build/sqirvy-query  -m gemini-2.0-flash-exp < hello.txt goodbye.txt
 echo "-------------------------------"
-echo "../build/sqirvy-query  -m gpt-4o-2024-11-20 < hello.txt goodbye.txt"
-check_return_code ../build/sqirvy-query  -m gpt-4o-2024-11-20 < hello.txt goodbye.txt
+echo "../build/sqirvy-query  -m gpt-4o < hello.txt goodbye.txt"
+check_return_code ../build/sqirvy-query  -m gpt-4o < hello.txt goodbye.txt
 echo "-------------------------------"
-echo "../build/sqirvy-query  -m gpt-4o-2024-11-20 < hello.txt goodbye.txt"
+echo "../build/sqirvy-query  -m gpt-4o < hello.txt goodbye.txt"
 ignore_return_code ../build/sqirvy-query  -m xyz < hello.txt 
 echo "-------------------------------"
-echo "../build/sqirvy-query  -m gpt-4o-2024-11-20 < hello.txt goodbye.txt"
+echo "../build/sqirvy-query  -m gpt-4o < hello.txt goodbye.txt"
 ignore_return_code ../build/sqirvy-query  xyz
 echo "-------------------------------"
