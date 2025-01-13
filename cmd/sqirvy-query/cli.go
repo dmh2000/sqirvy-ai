@@ -45,8 +45,13 @@ func processCommandLine() (prompt string, model string, err error) {
 		os.Exit(0)
 	}
 
-	// Check if we have data from stdin
+	// Initialize prompt with system.md if it exists
 	prompt = ""
+	if systemData, err := os.ReadFile("system.md"); err == nil {
+		prompt = string(systemData) + "\n\n"
+	}
+
+	// Check if we have data from stdin
 	if isInputFromPipe() {
 		stdinBytes, err := io.ReadAll(os.Stdin)
 		if err != nil {
