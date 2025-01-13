@@ -9,6 +9,8 @@ import (
 )
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	prompt, modelFlag, err := processCommandLine()
 	if err != nil {
 		log.Fatal(err)
