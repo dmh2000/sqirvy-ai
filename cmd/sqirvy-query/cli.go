@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sort"
 )
 
 func helpMessage() {
@@ -13,6 +14,16 @@ func helpMessage() {
 	fmt.Println("Options:")
 	fmt.Println("  -h    print this help message")
 	fmt.Println("  -m    AI model to use (default: claude-3-5-sonnet-latest)")
+	fmt.Println("")
+	fmt.Println("Supported models:")
+	keys := make([]string, 0, len(modelToProvider))
+	for key := range modelToProvider {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	for _, key := range keys {
+		fmt.Printf("  %s\n", key)
+	}
 }
 
 // isInputFromPipe determines if the program is receiving piped input on stdin

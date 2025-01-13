@@ -3,9 +3,19 @@ package main
 import "fmt"
 
 var modelToProvider = map[string]string{
+	// anthropic models
 	"claude-3-5-sonnet-latest": "anthropic",
-	"gemini-2.0-flash-exp":     "gemini",
-	"gpt-4o-2024-11-20":        "openai",
+	"claude-3-5-haiku-latest":  "anthropic",
+	"claude-3-opus-latest":     "anthropic",
+	// google gemini models
+	"gemini-2.0-flash-exp": "gemini",
+	"gemini-1.5-flash":     "gemini",
+	"gemini-1.5-pro":       "gemini",
+	// openai models
+	"gpt-4o":      "openai",
+	"gpt-4o-mini": "openai",
+	"gpt-4-turbo": "openai",
+	"o1-mini":     "openai",
 }
 
 func getProviderName(model string) (string, error) {

@@ -28,21 +28,25 @@ Depending on which model you select, you'll need to set the appropriate API key:
 ### Examples
 
 1. Send a prompt from stdin:
+
 ```bash
 echo "What is the capital of France?" | sqirvy-query
 ```
 
 2. Send a prompt from a file:
+
 ```bash
 sqirvy-query prompt.txt
 ```
 
 3. Combine stdin and files:
+
 ```bash
 echo "Please answer this question:" | sqirvy-query prompt.txt
 ```
 
 4. Use a specific model:
+
 ```bash
 sqirvy-query -m gpt-4-turbo-preview prompt.txt
 ```
@@ -52,18 +56,21 @@ sqirvy-query -m gpt-4-turbo-preview prompt.txt
 The tool supports various models from different providers:
 
 Anthropic:
+
 - claude-3-opus-20240229
 - claude-3-sonnet-20240229
 - claude-2.1
 - claude-instant-1.2
 
 OpenAI:
+
 - gpt-4-turbo-preview
 - gpt-4
 - gpt-3.5-turbo
 
 Gemini:
-- gemini-pro
+
+- gemini-
 - gemini-pro-vision
 
 ## Exit Status
