@@ -1,11 +1,11 @@
 .PHONY: build test clean
 
 build:
-	mkdir -p ../build
-	go build -o ../build/anthropic .
+	mkdir -p ../../bin
+	go build -o ../../bin/anthropic .
 
 test:
 	echo "Skipping tests for anthropic"
 
 clean:
-	rm -f ../build/anthropic
+	rm -f ../../bin/anthropic

@@ -25,33 +25,33 @@ ignore_return_code() {
 make build 
 echo "-------------------------------"
 echo "sqiry-query (should fail)"
-ignore_return_code ../build/sqirvy-query
+ignore_return_code ../../bin/sqirvy-query
 echo "-------------------------------"
 echo "sqiry-query -h"
-check_return_code ../build/sqirvy-query -h
+check_return_code ../../bin/sqirvy-query -h
 echo "-------------------------------"
-echo "../build/sqirvy-query < hello.txt"
-check_return_code ../build/sqirvy-query < hello.txt
+echo "../../bin/sqirvy-query < hello.txt"
+check_return_code ../../bin/sqirvy-query < hello.txt
 echo "sqiry-query file"
 echo "-------------------------------"
-echo "../build/sqirvy-query hello.txt"
-check_return_code ../build/sqirvy-query hello.txt
+echo "../../bin/sqirvy-query hello.txt"
+check_return_code ../../bin/sqirvy-query hello.txt
 echo "-------------------------------"
-echo "../build/sqirvy-query goodbye.txt < hello.txt"
-check_return_code ../build/sqirvy-query goodbye.txt < hello.txt
+echo "../../bin/sqirvy-query goodbye.txt < hello.txt"
+check_return_code ../../bin/sqirvy-query goodbye.txt < hello.txt
 echo "-------------------------------"
-echo "../build/sqirvy-query  hello.txt goodbye.txt"
-check_return_code ../build/sqirvy-query  hello.txt goodbye.txt
+echo "../../bin/sqirvy-query  hello.txt goodbye.txt"
+check_return_code ../../bin/sqirvy-query  hello.txt goodbye.txt
 echo "-------------------------------"
-echo "../build/sqirvy-query  -m gemini-2.0-flash-exp < hello.txt goodbye.txt"
-check_return_code ../build/sqirvy-query  -m gemini-2.0-flash-exp < hello.txt goodbye.txt
+echo "../../bin/sqirvy-query  -m gemini-2.0-flash-exp < hello.txt goodbye.txt"
+check_return_code ../../bin/sqirvy-query  -m gemini-2.0-flash-exp < hello.txt goodbye.txt
 echo "-------------------------------"
-echo "../build/sqirvy-query  -m gpt-4o < hello.txt goodbye.txt"
-check_return_code ../build/sqirvy-query  -m gpt-4o < hello.txt goodbye.txt
+echo "../../bin/sqirvy-query  -m gpt-4o < hello.txt goodbye.txt"
+check_return_code ../../bin/sqirvy-query  -m gpt-4o < hello.txt goodbye.txt
 echo "-------------------------------"
-echo "../build/sqirvy-query  -m gpt-4o < hello.txt goodbye.txt"
-ignore_return_code ../build/sqirvy-query  -m xyz < hello.txt 
+echo "../../bin/sqirvy-query  -m gpt-4o < hello.txt goodbye.txt"
+ignore_return_code ../../bin/sqirvy-query  -m xyz < hello.txt 
 echo "-------------------------------"
-echo "../build/sqirvy-query  -m gpt-4o < hello.txt goodbye.txt"
-ignore_return_code ../build/sqirvy-query  xyz
+echo "../../bin/sqirvy-query  -m gpt-4o < hello.txt goodbye.txt"
+ignore_return_code ../../bin/sqirvy-query  xyz
 echo "-------------------------------"

@@ -40,6 +40,6 @@ make build
 for item in "${models[@]}"
 do
 	echo "------ $item ------"
-	echo "../build/sqirvy-query -m $item < hello.txt"
-	check_return_code ../build/sqirvy-query -m $item < hello.txt
+	echo "../../bin/sqirvy-query -m $item < hello.txt"
+	check_return_code ../../bin/sqirvy-query -m $item < hello.txt
 done
