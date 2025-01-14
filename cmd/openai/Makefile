@@ -1,11 +1,11 @@
 .PHONY: build test clean
 
 build:
-	mkdir -p ../../bin
-	go build -o ../../bin/openai .
+	mkdir -p $(BINDIR)
+	go build -o $(BINDIR)/openai .
 
 test:
 	echo "Skipping tests for openai"
 
 clean:
-	rm -f ../../bin/openai
+	rm -f $(BINDIR)/openai

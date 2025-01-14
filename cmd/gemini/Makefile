@@ -1,11 +1,11 @@
 .PHONY: build test clean
 
 build:
-	mkdir -p ../../bin
-	go build -o ../../bin/gemini .
+	mkdir -p $(BINDIR)
+	go build -o $(BINDIR)/gemini .
 
 test:
 	echo "Skipping tests for gemini"
 
 clean:
-	rm -f ../../bin/gemini
+	rm -f $(BINDIR)/gemini
