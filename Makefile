@@ -6,7 +6,6 @@ build:
 	@for dir in $(SUBDIRS); do \
 		$(MAKE) -s  -C $$dir build; \
 	done
-	cp scripts/edit-pipe bin/edit-pipe
 
 test:
 	@for dir in $(SUBDIRS); do \

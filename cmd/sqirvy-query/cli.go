@@ -26,10 +26,10 @@ func helpMessage() {
 	}
 }
 
-// isInputFromPipe determines if the program is receiving piped input on stdin
-func isInputFromPipe() bool {
-	fileInfo, _ := os.Stdin.Stat()
-	return (fileInfo.Mode() & os.ModeCharDevice) == 0
+// inputIsFromPipe determines if the program is receiving piped input on stdin
+func inputIsFromPipe() (bool, error) {
+	fileInfo, err := os.Stdin.Stat()
+	return (fileInfo.Mode() & os.ModeCharDevice) == 0, err
 }
 
 func processCommandLine() (prompt string, model string, err error) {
@@ -38,7 +38,7 @@ func processCommandLine() (prompt string, model string, err error) {
 	// add a -h flag
 	var help bool
 	flag.BoolVar(&help, "h", false, "print help message")
-	flag.StringVar(&model, "m", "", "AI model to use (default: claude-3.5-sonnet)")
+	flag.StringVar(&model, "m", "", "AI model to use (default: claude-3.5-sonnet-latest)")
 	flag.Parse()
 	if help {
 		helpMessage()
@@ -47,12 +47,16 @@ func processCommandLine() (prompt string, model string, err error) {
 
 	// Initialize prompt with system.md if it exists
 	prompt = ""
-	if systemData, err := os.ReadFile("system.md"); err == nil {
+	if systemData, err := os.ReadFile("./system.md"); err == nil {
 		prompt = string(systemData) + "\n\n"
 	}
 
 	// Check if we have data from stdin
-	if isInputFromPipe() {
+	p, err := inputIsFromPipe()
+	if err != nil {
+		return "", "", fmt.Errorf("error checking if input is from pipe: %v", err)
+	}
+	if p {
 		stdinBytes, err := io.ReadAll(os.Stdin)
 		if err != nil {
 			return "", "", fmt.Errorf("error reading from stdin: %v", err)
@@ -60,7 +64,7 @@ func processCommandLine() (prompt string, model string, err error) {
 		prompt += string(stdinBytes)
 	}
 
-	// Process any file arguments
+	// Process any file arguments. use a buffer to avoid reading the entire file into memory
 	for _, filename := range flag.Args() {
 		data, err := os.ReadFile(filename)
 		if err != nil {

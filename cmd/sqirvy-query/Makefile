@@ -15,14 +15,17 @@ build: x build-linux build-macos build-windows
 	esac
 
 build-linux:
+	staticcheck ./...
 	mkdir -p $(BINDIR)
 	GOOS=linux GOARCH=amd64 go build -o $(BINDIR)/sqirvy-query-linux .
 
 build-macos:
+	staticcheck ./...
 	mkdir -p $(BINDIR)
 	GOOS=darwin GOARCH=amd64 go build -o $(BINDIR)/sqirvy-query-darwin .
 
 build-windows:
+	staticcheck ./...
 	mkdir -p $(BINDIR)
 	GOOS=windows GOARCH=amd64 go build -o $(BINDIR)/sqirvy-query.exe .
 

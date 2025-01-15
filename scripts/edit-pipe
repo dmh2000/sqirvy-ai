@@ -1,3 +1,0 @@
-#!/bin/bash
-
-temp_file=$(mktemp) && $EDITOR "$temp_file" && cat "$temp_file" && rm "$temp_file"
