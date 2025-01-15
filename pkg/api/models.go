@@ -1,7 +1,14 @@
+// Package api provides model management functionality for AI language models.
+//
+// This file contains model-to-provider mappings and utility functions for
+// working with different AI models across supported providers.
 package api
 
 import "fmt"
 
+// ModelToProvider maps model names to their respective providers.
+// This mapping is used to determine which client implementation should handle
+// requests for a given model.
 var ModelToProvider = map[string]string{
 	// anthropic models
 	"claude-3-5-sonnet-latest": "anthropic",

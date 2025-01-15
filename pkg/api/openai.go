@@ -1,3 +1,8 @@
+// Package api provides integration with OpenAI's GPT models.
+//
+// This file implements the Client interface for OpenAI's API, supporting
+// both text and JSON queries to GPT models. It handles authentication,
+// request formatting, and response parsing specific to OpenAI's requirements.
 package api
 
 import (

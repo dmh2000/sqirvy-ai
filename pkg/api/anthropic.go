@@ -1,3 +1,8 @@
+// Package api provides integration with Anthropic's Claude AI models.
+//
+// This file implements the Client interface for Anthropic's API, supporting
+// both text and JSON queries to Claude models. It handles authentication,
+// request formatting, and response parsing specific to Anthropic's requirements.
 package api
 
 import (
