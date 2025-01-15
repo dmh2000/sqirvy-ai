@@ -39,6 +39,13 @@ func helpMessage(prefix string) {
 // - the concatenated content of all input files as a string
 // - the specified AI model name (or empty string for default)
 // - any error that occurred during processing
+// processCommandLine parses command line arguments and assembles the input prompt.
+// It handles input from both files and stdin, enforcing size limits.
+//
+// Returns:
+//   - string: The assembled prompt text
+//   - string: The specified AI model name (or empty for default)
+//   - error: Any error that occurred during processing
 func processCommandLine() (string, string, error) {
 	// suppress the default help message
 	flag.Usage = func() {}

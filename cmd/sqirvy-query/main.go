@@ -1,3 +1,15 @@
+// Package main implements a command-line interface for querying AI language models.
+//
+// The program accepts input from both files and standard input, concatenates them,
+// and sends the combined text as a prompt to the specified AI model. It supports
+// multiple AI providers including Anthropic, OpenAI, and Google's Gemini.
+//
+// Usage:
+//
+//	sqirvy-query [options] files...
+//
+// The program will read from stdin if available, and concatenate any specified files.
+// A system prompt can be provided via system.md in the current directory.
 package main
 
 import (

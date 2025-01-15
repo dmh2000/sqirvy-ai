@@ -1,3 +1,10 @@
+// Package main provides command line interface functionality for the AI query tool.
+//
+// This file contains the command-line processing logic including:
+// - Argument parsing
+// - Input handling from both files and stdin
+// - Size limit enforcement
+// - Help message formatting
 package main
 
 import (
@@ -22,6 +29,8 @@ const maxTokens = 65536
 const bytesPerToken = 4
 const MaxTotalBytes = maxTokens * bytesPerToken // 262144 bytes limit
 
+// helpMessage prints usage information for the command line tool,
+// including available options and supported AI models.
 func helpMessage() {
 	fmt.Println("Usage: sqirvy-query [options] files...")
 	fmt.Println("concatenates prompt from stdin and/or files and sends it to the specified AI model")
@@ -41,6 +50,8 @@ func helpMessage() {
 }
 
 // inputIsFromPipe determines if the program is receiving piped input on stdin
+// inputIsFromPipe determines if the program is receiving piped input on stdin.
+// Returns true if stdin is a pipe, false if it's a terminal or other device.
 func inputIsFromPipe() (bool, error) {
 	fileInfo, err := os.Stdin.Stat()
 	if err != nil {
