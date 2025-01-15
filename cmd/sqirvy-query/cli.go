@@ -29,8 +29,8 @@ func helpMessage() {
 	fmt.Println("  -m    AI model to use (default: claude-3-5-sonnet-latest)")
 	fmt.Println("")
 	fmt.Println("Supported models:")
-	keys := make([]string, 0, len(modelToProvider))
-	for key := range modelToProvider {
+	keys := make([]string, 0, len(api.ModelToProvider))
+	for key := range api.ModelToProvider {
 		keys = append(keys, key)
 	}
 	sort.Strings(keys)

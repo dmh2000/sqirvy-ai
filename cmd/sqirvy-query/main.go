@@ -26,7 +26,7 @@ func main() {
 	}
 
 	// Get the provider for the model
-	provider, err := getProviderName(model)
+	provider, err := api.GetProviderName(model)
 	if err != nil {
 		log.Fatal(err)
 	}
