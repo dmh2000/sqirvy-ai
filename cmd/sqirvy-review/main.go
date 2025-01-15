@@ -1,4 +1,22 @@
-// Package main implements a code review tool that uses AI models to review code.
+// Package main implements an automated code review tool that leverages AI language models
+// to perform comprehensive code analysis and provide detailed feedback.
+//
+// The tool analyzes source code for:
+// - Potential bugs and logic errors
+// - Security vulnerabilities and best practices
+// - Performance optimizations
+// - Style and idiomatic code usage
+// - Documentation and comment quality
+//
+// It supports multiple AI providers (OpenAI, Anthropic, Google) and uses embedded
+// system prompts to ensure consistent and thorough reviews.
+//
+// Usage:
+//
+//	sqirvy-review [options] files...
+//
+// The tool will analyze all provided files and generate a detailed markdown report
+// containing findings and recommendations across multiple categories.
 package main
 
 import (
