@@ -1,3 +1,4 @@
+// Package main implements a code review tool that uses AI models to review code.
 package main
 
 import (

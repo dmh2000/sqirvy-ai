@@ -1,3 +1,4 @@
+// Package main provides command line interface functionality for the code review tool.
 package main
 
 import (
@@ -11,6 +12,8 @@ import (
 
 const MaxTotalBytes = 262144 // 256KB limit
 
+// helpMessage prints usage information for the command line tool.
+// If prefix is not empty, it is printed before the usage information.
 func helpMessage(prefix string) {
 	if prefix != "" {
 		fmt.Println(prefix)
@@ -32,6 +35,10 @@ func helpMessage(prefix string) {
 	}
 }
 
+// processCommandLine parses command line arguments and returns:
+// - the concatenated content of all input files as a string
+// - the specified AI model name (or empty string for default)
+// - any error that occurred during processing
 func processCommandLine() (string, string, error) {
 	// suppress the default help message
 	flag.Usage = func() {}
