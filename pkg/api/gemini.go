@@ -22,7 +22,9 @@ type GeminiClient struct {
 
 func (c *GeminiClient) initClient() error {
 	var err error
+	// Create a background context for API operations
 	c.ctx = context.Background()
+	// Initialize the Gemini client with API key from environment
 	c.client, err = genai.NewClient(c.ctx, option.WithAPIKey(os.Getenv("GEMINI_API_KEY")))
 	if err != nil {
 		return fmt.Errorf("failed to create client: %v", err)
@@ -31,19 +33,25 @@ func (c *GeminiClient) initClient() error {
 }
 
 func (c *GeminiClient) QueryText(prompt string, model string, options Options) (string, error) {
+	// Initialize the client if not already done
 	if err := c.initClient(); err != nil {
 		return "", err
 	}
+	// Ensure client is closed after we're done
 	defer c.client.Close()
 
+	// Create a generative model instance with the specified model name
 	genModel := c.client.GenerativeModel(model)
+	// Set response type to plain text
 	genModel.ResponseMIMEType = "text/plain"
 
+	// Generate content from the prompt
 	resp, err := genModel.GenerateContent(c.ctx, genai.Text(prompt))
 	if err != nil {
 		return "", fmt.Errorf("failed to generate content: %v", err)
 	}
 
+	// Concatenate all text parts from all candidates into a single string
 	var result string
 	for _, candidate := range resp.Candidates {
 		for _, part := range candidate.Content.Parts {
@@ -57,19 +65,26 @@ func (c *GeminiClient) QueryText(prompt string, model string, options Options) (
 }
 
 func (c *GeminiClient) QueryJSON(prompt string, model string, options Options) (string, error) {
+	// Initialize the client if not already done
 	if err := c.initClient(); err != nil {
 		return "", err
 	}
+	// Ensure client is closed after we're done
 	defer c.client.Close()
 
+	// Create a generative model instance with the specified model name
 	genModel := c.client.GenerativeModel(model)
+	// Set response type to JSON
 	genModel.ResponseMIMEType = "application/json"
 
+	// Generate content from the prompt
 	resp, err := genModel.GenerateContent(c.ctx, genai.Text(prompt))
 	if err != nil {
 		return "", fmt.Errorf("failed to generate content: %v", err)
 	}
 
+	// Concatenate all text parts from all candidates into a single string
+	// Each part should be valid JSON content
 	var result string
 	for _, candidate := range resp.Candidates {
 		for _, part := range candidate.Content.Parts {
