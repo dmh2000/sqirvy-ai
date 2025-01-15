@@ -3,10 +3,23 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
 	"os"
 	"sort"
+	util "sqirvyllm/pkg/util"
+	"strings"
 )
+
+// Max Bytes To Read
+// MaxTotalBytes is the maximum allowed size for all input files combined
+// assume the model will return an error if max context length is exceeded
+// it is impractical to know the exact max context length beforehand for all models
+// assume max 64k tokens
+// assuming 4 characters per token
+// total 262144 bytes
+// since the bytes are converted to UTF-8, the upload could be larger than the byte limit
+const maxTokens = 65536
+const bytesPerToken = 4
+const MaxTotalBytes = maxTokens * bytesPerToken // 262144 bytes limit
 
 func helpMessage() {
 	fmt.Println("Usage: sqirvy-query [options] files...")
@@ -33,6 +46,7 @@ func inputIsFromPipe() (bool, error) {
 }
 
 func processCommandLine() (prompt string, model string, err error) {
+
 	// suppress the default help message
 	flag.Usage = func() {}
 	// add a -h flag
@@ -45,33 +59,56 @@ func processCommandLine() (prompt string, model string, err error) {
 		os.Exit(0)
 	}
 
+	var builder strings.Builder
+	var totalSize int64
+
 	// Initialize prompt with system.md if it exists
-	prompt = ""
-	if systemData, err := os.ReadFile("./system.md"); err == nil {
-		prompt = string(systemData) + "\n\n"
+	totalSize = 0
+	builder.WriteString("")
+	sysprompt, totalSize, err := util.ReadFile("./system.md", MaxTotalBytes)
+	if err != nil {
+		return "", "", fmt.Errorf("error reading system.md: %w", err)
 	}
+	builder.WriteString(string(sysprompt))
+	builder.WriteString("\n\n")
+	totalSize += int64(builder.Len())
 
 	// Check if we have data from stdin
 	p, err := inputIsFromPipe()
 	if err != nil {
 		return "", "", fmt.Errorf("error checking if input is from pipe: %v", err)
 	}
+
+	// Read stdin
+	var stdinData string
+	var stdinSize int64
 	if p {
-		stdinBytes, err := io.ReadAll(os.Stdin)
+		stdinData, stdinSize, err = util.ReadStdin(MaxTotalBytes)
 		if err != nil {
-			return "", "", fmt.Errorf("error reading from stdin: %v", err)
+			return "", "", fmt.Errorf("error reading from stdin: %w", err)
 		}
-		prompt += string(stdinBytes)
 	}
 
-	// Process any file arguments. use a buffer to avoid reading the entire file into memory
-	for _, filename := range flag.Args() {
-		data, err := os.ReadFile(filename)
-		if err != nil {
-			return "", "", fmt.Errorf("error reading file %s: %v", filename, err)
-		}
-		prompt += string(data) + "\n\n"
+	// Check if total size of stdin exceeds MaxTotalBytes
+	totalSize += stdinSize
+	if totalSize > MaxTotalBytes {
+		return "", "", fmt.Errorf("total size would exceed limit of %d bytes", MaxTotalBytes)
 	}
+	prompt += string(stdinData)
+
+	// Read all files
+	fileData, fileSize, err := util.ReadFiles(flag.Args(), MaxTotalBytes)
+	if err != nil {
+		return "", "", fmt.Errorf("error reading files: %w", err)
+	}
+
+	// check if total size of stdin + files exceeds MaxTotalBytes
+	totalSize += fileSize
+	if totalSize > MaxTotalBytes {
+		return "", "", fmt.Errorf("total size would exceed limit of %d bytes", MaxTotalBytes)
+	}
+
+	prompt += fileData
 
 	// Check if we have any input
 	if prompt == "" {
@@ -80,5 +117,3 @@ func processCommandLine() (prompt string, model string, err error) {
 
 	return prompt, model, nil
 }
-
-//"hello\n\ngoodbye\n\n"
