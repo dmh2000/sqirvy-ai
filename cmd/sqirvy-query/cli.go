@@ -42,15 +42,20 @@ func helpMessage() {
 // inputIsFromPipe determines if the program is receiving piped input on stdin
 func inputIsFromPipe() (bool, error) {
 	fileInfo, err := os.Stdin.Stat()
+	if err != nil {
+		return false, err
+	}
 	return (fileInfo.Mode() & os.ModeCharDevice) == 0, err
 }
 
-func processCommandLine() (prompt string, model string, err error) {
+func processCommandLine() (string, string, error) {
 
 	// suppress the default help message
 	flag.Usage = func() {}
 	// add a -h flag
 	var help bool
+	var model string
+
 	flag.BoolVar(&help, "h", false, "print help message")
 	flag.StringVar(&model, "m", "", "AI model to use (default: claude-3.5-sonnet-latest)")
 	flag.Parse()
@@ -63,15 +68,17 @@ func processCommandLine() (prompt string, model string, err error) {
 	var totalSize int64
 
 	// Initialize prompt with system.md if it exists
-	totalSize = 0
 	builder.WriteString("")
 	sysprompt, totalSize, err := util.ReadFile("./system.md", MaxTotalBytes)
 	if err != nil {
-		return "", "", fmt.Errorf("error reading system.md: %w", err)
+		// no system.md file, skip a system prompt
+		totalSize = 0
 	}
-	builder.WriteString(string(sysprompt))
-	builder.WriteString("\n\n")
-	totalSize += int64(builder.Len())
+	if totalSize > 0 {
+		builder.WriteString(string(sysprompt))
+		builder.WriteString("\n\n")
+		totalSize += int64(builder.Len())
+	}
 
 	// Check if we have data from stdin
 	p, err := inputIsFromPipe()
@@ -94,7 +101,7 @@ func processCommandLine() (prompt string, model string, err error) {
 	if totalSize > MaxTotalBytes {
 		return "", "", fmt.Errorf("total size would exceed limit of %d bytes", MaxTotalBytes)
 	}
-	prompt += string(stdinData)
+	builder.WriteString(string(stdinData))
 
 	// Read all files
 	fileData, fileSize, err := util.ReadFiles(flag.Args(), MaxTotalBytes)
@@ -108,12 +115,11 @@ func processCommandLine() (prompt string, model string, err error) {
 		return "", "", fmt.Errorf("total size would exceed limit of %d bytes", MaxTotalBytes)
 	}
 
-	prompt += fileData
-
-	// Check if we have any input
-	if prompt == "" {
-		return "", "", fmt.Errorf("no input provided via stdin or files")
+	builder.WriteString(fileData)
+	if builder.Len() == 0 {
+		return "", "", fmt.Errorf("no prompts specified, stdin and files have no data")
 	}
 
-	return prompt, model, nil
+	// return the consolidated prompt
+	return builder.String(), model, nil
 }

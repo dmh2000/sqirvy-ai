@@ -32,6 +32,7 @@ build-windows:
 test:
 	@./test_query.sh >/dev/null
 	@./test_models.sh >/dev/null
+	@echo "Test Passed"
 
 clean:
 	rm -f $(BINDIR)/sqirvy-query-linux
