@@ -33,6 +33,10 @@ func (c *GeminiClient) initClient() error {
 }
 
 func (c *GeminiClient) QueryText(prompt string, model string, options Options) (string, error) {
+	if prompt == "" {
+		return "", fmt.Errorf("prompt cannot be empty for text query")
+	}
+
 	// Initialize the client if not already done
 	if err := c.initClient(); err != nil {
 		return "", err
@@ -65,6 +69,10 @@ func (c *GeminiClient) QueryText(prompt string, model string, options Options) (
 }
 
 func (c *GeminiClient) QueryJSON(prompt string, model string, options Options) (string, error) {
+	if prompt == "" {
+		return "", fmt.Errorf("prompt cannot be empty for json query")
+	}
+
 	// Initialize the client if not already done
 	if err := c.initClient(); err != nil {
 		return "", err

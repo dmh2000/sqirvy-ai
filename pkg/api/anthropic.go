@@ -20,6 +20,10 @@ type AnthropicClient struct {
 }
 
 func (c *AnthropicClient) QueryText(prompt string, model string, options Options) (string, error) {
+	if prompt == "" {
+		return "", fmt.Errorf("prompt cannot be empty for text query")
+	}
+
 	// Initialize client if not already done
 	if c.client == nil {
 		c.client = anthropic.NewClient()
@@ -27,11 +31,11 @@ func (c *AnthropicClient) QueryText(prompt string, model string, options Options
 
 	// Build response string
 	answer := ""
-	
+
 	// Create new message request with the provided prompt
 	message, err := c.client.Messages.New(context.TODO(), anthropic.MessageNewParams{
-		Model:     anthropic.F(model),          // Specify which model to use
-		MaxTokens: anthropic.F(int64(1024)),    // Limit response length
+		Model:     anthropic.F(model),       // Specify which model to use
+		MaxTokens: anthropic.F(int64(1024)), // Limit response length
 		Messages: anthropic.F([]anthropic.MessageParam{
 			anthropic.NewUserMessage(anthropic.NewTextBlock(prompt)), // Create user message
 		}),
@@ -53,6 +57,10 @@ func (c *AnthropicClient) QueryText(prompt string, model string, options Options
 }
 
 func (c *AnthropicClient) QueryJSON(prompt string, model string, options Options) (string, error) {
+	if prompt == "" {
+		return "", fmt.Errorf("prompt cannot be empty for json query")
+	}
+
 	// Initialize client if not already done
 	if c.client == nil {
 		c.client = anthropic.NewClient()
@@ -60,8 +68,8 @@ func (c *AnthropicClient) QueryJSON(prompt string, model string, options Options
 
 	// Create new message request expecting JSON response
 	message, err := c.client.Messages.New(context.TODO(), anthropic.MessageNewParams{
-		Model:     anthropic.F(model),                // Specify which model to use
-		MaxTokens: anthropic.F(int64(MAX_TOKENS)),    // Use maximum allowed tokens
+		Model:     anthropic.F(model),             // Specify which model to use
+		MaxTokens: anthropic.F(int64(MAX_TOKENS)), // Use maximum allowed tokens
 		Messages: anthropic.F([]anthropic.MessageParam{
 			anthropic.NewUserMessage(anthropic.NewTextBlock(prompt)), // Create user message
 		}),

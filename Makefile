@@ -1,6 +1,9 @@
 .PHONY: build test clean
 
 SUBDIRS = cmd web pkg/api cmd/sqirvy-review
+PKG_SOURCES := $(shell find pkg -type f -name '*.go')
+CMD_SOURCES := $(shell find cmd -type f -name '*.go')
+SOURCES:= $(PKG_SOURCES) $(CMD_SOURCES)
 
 # silence make output. remove -s to see make output
 export SILENT=-s
@@ -21,3 +24,6 @@ clean:
 		$(MAKE)  $(SILENT)  -C $$dir clean; \
 	done
 	-rm -rf bin
+
+review:	build
+	bin/sqirvy-review -model claude-3-5-haiku-latest  $(SOURCES) >REVIEW.md

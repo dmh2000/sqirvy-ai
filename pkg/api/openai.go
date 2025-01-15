@@ -20,14 +20,14 @@ const (
 
 // OpenAIClient implements the Client interface for OpenAI's API
 type OpenAIClient struct {
-	apiKey string        // OpenAI API authentication key
-	client *http.Client  // HTTP client for making API requests
+	apiKey string       // OpenAI API authentication key
+	client *http.Client // HTTP client for making API requests
 }
 
 // openAIRequest represents the structure of a request to OpenAI's chat completion API
 type openAIRequest struct {
-	Model          string          `json:"model"`           // Model identifier
-	Messages       []openAIMessage `json:"messages"`        // Conversation messages
+	Model          string          `json:"model"`                           // Model identifier
+	Messages       []openAIMessage `json:"messages"`                        // Conversation messages
 	MaxTokens      int             `json:"max_completion_tokens,omitempty"` // Max response length
 	ResponseFormat string          `json:"response_format,omitempty"`       // Desired response format
 }
@@ -46,6 +46,10 @@ type openAIResponse struct {
 }
 
 func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (string, error) {
+	if prompt == "" {
+		return "", fmt.Errorf("prompt cannot be empty for text query")
+	}
+
 	// Initialize HTTP client and API key if not already done
 	if c.client == nil {
 		c.client = &http.Client{}
