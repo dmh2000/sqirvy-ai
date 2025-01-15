@@ -7,7 +7,7 @@ else
     DETECTED_OS := $(shell uname -s)
 endif
 
-build: x build-linux build-macos build-windows
+build: build-linux build-macos build-windows
 	@case "$$(uname -s)" in \
 		Linux*) cp $(BINDIR)/sqirvy-query-linux $(BINDIR)/sqirvy-query ;; \
 		Darwin*) cp $(BINDIR)/sqirvy-query-darwin $(BINDIR)/sqirvy-query ;; \

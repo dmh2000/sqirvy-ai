@@ -6,7 +6,7 @@ build:
 	go build -o $(BINDIR)/openai .
 
 test:
-	echo "Skipping tests for openai"
+	go run . >/dev/null
 
 clean:
 	rm -f $(BINDIR)/openai

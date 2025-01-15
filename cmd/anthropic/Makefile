@@ -6,7 +6,7 @@ build:
 	go build -o $(BINDIR)/anthropic .
 	
 test:
-	echo "Skipping tests for anthropic"
+	go run . >/dev/null
 
 clean:
 	rm -f $(BINDIR)/anthropic

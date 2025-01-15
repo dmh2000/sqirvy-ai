@@ -13,6 +13,7 @@ func main() {
 
 	prompt, modelFlag, err := processCommandLine()
 	if err != nil {
+		helpMessage()
 		log.Fatal(err)
 	}
 	if prompt == "" {

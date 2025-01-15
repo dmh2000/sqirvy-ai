@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 	"sort"
 	api "sqirvyllm/pkg/api"
 	util "sqirvyllm/pkg/util"
@@ -12,12 +11,15 @@ import (
 
 const MaxTotalBytes = 262144 // 256KB limit
 
-func helpMessage() {
+func helpMessage(prefix string) {
+	if prefix != "" {
+		fmt.Println(prefix)
+	}
 	fmt.Println("Usage: sqirvy-review [options] files...")
-	fmt.Println("concatenates files and sends them to the specified AI model for review")
+	fmt.Println("adds files to context and sends them to the specified AI model for review")
 	fmt.Println("Options:")
 	fmt.Println("  -h    print this help message")
-	fmt.Println("  -model AI model to use (default: claude-3-5-sonnet-latest)")
+	fmt.Println("  -model AI model to use (default: gemini-1.5-flash)")
 	fmt.Println("")
 	fmt.Println("Supported models:")
 	keys := make([]string, 0, len(api.ModelToProvider))
@@ -33,7 +35,7 @@ func helpMessage() {
 func processCommandLine() (string, string, error) {
 	// suppress the default help message
 	flag.Usage = func() {}
-	
+
 	var help bool
 	var model string
 
@@ -42,14 +44,14 @@ func processCommandLine() (string, string, error) {
 	flag.Parse()
 
 	if help {
-		helpMessage()
-		os.Exit(0)
+		helpMessage("")
+		return "help", "", nil
 	}
 
 	var builder strings.Builder
-	
-	// Read all files
-	fileData, fileSize, err := util.ReadFiles(flag.Args(), MaxTotalBytes)
+
+	// Read all files (will return error if MaxTotalBytes exceeded)
+	fileData, _, err := util.ReadFiles(flag.Args(), MaxTotalBytes)
 	if err != nil {
 		return "", "", fmt.Errorf("error reading files: %w", err)
 	}

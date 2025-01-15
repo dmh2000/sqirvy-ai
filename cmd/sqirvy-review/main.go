@@ -1,26 +1,42 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"log"
-	"os"
-
 	api "sqirvyllm/pkg/api"
 )
+
+// build the system prompt and review requirements into the binary
+
+//go:embed system.md
+var systemPrompt string
+
+//go:embed review.md
+var reviewPrompt string
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	prompt, modelFlag, err := processCommandLine()
 	if err != nil {
+		helpMessage("Error:" + err.Error())
 		log.Fatal(err)
 	}
+	// -h ?
+	if prompt == "help" {
+		return
+	}
+
 	if prompt == "" {
 		log.Fatal("no prompt provided")
 	}
 
+	// prepend the system prompt and review instructions
+	prompt = systemPrompt + "\n\n" + reviewPrompt + "\n\n" + prompt
+
 	// Use default model if none specified
-	model := "claude-3-5-sonnet-latest"
+	model := "gemini-1.5-flash"
 	if modelFlag != "" {
 		model = modelFlag
 	}
@@ -45,6 +61,4 @@ func main() {
 
 	// Print response to stdout
 	fmt.Print(response)
-
-	os.Exit(0)
 }
