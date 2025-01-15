@@ -22,7 +22,11 @@ import (
 //
 // The function uses reflection to handle different API function signatures and
 // provides context-aware execution with proper cleanup on cancellation.
+// ApiCallWithContext executes an API function with context support.
+// It handles timeouts and cancellation through the provided context.
+// The function uses channels to manage concurrent execution and cleanup.
 func ApiCallWithContext(ctx context.Context, apiFunc interface{}, args ...interface{}) (interface{}, error) {
+	// Channels for handling results and errors
 	resultChan := make(chan interface{})
 	errChan := make(chan error)
 

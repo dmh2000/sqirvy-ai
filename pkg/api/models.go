@@ -25,6 +25,8 @@ var ModelToProvider = map[string]string{
 	"o1-mini":     "openai",
 }
 
+// GetProviderName returns the provider name for a given model identifier.
+// Returns an error if the model is not recognized.
 func GetProviderName(model string) (string, error) {
 	if provider, ok := ModelToProvider[model]; ok {
 		return provider, nil

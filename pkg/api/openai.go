@@ -18,16 +18,18 @@ const (
 	openAIEndpoint = "https://api.openai.com/v1/chat/completions"
 )
 
+// OpenAIClient implements the Client interface for OpenAI's API
 type OpenAIClient struct {
-	apiKey string
-	client *http.Client
+	apiKey string        // OpenAI API authentication key
+	client *http.Client  // HTTP client for making API requests
 }
 
+// openAIRequest represents the structure of a request to OpenAI's chat completion API
 type openAIRequest struct {
-	Model          string          `json:"model"`
-	Messages       []openAIMessage `json:"messages"`
-	MaxTokens      int             `json:"max_completion_tokens,omitempty"`
-	ResponseFormat string          `json:"response_format,omitempty"`
+	Model          string          `json:"model"`           // Model identifier
+	Messages       []openAIMessage `json:"messages"`        // Conversation messages
+	MaxTokens      int             `json:"max_completion_tokens,omitempty"` // Max response length
+	ResponseFormat string          `json:"response_format,omitempty"`       // Desired response format
 }
 
 type openAIMessage struct {

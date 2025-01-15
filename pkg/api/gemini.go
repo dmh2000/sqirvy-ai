@@ -14,9 +14,10 @@ import (
 	"google.golang.org/api/option"
 )
 
+// GeminiClient implements the Client interface for Google's Gemini API
 type GeminiClient struct {
-	client *genai.Client
-	ctx    context.Context
+	client *genai.Client   // Google Gemini API client
+	ctx    context.Context // Context for API requests
 }
 
 func (c *GeminiClient) initClient() error {

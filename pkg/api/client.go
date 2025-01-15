@@ -15,24 +15,29 @@ import (
 
 // Provider represents supported AI providers.
 // Currently supports Anthropic, Gemini, and OpenAI.
+// Provider identifies which AI service provider to use
 type Provider string
 
+// Supported AI providers
 const (
-	Anthropic Provider = "anthropic"
-	Gemini    Provider = "gemini"
-	OpenAI    Provider = "openai"
+	Anthropic Provider = "anthropic" // Anthropic's Claude models
+	Gemini    Provider = "gemini"    // Google's Gemini models
+	OpenAI    Provider = "openai"    // OpenAI's GPT models
 )
 
+// AnthropicOptions contains Anthropic-specific configuration options
 type AnthropicOptions struct {
-	// placeholder for options
+	// Reserved for future Anthropic-specific settings
 }
 
+// GeminiOptions contains Google Gemini-specific configuration options
 type GeminiOptions struct {
-	// placeholder for options
+	// Reserved for future Gemini-specific settings
 }
 
+// OpenAIOptions contains OpenAI-specific configuration options
 type OpenAIOptions struct {
-	// placeholder for options
+	// Reserved for future OpenAI-specific settings
 }
 
 // Options combines all provider-specific options into a single structure.

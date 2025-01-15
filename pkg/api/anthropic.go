@@ -14,8 +14,9 @@ import (
 
 const MAX_TOKENS = 2048
 
+// AnthropicClient implements the Client interface for Anthropic's API
 type AnthropicClient struct {
-	client *anthropic.Client
+	client *anthropic.Client // Anthropic API client
 }
 
 func (c *AnthropicClient) QueryText(prompt string, model string, options Options) (string, error) {
