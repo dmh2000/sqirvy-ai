@@ -1,6 +1,6 @@
 .PHONY: build test clean
 
-SUBDIRS = cmd web pkg/api
+SUBDIRS = cmd web pkg/api cmd/sqirvy-review
 
 build:
 	@for dir in $(SUBDIRS); do \
