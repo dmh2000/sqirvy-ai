@@ -46,22 +46,26 @@ type openAIResponse struct {
 }
 
 func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (string, error) {
+	// Initialize HTTP client and API key if not already done
 	if c.client == nil {
 		c.client = &http.Client{}
+		// Get API key from environment variable
 		c.apiKey = os.Getenv("OPENAI_API_KEY")
 		if c.apiKey == "" {
 			return "", fmt.Errorf("OPENAI_API_KEY environment variable not set")
 		}
 	}
 
+	// Construct the request body with the prompt as a user message
 	reqBody := openAIRequest{
 		Model: model,
 		Messages: []openAIMessage{
 			{Role: "user", Content: prompt},
 		},
-		MaxTokens: 1024,
+		MaxTokens: 1024, // Limit response length
 	}
 
+	// Send request and return response
 	return c.makeRequest(reqBody)
 }
 
@@ -69,66 +73,80 @@ func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (
 // using json has some options, see:
 // https://platform.openai.com/docs/guides/structured-outputs#examples
 func (c *OpenAIClient) QueryJSON(prompt string, model string, options Options) (string, error) {
+	// Validate prompt is not empty
 	if prompt == "" {
 		return "", fmt.Errorf("prompt cannot be empty for json query")
 	}
 
+	// Initialize HTTP client and API key if not already done
 	if c.client == nil {
 		c.client = &http.Client{}
+		// Get API key from environment variable
 		c.apiKey = os.Getenv("OPENAI_API_KEY")
 		if c.apiKey == "" {
 			return "", fmt.Errorf("OPENAI_API_KEY environment variable not set")
 		}
 	}
 
+	// Construct the request body with the prompt as a user message
 	reqBody := openAIRequest{
 		Model: model,
 		Messages: []openAIMessage{
 			{Role: "user", Content: prompt},
 		},
-		MaxTokens: 1024,
+		MaxTokens: 1024, // Limit response length
 	}
 
+	// Send request and return response
 	return c.makeRequest(reqBody)
 }
 
 func (c *OpenAIClient) makeRequest(reqBody openAIRequest) (string, error) {
+	// Convert request body to JSON
 	jsonBody, err := json.Marshal(reqBody)
 	if err != nil {
 		return "", fmt.Errorf("failed to marshal request: %v", err)
 	}
 
+	// Create new HTTP request with JSON body
 	req, err := http.NewRequest("POST", openAIEndpoint, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return "", fmt.Errorf("failed to create request: %v", err)
 	}
 
+	// Set required headers
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+c.apiKey)
 
+	// Send the request
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("failed to make request: %v", err)
 	}
 	defer resp.Body.Close()
 
+	// Read response body
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("failed to read response body: %v", err)
 	}
 
+	// Check for non-200 status code
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(body))
 	}
 
+	// Parse response JSON
 	var openAIResp openAIResponse
 	if err := json.Unmarshal(body, &openAIResp); err != nil {
 		return "", fmt.Errorf("failed to unmarshal response: %v", err)
 	}
 
+	// Ensure we got at least one choice back
 	if len(openAIResp.Choices) == 0 {
 		return "", fmt.Errorf("no content in response")
 	}
 
+	// Return the content of the first choice
 	return openAIResp.Choices[0].Message.Content, nil
 }
