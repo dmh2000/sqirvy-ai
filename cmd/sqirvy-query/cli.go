@@ -95,7 +95,7 @@ func processCommandLine() (string, string, error) {
 	// Check if we have data from stdin
 	p, err := inputIsFromPipe()
 	if err != nil {
-		return "", "", fmt.Errorf("error checking if input is from pipe: %v", err)
+		return "", "", fmt.Errorf("error checking if input is from pipe: %w", err)
 	}
 
 	// Read stdin

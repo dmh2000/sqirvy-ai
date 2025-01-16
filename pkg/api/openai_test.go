@@ -14,22 +14,31 @@ func TestOpenAIClient_QueryText(t *testing.T) {
 	client := &OpenAIClient{}
 
 	tests := []struct {
-		name   string
-		prompt string
+		name    string
+		prompt  string
+		wantErr bool
 	}{
 		{
-			name:   "Basic prompt",
-			prompt: "Say 'Hello, World!'",
+			name:    "Basic prompt",
+			prompt:  "Say 'Hello, World!'",
+			wantErr: false,
 		},
 		{
-			name:   "Empty prompt",
-			prompt: "",
+			name:    "Empty prompt",
+			prompt:  "",
+			wantErr: true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := client.QueryText(tt.prompt, "gpt-4-turbo-preview", Options{})
+			if tt.wantErr {
+				if err == nil {
+					t.Errorf("OpenAIClient.QueryText() error = %v, wantErr %v", err, tt.wantErr)
+				}
+				return
+			}
 			if err != nil {
 				t.Errorf("OpenAIClient.QueryText() error = %v", err)
 				return
@@ -54,18 +63,26 @@ func TestOpenAIClient_QueryJSON(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:   "JSON request",
-			prompt: "Return a JSON object with a greeting field containing 'Hello, World!'",
+			name:    "JSON request",
+			prompt:  "Return a JSON object with a greeting field containing 'Hello, World!'",
+			wantErr: false,
 		},
 		{
-			name:   "JSON Empty prompt",
-			prompt: "",
+			name:    "JSON Empty prompt",
+			prompt:  "",
+			wantErr: true,
 		},
 	}
 
 	tt := tests[0]
 	t.Run(tt.name, func(t *testing.T) {
 		got, err := client.QueryJSON(tt.prompt, "gpt-4-turbo-preview", Options{})
+		if tt.wantErr {
+			if err == nil {
+				t.Errorf("OpenAIClient.QueryJSON() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			return
+		}
 		if err != nil {
 			t.Errorf("OpenAIClient.QueryJSON() error = %v", err)
 			return

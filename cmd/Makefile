@@ -10,6 +10,7 @@ build:
 
 test:
 	@for dir in $(SUBDIRS); do \
+		echo "Testing $$dir"; \
 		$(MAKE) $(SILENT)  -C $$dir test; \
 	done
 

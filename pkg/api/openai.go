@@ -109,13 +109,13 @@ func (c *OpenAIClient) makeRequest(reqBody openAIRequest) (string, error) {
 	// Convert request body to JSON
 	jsonBody, err := json.Marshal(reqBody)
 	if err != nil {
-		return "", fmt.Errorf("failed to marshal request: %v", err)
+		return "", fmt.Errorf("failed to marshal request: %w", err)
 	}
 
 	// Create new HTTP request with JSON body
 	req, err := http.NewRequest("POST", openAIEndpoint, bytes.NewBuffer(jsonBody))
 	if err != nil {
-		return "", fmt.Errorf("failed to create request: %v", err)
+		return "", fmt.Errorf("failed to create request: %w", err)
 	}
 
 	// Set required headers
@@ -125,14 +125,14 @@ func (c *OpenAIClient) makeRequest(reqBody openAIRequest) (string, error) {
 	// Send the request
 	resp, err := c.client.Do(req)
 	if err != nil {
-		return "", fmt.Errorf("failed to make request: %v", err)
+		return "", fmt.Errorf("failed to make request: %w", err)
 	}
 	defer resp.Body.Close()
 
 	// Read response body
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("failed to read response body: %v", err)
+		return "", fmt.Errorf("failed to read response body: %w", err)
 	}
 
 	// Check for non-200 status code
@@ -143,7 +143,7 @@ func (c *OpenAIClient) makeRequest(reqBody openAIRequest) (string, error) {
 	// Parse response JSON
 	var openAIResp openAIResponse
 	if err := json.Unmarshal(body, &openAIResp); err != nil {
-		return "", fmt.Errorf("failed to unmarshal response: %v", err)
+		return "", fmt.Errorf("failed to unmarshal response: %w", err)
 	}
 
 	// Ensure we got at least one choice back

@@ -1,6 +1,7 @@
 package util
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"os"
@@ -12,7 +13,7 @@ import (
 func ReadStdin(maxTotalBytes int64) (string, int64, error) {
 	stdinBytes, err := io.ReadAll(os.Stdin)
 	if err != nil {
-		return "", 0, fmt.Errorf("error reading from stdin: %v", err)
+		return "", 0, fmt.Errorf("error reading from stdin: %w", err)
 	}
 	size := int64(len(stdinBytes))
 	if size > maxTotalBytes {
@@ -56,11 +57,40 @@ func ReadFile(fname string, maxTotalBytes int64) ([]byte, int64, error) {
 		return nil, 0, fmt.Errorf("total size would exceed limit of %d bytes", maxTotalBytes)
 	}
 
-	// Read file
-	content, err := os.ReadFile(cleanPath)
+	// path is valid, open the file
+	file, err := os.Open(cleanPath)
 	if err != nil {
-		return nil, 0, fmt.Errorf("error reading file %s: %v", fname, err)
+		return nil, 0, fmt.Errorf("error opening file %s: %w", fname, err)
 	}
+	defer file.Close()
+
+	// Read file in chunks
+	rdr := bufio.NewReader(file)
+	buf := make([]byte, 1024)
+	content := make([]byte, 0, maxTotalBytes)
+	var size int64 = 0
+	for {
+		// Read chunk from file
+		n, err := rdr.Read(buf)
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return nil, 0, fmt.Errorf("error reading file %s: %w", fname, err)
+		}
+		size += int64(n)
+		if size > maxTotalBytes {
+			return nil, 0, fmt.Errorf("total size would exceed limit of %d bytes", maxTotalBytes)
+		}
+		// Append chunk to buffer
+		content = append(content, buf[:n]...)
+	}
+
+	// // Read file
+	// content, err := os.ReadFile(cleanPath)
+	// if err != nil {
+	// 	return nil, 0, fmt.Errorf("error reading file %s: %v", fname, err)
+	// }
 
 	return content, int64(len(content)), nil
 }

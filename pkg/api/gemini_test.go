@@ -53,18 +53,26 @@ func TestGeminiClient_QueryJSON(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:   "JSON request",
-			prompt: "Return a JSON object with a greeting field containing 'Hello, World!'",
+			name:    "JSON request",
+			prompt:  "Return a JSON object with a greeting field containing 'Hello, World!'",
+			wantErr: false,
 		},
 		{
-			name:   "Empty prompt",
-			prompt: "",
+			name:    "Empty prompt",
+			prompt:  "",
+			wantErr: true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := client.QueryJSON(tt.prompt, "gemini-2.0-flash-exp", Options{})
+			if tt.wantErr {
+				if err == nil {
+					t.Errorf("GeminiClient.QueryJSON() error = %v, wantErr %v", err, tt.wantErr)
+				}
+				return
+			}
 			if err != nil {
 				t.Errorf("GeminiClient.QueryJSON() error = %v", err)
 				return

@@ -9,7 +9,7 @@ run: build
 	./build/server
 
 test:
-	echo "Skipping tests for query"
+	echo "Skipping tests for web"
 
 clean:
 	rm -rf build

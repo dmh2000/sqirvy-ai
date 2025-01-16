@@ -27,7 +27,7 @@ func (c *GeminiClient) initClient() error {
 	// Initialize the Gemini client with API key from environment
 	c.client, err = genai.NewClient(c.ctx, option.WithAPIKey(os.Getenv("GEMINI_API_KEY")))
 	if err != nil {
-		return fmt.Errorf("failed to create client: %v", err)
+		return fmt.Errorf("failed to create client: %w", err)
 	}
 	return nil
 }
@@ -52,7 +52,7 @@ func (c *GeminiClient) QueryText(prompt string, model string, options Options) (
 	// Generate content from the prompt
 	resp, err := genModel.GenerateContent(c.ctx, genai.Text(prompt))
 	if err != nil {
-		return "", fmt.Errorf("failed to generate content: %v", err)
+		return "", fmt.Errorf("failed to generate content: %w", err)
 	}
 
 	// Concatenate all text parts from all candidates into a single string
@@ -88,7 +88,7 @@ func (c *GeminiClient) QueryJSON(prompt string, model string, options Options) (
 	// Generate content from the prompt
 	resp, err := genModel.GenerateContent(c.ctx, genai.Text(prompt))
 	if err != nil {
-		return "", fmt.Errorf("failed to generate content: %v", err)
+		return "", fmt.Errorf("failed to generate content: %w", err)
 	}
 
 	// Concatenate all text parts from all candidates into a single string

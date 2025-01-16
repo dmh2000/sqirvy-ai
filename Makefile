@@ -27,3 +27,7 @@ clean:
 
 review:	build
 	bin/sqirvy-review -model claude-3-5-haiku-latest  $(SOURCES) >REVIEW.md
+
+deploy: clean build test review
+	git add .
+	# git commit -m "Auto commit : clean, build, test, review"

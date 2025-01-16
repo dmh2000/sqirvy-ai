@@ -54,6 +54,6 @@ echo "-------------------------------"
 echo "$BINDIR/sqirvy-query  -m gpt-4o < hello.txt goodbye.txt"
 ignore_return_code $BINDIR/sqirvy-query  -m xyz < hello.txt 
 echo "-------------------------------"
-echo "$BINDIR/sqirvy-query  -m gpt-4o < hello.txt goodbye.txt"
+echo "$BINDIR/sqirvy-query  -m gpt-4o xyz"
 ignore_return_code $BINDIR/sqirvy-query  xyz
 echo "-------------------------------"
