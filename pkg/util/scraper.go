@@ -59,7 +59,8 @@ func ScrapeURL(url string) (string, error) {
 		return "", fmt.Errorf("failed to scrape URL %s: %w", url, err)
 	}
 
-	return content.String(), nil
+	text := fmt.Sprintf("```%s\n%s```\n", url, content.String())
+	return text, nil
 }
 
 // ScrapeAll scrapes content from multiple URLs and concatenates the results.
@@ -99,12 +100,12 @@ func ScrapeAll(urls []string) (string, error) {
 			fmt.Printf("Warning: failed to scrape %s: %v\n", url, err)
 			continue
 		}
-		
+
 		// Add separator between URLs
 		if successCount > 0 {
 			allContent.WriteString("\n---\n")
 		}
-		
+
 		allContent.WriteString(content)
 		successCount++
 	}

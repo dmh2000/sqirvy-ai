@@ -59,6 +59,7 @@ func TestScrapeURL(t *testing.T) {
 			if !strings.Contains(got, tt.want) {
 				t.Errorf("ScrapeURL() = %v, want %v", got, tt.want)
 			}
+			t.Log(got)
 		})
 	}
 }
