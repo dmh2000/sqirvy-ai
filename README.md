@@ -2,7 +2,19 @@
 
 **VERSION 0.0.1-alpha**
 
-I was working out some devops for a project, and I needed a simple way to make queries to LLM providers for use in a Go command line program. I didn't want to have to copypasta from a web app or a Python script. This project is an attempt to create the simplest possible Go api for making queries to LLM providers. I wanted to use Go because it is convenient to build binaries for Linux, Windows and MacOS.
+Imagine you are setting up some DevOps for a project, and you need a simple way to make queries to LLM providers for use in a command line program. You don't want to have to copypasta from a web app or a python script.
+
+How about this: have a set of simple command line programs that perform various fixed queries to LLM providers. You can use them to automate tasks like code review, testing, and deployment. They could be used in CI/CD pipelines, or as part of a devops workflow.
+
+What if you could chain multiple queries in a shell command or script, and get a single response?
+
+That's what this project is all about.
+
+Here's some of the application programs in this project:
+
+- sqirvy-query: a command line program that allows you to send arbitrary prompts to an AI model.
+- sqirvy-review: a command line program that invokes an AI model to perform code review.
+- sqirvy-scrape: a command line program that invokes an AI model to scrape data from the web and perform some action on the downloaded data.
 
 [GitHub Repo](https://github.com/dmh2000/sqirvy-llm)
 

@@ -1,0 +1,6 @@
+- create a go library function that can scrape data from the web and return it as a string.
+- place it in the pkg/util/scraper.go file.
+- use the colly library to perform the scraping.
+- create one functions, ScrapeURL, that takes a url as a parameter and returns the scraped data as a string.
+- create one function, ScapeAll that takes a list of urls and returns the scraped data as a string. it should use the ScrapeUrl function to scrape each url in the list.
+-
