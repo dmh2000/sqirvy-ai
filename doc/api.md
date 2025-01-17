@@ -4,10 +4,10 @@ This document describes the APIs available for interacting with various AI provi
 
 ## Common Interface
 
-All providers implement the following interface, and these are what you use to make queries to the provider. See pkg/api/client.go for the full interface definition.
+All providers implement the following interface, and these are what you use to make queries to the provider. See pkg/sqirvy/client.go for the full interface definition.
 
 ```go
-// pkg/api/client.go
+// pkg/sqirvy/client.go
 
 const (
 	Anthropic Provider = "anthropic"

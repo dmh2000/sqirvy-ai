@@ -23,7 +23,7 @@ import (
 	_ "embed"
 	"fmt"
 	"log"
-	api "sqirvyllm/pkg/api"
+	sqirvy "sqirvyllm/pkg/sqirvy"
 )
 
 // build the system prompt and review requirements into the binary
@@ -61,19 +61,19 @@ func main() {
 	}
 
 	// Get the provider for the model
-	provider, err := api.GetProviderName(model)
+	provider, err := sqirvy.GetProviderName(model)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Create client for the provider
-	client, err := api.NewClient(api.Provider(provider))
+	client, err := sqirvy.NewClient(sqirvy.Provider(provider))
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Make the query
-	response, err := client.QueryText(prompt, model, api.Options{})
+	response, err := client.QueryText(prompt, model, sqirvy.Options{})
 	if err != nil {
 		log.Fatal(err)
 	}

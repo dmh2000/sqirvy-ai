@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
-	api "sqirvyllm/pkg/api"
+	sqirvy "sqirvyllm/pkg/sqirvy"
 	util "sqirvyllm/pkg/util"
 	"strings"
 )
@@ -39,8 +39,8 @@ func helpMessage() {
 	fmt.Println("  -m    AI model to use (default: claude-3-5-sonnet-latest)")
 	fmt.Println("")
 	fmt.Println("Supported models:")
-	keys := make([]string, 0, len(api.ModelToProvider))
-	for key := range api.ModelToProvider {
+	keys := make([]string, 0, len(sqirvy.ModelToProvider))
+	for key := range sqirvy.ModelToProvider {
 		keys = append(keys, key)
 	}
 	sort.Strings(keys)

@@ -4,6 +4,7 @@ go 1.23.2
 
 require (
 	github.com/anthropics/anthropic-sdk-go v0.2.0-alpha.8
+	github.com/gocolly/colly/v2 v2.1.0
 	github.com/google/generative-ai-go v0.19.0
 	google.golang.org/api v0.215.0
 )
@@ -24,7 +25,6 @@ require (
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
-	github.com/gocolly/colly/v2 v2.1.0 // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/s2a-go v0.1.8 // indirect

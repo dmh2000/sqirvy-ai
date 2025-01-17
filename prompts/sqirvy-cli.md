@@ -31,7 +31,7 @@ create a Go command line application in directory cmd/sqirvy-query with the foll
     - if an error occurs, print the error message and return
   - get the model name from the -model argument or default to anthropic and claude-3.5-sonnet if no model was specified
   - return with an error message is there is a model name and it is not recognized
-  - create a new api client for the provider specified by the model name based on the code in pkg/api/client.go
+  - create a new api client for the provider specified by the model name based on the code in pkg/sqirvy/client.go
   - call the QueryText method on the client with the prompt and the model name
   - print the response to stdout. no comments or heading, just the response text
   - handle any errors

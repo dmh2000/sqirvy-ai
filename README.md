@@ -24,11 +24,11 @@ This is the interface you would use to make queries to LLM providers in Go.
 
 Most of the code was generated using [Aider](https://aider.chat/) and the [claude-3-sonnet-20240229](https://claude.ai/) model. I had to do several iterations with Aider and some manual editing to get the exact code layout I wanted.
 
-The API is in directory pkg/api. It is a very simple interface that allows you to query a provider with a prompt and get a response. It supports Anthropic, Gemini, and OpenAI providers through the 'client' interface. Here is an example of how to use the API in a command line program. Examples for the other providers are in the 'cmd' directory.
+The API is in directory pkg/sqirvy. It is a very simple interface that allows you to query a provider with a prompt and get a response. It supports Anthropic, Gemini, and OpenAI providers through the 'client' interface. Here is an example of how to use the API in a command line program. Examples for the other providers are in the 'cmd' directory.
 
 - Making a query to a provider
   - Create a new client for the provider you want to use
-    - api.NewClient(api.<provider>)
+    - sqirvy.NewClient(sqirvy.<provider>)
     - anthropic, gemini or openai
   - Make the query with a prompt, the model name, and any options (nothing supported yet). You can request the results to be plain text or JSON
     - client.QueryText(prompt, model string, options Options) (string, error)
@@ -43,18 +43,18 @@ import (
 	"fmt"
 	"log"
 
-	api "sqirvyllm/pkg/api"
+	sqirvy "sqirvyllm/pkg/sqirvy"
 )
 
 func main() {
 	// Create a new Anthropic client
-	client, err := api.NewClient(api.Anthropic)
+	client, err := sqirvy.NewClient(sqirvy.Anthropic)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
 	}
 
 	// Make the query with a prompt, the model name, and any options (nothing supported yet)
-	response, err := client.QueryText("say hello world", "claude-3-sonnet-20240229", api.Options{})
+	response, err := client.QueryText("say hello world", "claude-3-sonnet-20240229", sqirvy.Options{})
 	if err != nil {
 		log.Fatalf("Query failed: %v", err)
 	}

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	api "sqirvyllm/pkg/api"
+	sqirvy "sqirvyllm/pkg/sqirvy"
 )
 
 type ProviderResponse struct {
@@ -47,8 +47,8 @@ func handleQuery(w http.ResponseWriter, r *http.Request) {
 	response := QueryResponse{}
 
 	// Query Anthropic
-	if client, err := api.NewClient(api.Anthropic); err == nil {
-		if result, err := client.QueryText(prompt, "claude-3-sonnet-20240229", api.Options{}); err == nil {
+	if client, err := sqirvy.NewClient(sqirvy.Anthropic); err == nil {
+		if result, err := client.QueryText(prompt, "claude-3-sonnet-20240229", sqirvy.Options{}); err == nil {
 			response.Anthropic.Result = result
 		} else {
 			response.Anthropic.Error = err.Error()
@@ -58,8 +58,8 @@ func handleQuery(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Query OpenAI
-	if client, err := api.NewClient(api.OpenAI); err == nil {
-		if result, err := client.QueryText(prompt, "gpt-4-turbo-preview", api.Options{}); err == nil {
+	if client, err := sqirvy.NewClient(sqirvy.OpenAI); err == nil {
+		if result, err := client.QueryText(prompt, "gpt-4-turbo-preview", sqirvy.Options{}); err == nil {
 			response.OpenAI.Result = result
 		} else {
 			response.OpenAI.Error = err.Error()
@@ -69,8 +69,8 @@ func handleQuery(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Query Gemini
-	if client, err := api.NewClient(api.Gemini); err == nil {
-		if result, err := client.QueryText(prompt, "gemini-2.0-flash-exp", api.Options{}); err == nil {
+	if client, err := sqirvy.NewClient(sqirvy.Gemini); err == nil {
+		if result, err := client.QueryText(prompt, "gemini-2.0-flash-exp", sqirvy.Options{}); err == nil {
 			response.Gemini.Result = result
 		} else {
 			response.Gemini.Error = err.Error()

@@ -3,19 +3,18 @@ package main
 import (
 	"fmt"
 	"log"
-
-	api "sqirvyllm/pkg/api"
+	sqirvy "sqirvyllm/pkg/sqirvy"
 )
 
 func main() {
 	// Create a new OpenAI client
-	client, err := api.NewClient(api.OpenAI)
+	client, err := sqirvy.NewClient(sqirvy.OpenAI)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
 	}
 
 	// Make the query
-	response, err := client.QueryText("say hello world", "gpt-4-turbo-preview", api.Options{})
+	response, err := client.QueryText("say hello world", "gpt-4-turbo-preview", sqirvy.Options{})
 	if err != nil {
 		log.Fatalf("Query failed: %v", err)
 	}

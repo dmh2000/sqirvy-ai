@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	openAIEndpoint = "https://api.openai.com/v1/chat/completions"
+	openAIEndpoint = "https://sqirvy.openai.com/v1/chat/completions"
 )
 
 // OpenAIClient implements the Client interface for OpenAI's API
