@@ -12,7 +12,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 	"sort"
 	api "sqirvyllm/pkg/api"
 	util "sqirvyllm/pkg/util"

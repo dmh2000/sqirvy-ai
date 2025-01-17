@@ -80,4 +80,5 @@ func main() {
 
 	// Print response to stdout
 	fmt.Print(response)
+	fmt.Println()
 }

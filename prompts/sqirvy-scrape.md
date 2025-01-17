@@ -18,6 +18,7 @@ create a Go command line application in directory cmd/sqirvy-scrape with the fol
   - if any of the urls cannot be downloaded, return with an error message
   - if the prompt is empty, return with an error message
 - use pkg/util/files.go to read the files and stdin
+- use the pkg/util/scraper.go library to scrape the urls
 
 # Model Selection
 

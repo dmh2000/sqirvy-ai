@@ -49,17 +49,6 @@ func helpMessage() {
 	}
 }
 
-// inputIsFromPipe determines if the program is receiving piped input on stdin
-// inputIsFromPipe determines if the program is receiving piped input on stdin.
-// Returns true if stdin is a pipe, false if it's a terminal or other device.
-func inputIsFromPipe() (bool, error) {
-	fileInfo, err := os.Stdin.Stat()
-	if err != nil {
-		return false, err
-	}
-	return (fileInfo.Mode() & os.ModeCharDevice) == 0, err
-}
-
 func processCommandLine() (string, string, error) {
 
 	// suppress the default help message
@@ -93,7 +82,7 @@ func processCommandLine() (string, string, error) {
 	}
 
 	// Check if we have data from stdin
-	p, err := inputIsFromPipe()
+	p, err := util.InputIsFromPipe()
 	if err != nil {
 		return "", "", fmt.Errorf("error checking if input is from pipe: %w", err)
 	}

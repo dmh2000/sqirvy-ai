@@ -36,7 +36,7 @@ func ScrapeURL(url string) (string, error) {
 	// Initialize collector
 	c := colly.NewCollector(
 		colly.AllowURLRevisit(),
-		colly.MaxDepth(1),
+		colly.MaxDepth(2),
 	)
 
 	// Store scraped content
