@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
-	api "sqirvyllm/pkg/api"
+	sqirvy "sqirvyllm/pkg/sqirvy"
 	util "sqirvyllm/pkg/util"
 	"strings"
 )
@@ -33,31 +33,21 @@ const MaxTotalBytes = maxTokens * bytesPerToken // 262144 bytes limit
 // including available options and supported AI models.
 func helpMessage() {
 	fmt.Println("Usage: sqirvy-query [options] files...")
-	fmt.Println("concatenates prompt from stdin and/or files and sends it to the specified AI model")
+	fmt.Println("initializes the context from stdin, pipe or redirection (if any)")
+	fmt.Println("concatenates files to the context in order")
 	fmt.Println("Options:")
 	fmt.Println("  -h    print this help message")
 	fmt.Println("  -m    AI model to use (default: claude-3-5-sonnet-latest)")
 	fmt.Println("")
 	fmt.Println("Supported models:")
-	keys := make([]string, 0, len(api.ModelToProvider))
-	for key := range api.ModelToProvider {
+	keys := make([]string, 0, len(sqirvy.ModelToProvider))
+	for key := range sqirvy.ModelToProvider {
 		keys = append(keys, key)
 	}
 	sort.Strings(keys)
 	for _, key := range keys {
 		fmt.Printf("  %s\n", key)
 	}
-}
-
-// inputIsFromPipe determines if the program is receiving piped input on stdin
-// inputIsFromPipe determines if the program is receiving piped input on stdin.
-// Returns true if stdin is a pipe, false if it's a terminal or other device.
-func inputIsFromPipe() (bool, error) {
-	fileInfo, err := os.Stdin.Stat()
-	if err != nil {
-		return false, err
-	}
-	return (fileInfo.Mode() & os.ModeCharDevice) == 0, err
 }
 
 func processCommandLine() (string, string, error) {
@@ -93,7 +83,7 @@ func processCommandLine() (string, string, error) {
 	}
 
 	// Check if we have data from stdin
-	p, err := inputIsFromPipe()
+	p, err := util.InputIsFromPipe()
 	if err != nil {
 		return "", "", fmt.Errorf("error checking if input is from pipe: %w", err)
 	}

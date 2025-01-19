@@ -9,6 +9,16 @@ import (
 	"strings"
 )
 
+// inputIsFromPipe determines if the program is receiving piped input on stdin.
+// Returns true if stdin is a pipe, false if it's a terminal or other device.
+func InputIsFromPipe() (bool, error) {
+	fileInfo, err := os.Stdin.Stat()
+	if err != nil {
+		return false, err
+	}
+	return (fileInfo.Mode() & os.ModeCharDevice) == 0, err
+}
+
 // ReadStdin reads and concatenates the contents of stdin,
 func ReadStdin(maxTotalBytes int64) (string, int64, error) {
 	stdinBytes, err := io.ReadAll(os.Stdin)

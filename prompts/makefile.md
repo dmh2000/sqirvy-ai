@@ -35,10 +35,10 @@ create a makefile as follows:
     - test - use the cmd go test .
     - clean - remove the built binary
 
-- in directory pkg/api, create a makefile that will run tests
+- in directory pkg/sqirvy, create a makefile that will run tests
 
   - create an empty 'build' make rule
-  - test: run go test . in the pkg/api directory
+  - test: run go test . in the pkg/sqirvy directory
   - create an empty 'clean' make rule
 
 - in directory cmd, create a makefile that invokes the lower level makefiles
