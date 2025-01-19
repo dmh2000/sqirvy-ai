@@ -38,10 +38,11 @@ func helpMessage(prefix string) {
 		fmt.Println(prefix)
 	}
 	fmt.Println("Usage: sqirvy-review [options] files...")
-	fmt.Println("adds files to context and sends them to the specified AI model for review")
+	fmt.Println("initializes the context from stdin, pipe or redirection (if any)")
+	fmt.Println("concatenates files to the context in order")
 	fmt.Println("Options:")
 	fmt.Println("  -h    print this help message")
-	fmt.Println("  -model AI model to use (default: gemini-1.5-flash)")
+	fmt.Println("  -m    AI model to use (default: gemini-1.5-flash)")
 	fmt.Println("")
 	fmt.Println("Supported models:")
 	keys := make([]string, 0, len(sqirvy.ModelToProvider))
@@ -85,7 +86,7 @@ func processCommandLine() (string, string, error) {
 	var model string
 
 	flag.BoolVar(&help, "h", false, "print help message")
-	flag.StringVar(&model, "model", "", "AI model to use")
+	flag.StringVar(&model, "m", "", "AI model to use")
 	flag.Parse()
 
 	if help {

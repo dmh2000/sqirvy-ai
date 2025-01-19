@@ -14,9 +14,7 @@ import (
 	"os"
 )
 
-const (
-	openAIEndpoint = "https://sqirvy.openai.com/v1/chat/completions"
-)
+var openAIEndpoint = "https://api.openai.com/v1/chat/completions"
 
 // OpenAIClient implements the Client interface for OpenAI's API
 type OpenAIClient struct {
@@ -48,6 +46,11 @@ type openAIResponse struct {
 func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (string, error) {
 	if prompt == "" {
 		return "", fmt.Errorf("prompt cannot be empty for text query")
+	}
+
+	// update the endpoing if OPENAI_API_BASE is set
+	if base := os.Getenv("OPENAI_API_BASE"); base != "" {
+		openAIEndpoint = base + "/v1/chat/completions"
 	}
 
 	// Initialize HTTP client and API key if not already done

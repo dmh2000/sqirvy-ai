@@ -26,10 +26,11 @@ func helpMessage(prefix string) {
 		fmt.Println(prefix)
 	}
 	fmt.Println("Usage: sqirvy-scrape [options] urls...")
+	fmt.Println("initializes the context from stdin, pipe or redirection (if any)")
 	fmt.Println("scrapes content from URLs and sends it to the specified AI model")
 	fmt.Println("Options:")
 	fmt.Println("  -h     print this help message")
-	fmt.Println("  -model AI model to use (default: claude-3-5-sonnet-latest)")
+	fmt.Println("  -m     AI model to use (default: claude-3-5-sonnet-latest)")
 	fmt.Println("")
 	fmt.Println("Supported models:")
 	keys := make([]string, 0, len(sqirvy.ModelToProvider))
@@ -51,7 +52,7 @@ func processCommandLine() (string, string, error) {
 	var model string
 
 	flag.BoolVar(&help, "h", false, "print help message")
-	flag.StringVar(&model, "model", "", "AI model to use")
+	flag.StringVar(&model, "m", "", "AI model to use")
 	flag.Parse()
 
 	if help {

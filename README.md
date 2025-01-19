@@ -2,7 +2,7 @@
 
 **VERSION 0.0.1-alpha**
 
-Imagine you are setting up some DevOps for a project, and you need a simple way to make queries to LLM providers for use in a command line program. You don't want to have to copypasta from a web app or a python script.
+Imagine you are setting up some DevOps for a project, and you need a simple way to make queries to LLM providers for use in a command line program. You don't want to have to copypasta from a web app or a python script. Or, you want to automate tasks like code review or web scraping using LLMs.
 
 How about this: have a set of simple command line programs that perform various fixed queries to LLM providers. You can use them to automate tasks like code review, testing, and deployment. They could be used in CI/CD pipelines, or as part of a devops workflow.
 
@@ -16,11 +16,118 @@ Here's some of the application programs in this project:
 - sqirvy-review: a command line program that invokes an AI model to perform code review.
 - sqirvy-scrape: a command line program that invokes an AI model to scrape data from the web and perform some action on the downloaded data.
 
+Note: Each LLM model will give different results for a given prompt, and each execution of the same program and prompt will most likely generate different results even with the same model and prompt.
+
 [GitHub Repo](https://github.com/dmh2000/sqirvy-llm)
 
-## API Library
+Sqirvy-llm has some preconfigured command line programs that allow you to send prompts to LLM providers. And it provides a simple API for making queries to LLM providers in Go if you want to use it in your own Go programs.
 
-This is the interface you would use to make queries to LLM providers in Go.
+## Sqirvy-llm Command Line Programs
+
+### Supported Models
+
+- Supported models (currently):
+  - claude-3-5-haiku-latest
+  - claude-3-5-sonnet-latest
+  - claude-3-opus-latest
+  - gemini-1.5-flash
+  - gemini-1.5-pro
+  - gemini-2.0-flash-exp
+  - gpt-4-turbo
+  - gpt-4o
+  - gpt-4o-mini
+  - o1-mini
+
+### sqirvy-query
+
+- run an arbitrary query to an LLM provider
+- concatenates prompt from stdin and/or files and sends it to the specified AI model
+- defaults to Anthropic claude-3-5-sonnet-latest model if no model is specified
+- example: pipe a prompt to sqirvy-query with the default claude-3-5-sonnet-latest model
+  - echo "say hello world" | sqirvy-query
+- example: read a prompt from a file and pipe it to sqirvy-query with the o1-mini model
+  - sqirvy-query -m o1-mini prompt.txt
+
+A command line program that allows you to send arbitrary prompts to an AI model.
+
+#### Usage: sqirvy-query [options] files...
+
+- Options:
+  - -h print this help message
+  - -m AI model to use (default: claude-3-5-sonnet-latest)
+
+Example usage:
+
+```bash
+sqirvy-query -m gpt-4-turbo-preview "tell me a joke"
+
+sqirvy-query -h
+Usage: sqirvy-query [options] files...
+initializes the context from stdin, pipe or redirection (if any)
+concatenates files to the context in order
+Options:
+  -h    print this help message
+  -m    AI model to use (default: claude-3-5-sonnet-latest)
+
+```
+
+### sqirvy-review
+
+A command line program that invokes an AI model to perform code review. This program has a built-in system and review prompt (using Go file embeddeding), so you don't need to provide any prompts if you don't want to. If you don't like those prompts, you can modify them and rebuild the program.
+
+Example usage:
+
+```bash
+sqirvy-review -m claude-3-5-haiku-latest ../../cmd/sqirvy-query/*.go
+
+sqirvy-review -h
+Usage: sqirvy-review [options] files...
+initializes the context from stdin, pipe or redirection (if any)
+concatenates files to the context in order
+Options:
+  -h    print this help message
+  -m    AI model to use (default: gemini-1.5-flash)
+
+```
+
+### sqirvy-scrape
+
+A command line program that invokes an AI model to scrape data from the web and perform some action on the downloaded data.
+
+Example usage:
+
+```bash
+sqirvy-scrape -m gpt-4-turbo-preview https://sqirvy.xyz
+
+sqirvy-scrape -h
+Usage: sqirvy-scrape [options] urls...
+initializes the context from stdin, pipe or redirection (if any)
+scrapes content from URLs and sends it to the specified AI model
+Options:
+  -h     print this help message
+  -m     AI model to use (default: claude-3-5-sonnet-latest)
+
+```
+
+### Chaining
+
+The command line programs can be chained together to perform more complex tasks. This is because the prompt inputs to the programs are added to the context in this order:
+
+- special cases
+  - sqirvy-review has a built-in system and query prompt.
+  - sqirvy_query and sqirvy_scrape, if a file named system.md exists in the current directory, it will be first in the context.
+- stdin, pipe or redirection.
+- files specified on the command line
+
+For example, you can use sqirvy-scrape to scrape a website and then use sqirvy-query to summarize the content.
+
+```bash
+sqirvy-scrape -m gpt-4-turbo-preview https://sqirvy.xyz | sqirvy-query -m gpt-4-turbo-preview "summarize the content"
+```
+
+## SDK Library
+
+The above preconfigure commands use the sqirvy-llm/pkg/sqirvy SDK in this repo. This is the interface you would use to make queries to LLM providers in Go if you want to use it in your own Go programs.
 
 Most of the code was generated using [Aider](https://aider.chat/) and the [claude-3-sonnet-20240229](https://claude.ai/) model. I had to do several iterations with Aider and some manual editing to get the exact code layout I wanted.
 
@@ -95,31 +202,6 @@ The cmd/sqirvy-query directory contains a command line program that allows you t
 
 Example is in the 'examples/chain' directory.
 
-#### Usage: sqirvy-query [options] files...
-
-- concatenates prompt from stdin and/or files and sends it to the specified AI model
-- defaults to Anthropic claude-3-5-sonnet-latest model if no model is specified
-- example: pipe a prompt to sqirvy-query with the default claude-3-5-sonnet-latest model
-  - echo "say hello world" | sqirvy-query
-- example: read a prompt from a file and pipe it to sqirvy-query with the o1-mini model
-
-  - sqirvy-query -m o1-mini prompt.txt
-
-- Options:
-  - -h print this help message
-  - -m AI model to use (default: claude-3-5-sonnet-latest)
-- Supported models:
-- claude-3-5-haiku-latest
-- claude-3-5-sonnet-latest
-- claude-3-opus-latest
-- gemini-1.5-flash
-- gemini-1.5-pro
-- gemini-2.0-flash-exp
-- gpt-4-turbo
-- gpt-4o
-- gpt-4o-mini
-- o1-mini
-
 #### Chaining Prompts
 
 ```bash
@@ -163,7 +245,7 @@ The code for the web app was generated using Aider and the claude-3-sonnet-20240
 - this api is a Go native client for the Anthropic API
 - this api is the one recommeded by Anthropic for Go.
 - It's in alpha now but seems to work without problems for these use cases.
-- **The Anthropic sdk default to "ANTHROPIC_API_KEY" environment variable to authenticate**
+- **The Anthropic API requires an "ANTHROPIC_API_KEY" environment variable to authenticate**
 
 ### Gemini
 
@@ -177,3 +259,4 @@ The code for the web app was generated using Aider and the claude-3-sonnet-20240
 - [OpenAI API](https://platform.openai.com/docs/api-reference)
 - Since there did not seem to be an official Go native API for OpenAI, I used the OpenAI REST API directly with the "net/http" package.
 - **The OpenAI API requires a "OPENAI_API_KEY" environment variable to authenticate**
+- **If you connecting to an OpenAI model to a server besides the official OpenAI servers, you will need to set the "OPENAI_API_BASE" environment variable to the base URL of the server you are connecting to**

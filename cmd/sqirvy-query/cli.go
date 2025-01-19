@@ -33,7 +33,8 @@ const MaxTotalBytes = maxTokens * bytesPerToken // 262144 bytes limit
 // including available options and supported AI models.
 func helpMessage() {
 	fmt.Println("Usage: sqirvy-query [options] files...")
-	fmt.Println("concatenates prompt from stdin and/or files and sends it to the specified AI model")
+	fmt.Println("initializes the context from stdin, pipe or redirection (if any)")
+	fmt.Println("concatenates files to the context in order")
 	fmt.Println("Options:")
 	fmt.Println("  -h    print this help message")
 	fmt.Println("  -m    AI model to use (default: claude-3-5-sonnet-latest)")

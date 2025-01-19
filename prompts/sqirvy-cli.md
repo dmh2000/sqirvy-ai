@@ -3,7 +3,7 @@ create a Go command line application in directory cmd/sqirvy-query with the foll
 # Command Line Processing
 
 - has a command line argment -h that prints a help message and returns
-- has a command line argument -model that specifies the model to use.
+- has a command line argument -m that specifies the model to use.
 - any other arguments are considered to be filenames to read from
 - construct a string variable named "prompt" that will concatenate the string values from the following sources in this order
   - data from stdin if it is available
@@ -29,7 +29,7 @@ create a Go command line application in directory cmd/sqirvy-query with the foll
 - create a main function that performs the following steps
   - call the processCommandLine function
     - if an error occurs, print the error message and return
-  - get the model name from the -model argument or default to anthropic and claude-3.5-sonnet if no model was specified
+  - get the model name from the -m argument or default to anthropic and claude-3.5-sonnet if no model was specified
   - return with an error message is there is a model name and it is not recognized
   - create a new api client for the provider specified by the model name based on the code in pkg/sqirvy/client.go
   - call the QueryText method on the client with the prompt and the model name

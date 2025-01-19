@@ -11,6 +11,8 @@ import (
 	sqirvy "sqirvyllm/pkg/sqirvy"
 )
 
+var DEFAULT_MODEL = "claude-3-5-haiku-latest"
+
 func main() {
 	// Process command line arguments
 	prompt, modelFlag, err := processCommandLine()
@@ -22,7 +24,7 @@ func main() {
 	}
 
 	// Use default model if none specified
-	model := "claude-3-5-sonnet-latest"
+	model := DEFAULT_MODEL
 	if modelFlag != "" {
 		model = modelFlag
 	}

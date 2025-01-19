@@ -26,7 +26,7 @@ clean:
 	-rm -rf bin
 
 review:	build
-	bin/sqirvy-review -model claude-3-5-haiku-latest  $(SOURCES) >REVIEW.md
+	bin/sqirvy-review -m claude-3-5-haiku-latest  $(SOURCES) >REVIEW.md
 
 deploy: clean build test review
 	git add .

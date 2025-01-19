@@ -34,6 +34,8 @@ var systemPrompt string
 //go:embed review.md
 var reviewPrompt string
 
+var DEFAULT_MODEL = "gemini-1.5-flash"
+
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
@@ -55,7 +57,7 @@ func main() {
 	prompt = systemPrompt + "\n\n" + reviewPrompt + "\n\n" + prompt
 
 	// Use default model if none specified
-	model := "gemini-1.5-flash"
+	model := DEFAULT_MODEL
 	if modelFlag != "" {
 		model = modelFlag
 	}
