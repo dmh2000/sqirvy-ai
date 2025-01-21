@@ -28,7 +28,9 @@ build-windows:
 	GOOS=windows GOARCH=amd64 go build -o $(BINDIR)/sqirvy-scrape.exe .
 
 test:
-	@echo "skip tests for sqirvy-scrape"
+	@./test.sh >/dev/null
+	@echo "Test Passed"
+
 
 clean:
 	rm -f $(BINDIR)/sqirvy-scrape-linux
