@@ -1,5 +1,4 @@
 #!/bin/sh
-export BINDIR=../../bin
 
 check_return_code() {
     local cmd="$1"
@@ -23,6 +22,11 @@ ignore_return_code() {
     
     return 0
 }
+
+# Build latest
+export BINDIR=./bin
+mkdir -p $BINDIR
+make -s build
 
 make build 
 echo "-------------------------------"
@@ -57,3 +61,5 @@ echo "-------------------------------"
 echo "$BINDIR/sqirvy-query  -m gpt-4o xyz"
 ignore_return_code $BINDIR/sqirvy-query  xyz
 echo "-------------------------------"
+
+rm -rf $BINDIR

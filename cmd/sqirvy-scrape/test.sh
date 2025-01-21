@@ -29,20 +29,26 @@ makecopy="scrape this url and create a single html file containing html,css and 
    the output should be ready to be served as a webpage"
 
 
+# Build latest
+export BINDIR=./bin
+mkdir -p $BINDIR
+make -s build
+
 echo "-------------------------------"
-echo "sqiry-scrape (should fail)"
+echo "$BINDIR/sqirvy-scrape (should fail)"
 ignore_return_code go run .
 echo "-------------------------------"
-echo "sqiry-scrape -h"
+echo "$BINDIR/sqirvy-scrape -h"
 check_return_code go run . -h
 echo "-------------------------------"
-echo "sqiry-scrape https://sqirvy.xyz"
+echo "$BINDIR/sqirvy-scrape https://sqirvy.xyz"
 check_return_code echo "summarize the url" | go run . https://sqirvy.xyz
 echo "-------------------------------"
-echo "sqiry-scrape https://sqirvy.xyz https://test-alert.vercel.app/"
+echo "$BINDIR/sqirvy-scrape https://sqirvy.xyz https://test-alert.vercel.app/"
 check_return_code echo "summarize the urls" | go run . https://sqirvy.xyz https://test-alert.vercel.app/
 echo "-------------------------------"
-echo "'copy' sqiry-scrape https://sqirvy.xyz "
+echo "'copy' $BINDIR/sqirvy-scrape https://sqirvy.xyz "
 check_return_code echo $makecopy | go run . https://sqirvy.xyz  xyz.html
 echo "-------------------------------"
 
+rm -rf bin

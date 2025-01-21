@@ -1,3 +1,4 @@
+.PHONY: build test clean
 # detect variants of Windows
 ifeq ($(filter Windows%, $(OS)),Windows)
     DETECTED_OS := Windows

@@ -1,7 +1,5 @@
 #!/bin/bash
 
-export BINDIR=../../bin
-
 models=(
 	"claude-3-5-sonnet-latest"
 	"claude-3-5-haiku-latest"
@@ -37,10 +35,16 @@ check_return_code() {
 
 
 # use the latest build
-make build 
+# Build latest
+export BINDIR=./bin
+mkdir -p $BINDIR
+make -s build
+
 for item in "${models[@]}"
 do
 	echo "------ $item ------"
 	echo "$BINDIR/sqirvy-query -m $item < hello.txt"
 	check_return_code $BINDIR/sqirvy-query -m $item < hello.txt
 done
+
+rm -rf bin
