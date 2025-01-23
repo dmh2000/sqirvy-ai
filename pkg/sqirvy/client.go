@@ -14,13 +14,14 @@ import (
 )
 
 // Provider represents supported AI providers.
-// Currently supports Anthropic, Gemini, and OpenAI.
+// Currently supports Anthropic, DeepSeek, Gemini, and OpenAI.
 // Provider identifies which AI service provider to use
 type Provider string
 
 // Supported AI providers
 const (
 	Anthropic Provider = "anthropic" // Anthropic's Claude models
+	DeepSeek  Provider = "deepseek"  // DeepSeek's LLM models
 	Gemini    Provider = "gemini"    // Google's Gemini models
 	OpenAI    Provider = "openai"    // OpenAI's GPT models
 )
@@ -61,6 +62,8 @@ func NewClient(provider Provider) (Client, error) {
 	switch provider {
 	case Anthropic:
 		return &AnthropicClient{}, nil
+	case DeepSeek:
+		return &DeepSeekClient{}, nil
 	case Gemini:
 		return &GeminiClient{}, nil
 	case OpenAI:
