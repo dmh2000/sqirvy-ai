@@ -16,7 +16,7 @@ import (
 
 // MetaLlamaClient implements the Client interface for Meta's Llama models
 type MetaLlamaClient struct {
-	llm llms.LLM // OpenAI-compatible LLM client
+	llm llms.Model // OpenAI-compatible LLM client
 }
 
 func (c *MetaLlamaClient) QueryText(prompt string, model string, options Options) (string, error) {
@@ -30,12 +30,7 @@ func (c *MetaLlamaClient) QueryText(prompt string, model string, options Options
 		if apiKey == "" {
 			return "", fmt.Errorf("TOGETHER_API_KEY environment variable not set")
 		}
-		
-		baseURL := os.Getenv("TOGETHER_API_BASE")
-		if baseURL == "" {
-			return "", fmt.Errorf("TOGETHER_API_BASE environment variable not set")
-		}
-		
+
 		baseURL := os.Getenv("TOGETHER_API_BASE")
 		if baseURL == "" {
 			return "", fmt.Errorf("TOGETHER_API_BASE environment variable not set")
@@ -53,10 +48,7 @@ func (c *MetaLlamaClient) QueryText(prompt string, model string, options Options
 	}
 
 	// Call the LLM with the prompt
-	completion, err := c.llm.Call(context.Background(), prompt,
-		llms.WithMaxTokens(1024),
-		llms.WithTemperature(0.7),
-	)
+	completion, err := llms.GenerateFromSinglePrompt(context.Background(), c.llm, prompt)
 	if err != nil {
 		return "", fmt.Errorf("failed to generate completion: %w", err)
 	}
@@ -75,9 +67,13 @@ func (c *MetaLlamaClient) QueryJSON(prompt string, model string, options Options
 		if apiKey == "" {
 			return "", fmt.Errorf("TOGETHER_API_KEY environment variable not set")
 		}
+		baseUrl := os.Getenv("TOGETHER_API_BASE")
+		if baseUrl == "" {
+			return "", fmt.Errorf("TOGETHER_API_BASE environment variable not set")
+		}
 
 		llm, err := openai.New(
-			openai.WithBaseURL(os.Getenv("TOGETHER_API_BASE")),
+			openai.WithBaseURL(baseUrl),
 			openai.WithToken(apiKey),
 			openai.WithModel(model),
 		)
@@ -90,15 +86,11 @@ func (c *MetaLlamaClient) QueryJSON(prompt string, model string, options Options
 	// Add JSON instruction to prompt
 	jsonPrompt := prompt + "\nRespond only with valid JSON."
 
-	// Call the LLM with the JSON prompt
-	completion, err := c.llm.Call(context.Background(), jsonPrompt,
-		llms.WithMaxTokens(1024),
-		llms.WithTemperature(0.7),
-	)
+	completion, err := llms.GenerateFromSinglePrompt(context.Background(), c.llm, jsonPrompt)
+
 	if err != nil {
 		return "", fmt.Errorf("failed to generate JSON completion: %w", err)
 	}
 
 	return completion, nil
 }
-
