@@ -30,9 +30,19 @@ func (c *MetaLlamaClient) QueryText(prompt string, model string, options Options
 		if apiKey == "" {
 			return "", fmt.Errorf("TOGETHER_API_KEY environment variable not set")
 		}
+		
+		baseURL := os.Getenv("TOGETHER_API_BASE")
+		if baseURL == "" {
+			return "", fmt.Errorf("TOGETHER_API_BASE environment variable not set")
+		}
+		
+		baseURL := os.Getenv("TOGETHER_API_BASE")
+		if baseURL == "" {
+			return "", fmt.Errorf("TOGETHER_API_BASE environment variable not set")
+		}
 
 		llm, err := openai.New(
-			openai.WithBaseURL("https://api.together.xyz/v1"),
+			openai.WithBaseURL(os.Getenv("TOGETHER_API_BASE")),
 			openai.WithToken(apiKey),
 			openai.WithModel(model),
 		)
@@ -67,7 +77,7 @@ func (c *MetaLlamaClient) QueryJSON(prompt string, model string, options Options
 		}
 
 		llm, err := openai.New(
-			openai.WithBaseURL("https://api.together.xyz/v1"),
+			openai.WithBaseURL(os.Getenv("TOGETHER_API_BASE")),
 			openai.WithToken(apiKey),
 			openai.WithModel(model),
 		)
