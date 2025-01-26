@@ -20,10 +20,11 @@ type Provider string
 
 // Supported AI providers
 const (
-	Anthropic Provider = "anthropic" // Anthropic's Claude models
-	DeepSeek  Provider = "deepseek"  // DeepSeek's LLM models
-	Gemini    Provider = "gemini"    // Google's Gemini models
-	OpenAI    Provider = "openai"    // OpenAI's GPT models
+	Anthropic  Provider = "anthropic"   // Anthropic's Claude models
+	DeepSeek   Provider = "deepseek"    // DeepSeek's LLM models
+	Gemini     Provider = "gemini"      // Google's Gemini models
+	OpenAI     Provider = "openai"      // OpenAI's GPT models
+	MetaLlama  Provider = "meta-llama"  // Meta's Llama models
 )
 
 // AnthropicOptions contains Anthropic-specific configuration options
@@ -68,6 +69,8 @@ func NewClient(provider Provider) (Client, error) {
 		return &GeminiClient{}, nil
 	case OpenAI:
 		return &OpenAIClient{}, nil
+	case MetaLlama:
+		return &MetaLlamaClient{}, nil
 	default:
 		return nil, fmt.Errorf("unsupported provider: %s", provider)
 	}
