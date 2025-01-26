@@ -1,8 +1,8 @@
-// Package api provides integration with Meta's Llama models via langchain.
+// Package api provides integration with Meta's Llama models via langchaingo.
 //
 // This file implements the Client interface for Meta's Llama models using
-// langchain directly. It handles model initialization, prompt formatting,
-// and response parsing.
+// langchaingo's OpenAI-compatible interface. It handles model initialization,
+// prompt formatting, and response parsing.
 package api
 
 import (
@@ -11,12 +11,12 @@ import (
 	"os"
 
 	"github.com/tmc/langchaingo/llms"
-	"github.com/tmc/langchaingo/llms/llama"
+	"github.com/tmc/langchaingo/llms/openai"
 )
 
 // MetaLlamaClient implements the Client interface for Meta's Llama models
 type MetaLlamaClient struct {
-	llm llms.LLM // Llama model client
+	llm llms.LLM // OpenAI-compatible LLM client
 }
 
 func (c *MetaLlamaClient) QueryText(prompt string, model string, options Options) (string, error) {
@@ -26,12 +26,18 @@ func (c *MetaLlamaClient) QueryText(prompt string, model string, options Options
 
 	// Initialize LLM if not already done
 	if c.llm == nil {
-		llm, err := llama.New(
-			llama.WithModel(model),
-			llama.WithSystemPrompt("You are a helpful AI assistant."),
+		apiKey := os.Getenv("TOGETHER_API_KEY")
+		if apiKey == "" {
+			return "", fmt.Errorf("TOGETHER_API_KEY environment variable not set")
+		}
+
+		llm, err := openai.New(
+			openai.WithBaseURL("https://api.together.xyz/v1"),
+			openai.WithToken(apiKey),
+			openai.WithModel(model),
 		)
 		if err != nil {
-			return "", fmt.Errorf("failed to create Llama client: %w", err)
+			return "", fmt.Errorf("failed to create Together client: %w", err)
 		}
 		c.llm = llm
 	}
@@ -55,12 +61,18 @@ func (c *MetaLlamaClient) QueryJSON(prompt string, model string, options Options
 
 	// Initialize LLM if not already done
 	if c.llm == nil {
-		llm, err := llama.New(
-			llama.WithModel(model),
-			llama.WithSystemPrompt("You are a helpful AI assistant that responds in JSON format."),
+		apiKey := os.Getenv("TOGETHER_API_KEY")
+		if apiKey == "" {
+			return "", fmt.Errorf("TOGETHER_API_KEY environment variable not set")
+		}
+
+		llm, err := openai.New(
+			openai.WithBaseURL("https://api.together.xyz/v1"),
+			openai.WithToken(apiKey),
+			openai.WithModel(model),
 		)
 		if err != nil {
-			return "", fmt.Errorf("failed to create Llama client: %w", err)
+			return "", fmt.Errorf("failed to create Together client: %w", err)
 		}
 		c.llm = llm
 	}
