@@ -26,7 +26,22 @@ type CommandLine struct {
 }
 
 func helpMessage() {
-	fmt.Println("Usage: sqirvy-query [options] files...")
+	fmt.Println("Usage: sqirvy-pdf [options] files...")
+	fmt.Println("Processes PDF files and generates AI-powered summaries")
+	fmt.Println("")
+	fmt.Println("Options:")
+	fmt.Println("  -h    print this help message")
+	fmt.Println("  -m    AI model to use (default: claude-3-5-sonnet-latest)")
+	fmt.Println("")
+	fmt.Println("Input:")
+	fmt.Println("  - Accepts PDF files as command line arguments")
+	fmt.Println("  - Can read PDF data from stdin via pipe")
+	fmt.Println("  - Maximum file size: 10MB per file")
+	fmt.Println("")
+	fmt.Println("Output:")
+	fmt.Println("  - Generates markdown-formatted summaries")
+	fmt.Println("  - Each summary is wrapped in <markdown> tags")
+	fmt.Println("  - Preserves document structure and key information")
 }
 
 func processCommandLine() (string, string, []string, error) {
