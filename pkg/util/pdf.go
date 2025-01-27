@@ -10,7 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	api "sqirvyllm/pkg/sqirvy"
+	api "sqirvy-llm/pkg/sqirvy"
 )
 
 // ExtractPDF extracts text content from PDF binary data using pdftotext.

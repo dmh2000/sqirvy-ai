@@ -8,7 +8,7 @@ package main
 import (
 	"fmt"
 	"log"
-	sqirvy "sqirvyllm/pkg/sqirvy"
+	sqirvy "sqirvy-llm/pkg/sqirvy"
 )
 
 var DEFAULT_MODEL = "claude-3-5-haiku-latest"

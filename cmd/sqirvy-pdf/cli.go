@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	util "sqirvyllm/pkg/util"
+	util "sqirvy-llm/pkg/util"
 )
 
 // Max Bytes To Read

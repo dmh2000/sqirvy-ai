@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	sqirvy "sqirvyllm/pkg/sqirvy"
+	sqirvy "sqirvy-llm/pkg/sqirvy"
 )
 
 type ProviderResponse struct {

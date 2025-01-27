@@ -1,4 +1,4 @@
-module sqirvyllm
+module sqirvy-llm
 
 go 1.23.2
 
@@ -6,6 +6,7 @@ require (
 	github.com/anthropics/anthropic-sdk-go v0.2.0-alpha.8
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/google/generative-ai-go v0.19.0
+	github.com/tmc/langchaingo v0.1.12
 	google.golang.org/api v0.215.0
 )
 
@@ -40,7 +41,6 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tidwall/sjson v1.2.5 // indirect
-	github.com/tmc/langchaingo v0.1.12 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.54.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.54.0 // indirect
 	go.opentelemetry.io/otel v1.29.0 // indirect

@@ -13,8 +13,8 @@ import (
 	"flag"
 	"fmt"
 	"sort"
-	sqirvy "sqirvyllm/pkg/sqirvy"
-	util "sqirvyllm/pkg/util"
+	sqirvy "sqirvy-llm/pkg/sqirvy"
+	util "sqirvy-llm/pkg/util"
 	"strings"
 )
 

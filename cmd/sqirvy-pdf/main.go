@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	sqirvy "sqirvyllm/pkg/sqirvy"
-	util "sqirvyllm/pkg/util"
+	sqirvy "sqirvy-llm/pkg/sqirvy"
+	util "sqirvy-llm/pkg/util"
 )
 
 const maxFileSize int64 = 10 * 1024 * 1024 // 10MB

@@ -150,7 +150,7 @@ import (
 	"fmt"
 	"log"
 
-	sqirvy "sqirvyllm/pkg/sqirvy"
+	sqirvy "sqirvy-llm/pkg/sqirvy"
 )
 
 func main() {

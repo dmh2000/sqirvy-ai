@@ -23,7 +23,7 @@ import (
 	_ "embed"
 	"fmt"
 	"log"
-	sqirvy "sqirvyllm/pkg/sqirvy"
+	sqirvy "sqirvy-llm/pkg/sqirvy"
 )
 
 // build the system prompt and review requirements into the binary
