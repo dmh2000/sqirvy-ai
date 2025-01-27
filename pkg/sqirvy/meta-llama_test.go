@@ -32,7 +32,7 @@ func TestMetaLlamaClient_QueryText(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := client.QueryText(tt.prompt, "meta-llama-3.1-8b-instruct-turbo", Options{})
+			got, err := client.QueryText(tt.prompt, "meta-llama/meta-llama-3.1-8b-instruct-turbo", Options{})
 			if tt.wantErr {
 				if err == nil {
 					t.Errorf("MetaLlamaClient.QueryText() error = %v, wantErr %v", err, tt.wantErr)
@@ -76,7 +76,7 @@ func TestMetaLlamaClient_QueryJSON(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := client.QueryJSON(tt.prompt, "meta-llama-3.1-8b-instruct-turbo", Options{})
+			got, err := client.QueryJSON(tt.prompt, "meta-llama/meta-llama-3.1-8b-instruct-turbo", Options{})
 			if tt.wantErr {
 				if err == nil {
 					t.Errorf("MetaLlamaClient.QueryJSON() error = %v, wantErr %v", err, tt.wantErr)
