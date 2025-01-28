@@ -81,26 +81,5 @@ func TestAllModels(t *testing.T) {
 			}
 		})
 
-		// Test QueryJSON
-		t.Run(model+"_QueryJSON", func(t *testing.T) {
-			for _, tt := range tests {
-				t.Run(tt.name, func(t *testing.T) {
-					got, err := client.QueryJSON(tt.prompt, model, Options{})
-					if tt.wantErr {
-						if err == nil {
-							t.Errorf("QueryJSON() error = nil, wantErr %v", tt.wantErr)
-						}
-						return
-					}
-					if err != nil {
-						t.Errorf("QueryJSON() error = %v", err)
-						return
-					}
-					if !strings.Contains(got, "{") || !strings.Contains(got, "}") {
-						t.Errorf("QueryJSON() = %v, expected JSON response", got)
-					}
-				})
-			}
-		})
 	}
 }

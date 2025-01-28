@@ -79,34 +79,6 @@ func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (
 // QueryJSON sends a JSON query to OpenAI and returns the response
 // using json has some options, see:
 // https://platform.openai.com/docs/guides/structured-outputs#examples
-func (c *OpenAIClient) QueryJSON(prompt string, model string, options Options) (string, error) {
-	// Validate prompt is not empty
-	if prompt == "" {
-		return "", fmt.Errorf("prompt cannot be empty for json query")
-	}
-
-	// Initialize HTTP client and API key if not already done
-	if c.client == nil {
-		c.client = &http.Client{}
-		// Get API key from environment variable
-		c.apiKey = os.Getenv("OPENAI_API_KEY")
-		if c.apiKey == "" {
-			return "", fmt.Errorf("OPENAI_API_KEY environment variable not set")
-		}
-	}
-
-	// Construct the request body with the prompt as a user message
-	reqBody := openAIRequest{
-		Model: model,
-		Messages: []openAIMessage{
-			{Role: "user", Content: prompt},
-		},
-		MaxTokens: 1024, // Limit response length
-	}
-
-	// Send request and return response
-	return c.makeRequest(reqBody)
-}
 
 func (c *OpenAIClient) makeRequest(reqBody openAIRequest) (string, error) {
 	// Convert request body to JSON
