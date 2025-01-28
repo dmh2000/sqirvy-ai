@@ -2,7 +2,6 @@ package api
 
 import (
 	"os"
-	"strings"
 	"testing"
 )
 
@@ -49,4 +48,3 @@ func TestOpenAIClient_QueryText(t *testing.T) {
 		})
 	}
 }
-

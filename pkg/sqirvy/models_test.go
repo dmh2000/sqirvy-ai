@@ -2,7 +2,6 @@ package api
 
 import (
 	"os"
-	"strings"
 	"testing"
 )
 

@@ -2,7 +2,6 @@ package api
 
 import (
 	"os"
-	"strings"
 	"testing"
 )
 
@@ -39,4 +38,3 @@ func TestGeminiClient_QueryText(t *testing.T) {
 		})
 	}
 }
-

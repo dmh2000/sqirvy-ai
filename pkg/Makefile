@@ -1,6 +1,6 @@
 .PHONY: build test clean
 
-SUBDIRS = api util
+SUBDIRS = sqirvy util
 
 build:
 	@for dir in $(SUBDIRS); do \
