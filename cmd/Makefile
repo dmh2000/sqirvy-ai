@@ -1,6 +1,6 @@
 .PHONY: build test clean
 
-SUBDIRS = sqirvy-query sqirvy-review sqirvy-scrape sqirvy-pdf gemini openai anthropic
+SUBDIRS = sqirvy-query sqirvy-review sqirvy-scrape gemini openai anthropic
 export BINDIR:=../../bin
 
 build:
