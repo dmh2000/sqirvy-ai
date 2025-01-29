@@ -22,11 +22,12 @@ Note: Each LLM model will give different results for a given prompt, and each ex
 
 Sqirvy-llm has some preconfigured command line programs that allow you to send prompts to LLM providers. And it provides a simple API for making queries to LLM providers in Go if you want to use it in your own Go programs.
 
+
 ## Sqirvy-llm Command Line Programs
 
 ### Supported Models
 
-- Supported models (currently):
+- Supported models:
   - claude-3-5-haiku-latest
   - claude-3-5-sonnet-latest
   - claude-3-opus-latest
@@ -37,6 +38,8 @@ Sqirvy-llm has some preconfigured command line programs that allow you to send p
   - gpt-4o
   - gpt-4o-mini
   - o1-mini
+  - deepseek-reasoner (temporarily disabled due to server overloads)
+  - deepseek-chat (also disabled)
 
 ### sqirvy-query
 

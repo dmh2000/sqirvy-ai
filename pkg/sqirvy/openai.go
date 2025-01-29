@@ -76,10 +76,6 @@ func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (
 	return c.makeRequest(reqBody)
 }
 
-// QueryJSON sends a JSON query to OpenAI and returns the response
-// using json has some options, see:
-// https://platform.openai.com/docs/guides/structured-outputs#examples
-
 func (c *OpenAIClient) makeRequest(reqBody openAIRequest) (string, error) {
 	// Convert request body to JSON
 	jsonBody, err := json.Marshal(reqBody)
