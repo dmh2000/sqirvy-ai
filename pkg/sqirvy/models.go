@@ -6,6 +6,8 @@ package api
 
 import "fmt"
 
+const MAX_TOKENS = 4096
+
 // ModelToProvider maps model names to their respective providers.
 // This mapping is used to determine which client implementation should handle
 // requests for a given model.

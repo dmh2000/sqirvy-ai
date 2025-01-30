@@ -12,8 +12,6 @@ import (
 	"github.com/anthropics/anthropic-sdk-go"
 )
 
-const MAX_TOKENS = 2048
-
 // AnthropicClient implements the Client interface for Anthropic's API
 type AnthropicClient struct {
 	client *anthropic.Client // Anthropic API client
@@ -34,8 +32,8 @@ func (c *AnthropicClient) QueryText(prompt string, model string, options Options
 
 	// Create new message request with the provided prompt
 	message, err := c.client.Messages.New(context.TODO(), anthropic.MessageNewParams{
-		Model:     anthropic.F(model),       // Specify which model to use
-		MaxTokens: anthropic.F(int64(1024)), // Limit response length
+		Model:     anthropic.F(model),             // Specify which model to use
+		MaxTokens: anthropic.F(int64(MAX_TOKENS)), // Limit response length
 		Messages: anthropic.F([]anthropic.MessageParam{
 			anthropic.NewUserMessage(anthropic.NewTextBlock(prompt)), // Create user message
 		}),
@@ -55,4 +53,3 @@ func (c *AnthropicClient) QueryText(prompt string, model string, options Options
 	}
 	return answer, nil
 }
-

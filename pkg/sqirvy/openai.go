@@ -69,7 +69,7 @@ func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (
 		Messages: []openAIMessage{
 			{Role: "user", Content: prompt},
 		},
-		MaxTokens: 1024, // Limit response length
+		MaxTokens: MAX_TOKENS, // Limit response length
 	}
 
 	// Send request and return response

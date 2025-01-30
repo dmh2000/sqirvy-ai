@@ -2,7 +2,7 @@
 
 **VERSION 0.0.1-alpha**
 
-Imagine you are setting up some DevOps for a project, and you need a simple way to make queries to LLM providers for use in a command line program. You don't want to have to copypasta from a web app or a python script. Or, you want to automate tasks like code review or web scraping using LLMs.
+Imagine you are setting up some DevOps for a project, and you need a simple way to make queries to LLM providers for use in a command line program. You don't want to have to copypasta from a web app or a python script. Or, you want to automate tasks like code review or web scraping using LLMs. 
 
 How about this: have a set of simple command line programs that perform various fixed queries to LLM providers. You can use them to automate tasks like code review, testing, and deployment. They could be used in CI/CD pipelines, or as part of a devops workflow.
 
@@ -38,6 +38,11 @@ Sqirvy-llm has some preconfigured command line programs that allow you to send p
   - gpt-4o
   - gpt-4o-mini
   - o1-mini
+	- meta-llama/meta-llama-3.1-8b-instruct-turbo
+	- meta-llama/Llama-3.3-70B-Instruct-Turbo
+  - meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo
+
+DeepSeek is temporarily disabled due to server overload/DDOS
   - deepseek-reasoner (temporarily disabled due to server overloads)
   - deepseek-chat (also disabled)
 
