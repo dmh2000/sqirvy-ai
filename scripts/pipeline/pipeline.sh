@@ -1,25 +1,25 @@
 #!/bin/bash
 
+# this script does the following:
+# - creates a directory called tetris
+# - uses sqirvy-query and gemini-1.5-flash to create a design for a web app
+# - uses sqirvy-query and claude-3-5-sonnet-latest to generate code for the design
+# - uses sqirvy-review and gpt-4o-mini to review the code
+# - starts a web server to serve the generated code
 export BINDIR=../../bin
 
-design="describe the steps required to build a web project that uses a node.js server and a \
-simple web app that creates a simple tetris game clone. do not generate any code, just describe \
-what is needed to create the project. the project should be able to run locally. \
-code should be html, css and javascript, in separate files. \
-include instructions for adding an http server for the project. \
-output will be a markdown. your output will be to another LLM that will generate the code."
+design="describe the steps required to build a web project that is a \
+    simple web app that implements a simple tetris game clone.       \
+    do not generate any code, just describe  what is needed to create the project. \
+    code should be html, css and javascript, in a single file. \
+    output will be markdown. your output will be to another LLM that will generate the code. "
 
-code="generate code for the specified design. there will be multiple code files generated. \
-output will be a single file containing the code for all file. wrap each separate content in \
- triple backticks,  where language is the file type of each separate code file. \
- output will be markdown. do not stop until all the code is generated."
+code="generate code for the specified design. output only the code, no comments or annotations. \
+      output will be html. do not wrap the output  in triple backticks"
 
-review="treat each section of content that is wrapped in triple backticks as a code file. review each file for \
-style, correctness, security and best practices. output will be a markdown file with the review"
- 
 
-rm -rf tetris && mkdir tetris && \
-echo $design  | $BINDIR/sqirvy-query -m gemini-1.5-flash                         >tetris/plan.md && \
-echo $code    | $BINDIR/sqirvy-query -m claude-3-5-sonnet-latest tetris/plan.md  >tetris/code.md && \
-echo $review  | $BINDIR/sqirvy-query -m gpt-4o-mini              tetris/code.md  >tetris/review.md 
-
+rm -rf tetris && mkdir tetris 
+echo $design | $BINDIR/sqirvy-query  -m gemini-1.5-flash                        >tetris/plan.md     && \
+echo $code   | $BINDIR/sqirvy-query  -m claude-3-5-sonnet-latest tetris/plan.md >tetris/index.html  && \
+               $BINDIR/sqirvy-review -m gpt-4o-mini tetris/index.html           >tetris/review.md   && \
+python -m http.server 8080 --directory tetris

@@ -2,6 +2,35 @@
 
 **VERSION 0.0.1-alpha**
 
+## What If You Could String Together Some AI Queries To Make Something Happen?
+```bash
+#!/bin/bash
+
+# this script does the following:
+# - creates a directory called tetris
+# - uses sqirvy-query and gemini-1.5-flash to create a design for a web app
+# - uses sqirvy-query and claude-3-5-sonnet-latest to generate code for the design
+# - uses sqirvy-review and gpt-4o-mini to review the code
+# - starts a web server to serve the generated code
+export BINDIR=../../bin
+
+design="describe the steps required to build a                       \
+    simple web app that implements a simple tetris game clone.       \
+    do not generate any code, just describe  what is needed to create the project. \
+    code should be html, css and javascript, in a single file.       \
+    output will be markdown. your output will be to another LLM that will generate the code. "
+
+code="generate code for the specified design. output only the code, no comments or annotations. \
+      output will be html. do not wrap the output  in triple backticks"
+
+
+rm -rf tetris && mkdir tetris 
+echo $design | $BINDIR/sqirvy-query  -m gemini-1.5-flash                        >tetris/plan.md     && \
+echo $code   | $BINDIR/sqirvy-query  -m claude-3-5-sonnet-latest tetris/plan.md >tetris/index.html  && \
+               $BINDIR/sqirvy-review -m gpt-4o-mini tetris/index.html           >tetris/review.md   && \
+python -m http.server 8080 --directory tetris
+```
+
 Imagine you are setting up some DevOps for a project, and you need a simple way to make queries to LLM providers for use in a command line program. You don't want to have to copypasta from a web app or a python script. Or, you want to automate tasks like code review or web scraping using LLMs. 
 
 How about this: have a set of simple command line programs that perform various fixed queries to LLM providers. You can use them to automate tasks like code review, testing, and deployment. They could be used in CI/CD pipelines, or as part of a devops workflow.
@@ -12,7 +41,7 @@ That's what this project is all about.
 
 Here's some of the application programs in this project:
 
-- sqirvy-query: a command line program that allows you to send arbitrary prompts to an AI model.
+- sqirvy-query:  a command line program that allows you to send arbitrary prompts to an AI model.
 - sqirvy-review: a command line program that invokes an AI model to perform code review.
 - sqirvy-scrape: a command line program that invokes an AI model to scrape data from the web and perform some action on the downloaded data.
 
@@ -21,6 +50,8 @@ Note: Each LLM model will give different results for a given prompt, and each ex
 [GitHub Repo](https://github.com/dmh2000/sqirvy-llm)
 
 Sqirvy-llm has some preconfigured command line programs that allow you to send prompts to LLM providers. And it provides a simple API for making queries to LLM providers in Go if you want to use it in your own Go programs.
+
+
 
 
 ## Sqirvy-llm Command Line Programs
