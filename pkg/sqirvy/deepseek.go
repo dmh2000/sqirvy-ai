@@ -1,7 +1,7 @@
 // Package api provides integration with DeepSeek's LLM models.
 //
 // This file implements the Client interface for DeepSeek's API, supporting
-// both text and JSON queries using the OpenAI-compatible REST interface.
+// both text and JSON queries using the OpenAI-compatible  interface.
 // It handles authentication, request formatting, and response parsing.
 package api
 

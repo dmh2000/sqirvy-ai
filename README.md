@@ -260,6 +260,6 @@ The code for the web app was generated using Aider and the claude-3-sonnet-20240
 ### OpenAI
 
 - [OpenAI API](https://platform.openai.com/docs/api-reference)
-- Since there did not seem to be an official Go native API for OpenAI, I used the OpenAI REST API directly with the "net/http" package.
+- Since there did not seem to be an official Go native API for OpenAI, I used the OpenAI  API directly with the "net/http" package.
 - **The OpenAI API requires a "OPENAI_API_KEY" environment variable to authenticate**
 - **If you connecting to an OpenAI model to a server besides the official OpenAI servers, you will need to set the "OPENAI_API_BASE" environment variable to the base URL of the server you are connecting to**
