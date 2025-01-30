@@ -59,19 +59,23 @@ Sqirvy-llm has some preconfigured command line programs that allow you to send p
 ### Supported Models
 
 - Supported models:
-  - claude-3-5-haiku-latest
-  - claude-3-5-sonnet-latest
-  - claude-3-opus-latest
-  - gemini-1.5-flash
-  - gemini-1.5-pro
-  - gemini-2.0-flash-exp
-  - gpt-4-turbo
-  - gpt-4o
-  - gpt-4o-mini
-  - o1-mini
-	- meta-llama/meta-llama-3.1-8b-instruct-turbo
-	- meta-llama/Llama-3.3-70B-Instruct-Turbo
-  - meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo
+  - Anthropic
+    - claude-3-5-haiku-latest
+    - claude-3-5-sonnet-latest
+    - claude-3-opus-latest
+  - Google Gemini
+    - gemini-1.5-flash
+    - gemini-1.5-pro
+    - gemini-2.0-flash-exp
+  - OpenAI
+    - gpt-4-turbo
+    - gpt-4o
+    - gpt-4o-mini
+    - o1-mini
+  - Meta-Llama
+	  - meta-llama/meta-llama-3.1-8b-instruct-turbo
+	  - meta-llama/Llama-3.3-70B-Instruct-Turbo
+    - meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo
 
 DeepSeek is temporarily disabled due to server overload/DDOS
   - deepseek-reasoner (temporarily disabled due to server overloads)
