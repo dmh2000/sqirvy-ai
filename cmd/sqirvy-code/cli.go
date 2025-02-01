@@ -1,4 +1,4 @@
-// Package main provides command line interface functionality for the code review tool.
+// Package main provides command line interface functionality for the code gen tool.
 //
 // This package handles:
 // - Command line argument parsing and validation
@@ -37,7 +37,8 @@ func helpMessage(prefix string) {
 	if prefix != "" {
 		fmt.Println(prefix)
 	}
-	fmt.Println("Usage: sqirvy-review [options] files...")
+	fmt.Println("Usage: sqirvy-code[options] files...")
+	fmt.Println("Generates code based on the input prompt")
 	fmt.Println("initializes the context from stdin, pipe or redirection (if any)")
 	fmt.Println("concatenates files to the context in order")
 	fmt.Println("Options:")
