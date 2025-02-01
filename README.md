@@ -14,21 +14,20 @@
 # - starts a web server to serve the generated code
 export BINDIR=../../bin
 
-design="describe the steps required to build a                       \
+design="create a design specification for a web project that is a \
     simple web app that implements a simple tetris game clone.       \
     do not generate any code, just describe  what is needed to create the project. \
-    code should be html, css and javascript, in a single file.       \
+    code should be html, css and javascript, in a single file named index.html \
     output will be markdown. your output will be to another LLM that will generate the code. "
 
-code="generate code for the specified design. output only the code, no comments or annotations. \
-      output will be html. do not wrap the output  in triple backticks"
-
-
 rm -rf tetris && mkdir tetris 
-echo $design | $BINDIR/sqirvy-query  -m gemini-1.5-flash                        >tetris/plan.md     && \
-echo $code   | $BINDIR/sqirvy-query  -m claude-3-5-sonnet-latest tetris/plan.md >tetris/index.html  && \
-               $BINDIR/sqirvy-review -m gpt-4o-mini tetris/index.html           >tetris/review.md   && \
+echo $design | \
+$BINDIR/sqirvy-query  -m gemini-1.5-flash         | tee tetris/plan.md    | \
+$BINDIR/sqirvy-code   -m claude-3-5-sonnet-latest | tee tetris/index.html | \
+$BINDIR/sqirvy-review -m gpt-4o-mini              >tetris/review.md   
+
 python -m http.server 8080 --directory tetris
+
 ```
 
 Imagine you are setting up some DevOps for a project, and you need a simple way to make queries to LLM providers for use in a command line program. You don't want to have to copypasta from a web app or a python script. Or, you want to automate tasks like code review or web scraping using LLMs. 
