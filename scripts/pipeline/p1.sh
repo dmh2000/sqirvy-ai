@@ -21,3 +21,5 @@ $BINDIR/sqirvy-code   -m claude-3-5-sonnet-latest | tee tetris/index.html | \
 $BINDIR/sqirvy-review -m gpt-4o-mini              >tetris/review.md   
 
 python -m http.server 8080 --directory tetris
+
+# test
