@@ -4,4 +4,4 @@
 build
 bin
 REVIEW.*
-fmt.Errorf(.*\%v", err)
+pkg/prompts

@@ -1,7 +1,6 @@
 .PHONY: build test clean
 
-SUBDIRS = sqirvy-query sqirvy-review sqirvy-scrape sqirvy-code gemini openai anthropic
-export BINDIR:=../../bin
+SUBDIRS = sqirvy
 
 build:
 	@for dir in $(SUBDIRS); do \

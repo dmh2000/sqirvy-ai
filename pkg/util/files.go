@@ -20,12 +20,23 @@ func InputIsFromPipe() (bool, error) {
 }
 
 // ReadStdin reads and concatenates the contents of stdin,
-func ReadStdin(maxTotalBytes int64) (string, int64, error) {
+func ReadStdin(maxTotalBytes int64) (data string, size int64, err error) {
+	pipe, err := InputIsFromPipe()
+
+	if err != nil {
+		return "", 0, err
+	}
+
+	// not a pipe/stdin, so just return
+	if !pipe {
+		return "", 0, nil
+	}
+
 	stdinBytes, err := io.ReadAll(os.Stdin)
 	if err != nil {
 		return "", 0, fmt.Errorf("error reading from stdin: %w", err)
 	}
-	size := int64(len(stdinBytes))
+	size = int64(len(stdinBytes))
 	if size > maxTotalBytes {
 		return "", 0, fmt.Errorf("total size would exceed limit of %d bytes", maxTotalBytes)
 	}

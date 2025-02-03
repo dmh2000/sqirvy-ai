@@ -1,0 +1,114 @@
+// Package main implements a command-line interface for querying AI language models.
+//
+// The program accepts input from both files and standard input, concatenates them,
+// and sends the combined text as a prompt to the specified AI model. It supports
+// multiple AI providers including Anthropic, OpenAI, and Google's Gemini.
+//
+// Usage:
+//
+//	sqirvy-query [options] files...
+//
+// The program will read from stdin if available, and concatenate any specified files.
+// A system prompt can be provided via system.md in the current directory.
+package main
+
+import (
+	_ "embed"
+	"flag"
+	"fmt"
+	"log"
+	"os"
+
+	sqirvy "sqirvy-llm/pkg/sqirvy"
+)
+
+// bind the embedded prompts
+
+//go:embed prompts/system.md
+var systemPrompt string
+
+//go:embed prompts/query.md
+var queryPrompt string
+
+//go:embed prompts/review.md
+var reviewPrompt string
+
+//go:embed prompts/code.md
+var codePrompt string
+
+//go:embed prompts/scrape.md
+var scrapePrompt string
+
+// a map from function names to their corresponding prompts
+var prompts = map[string]string{
+	"query":  queryPrompt,
+	"review": reviewPrompt,
+	"code":   codePrompt,
+	"scrape": scrapePrompt,
+}
+
+func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
+	// get comand line flags and arguments
+	f_h, f_model, f_function, args, err := CliFlags()
+	if err != nil {
+		flag.Usage()
+		log.Fatal(fmt.Errorf("error parsing flags: %v", err))
+	}
+
+	if f_h {
+		flag.Usage()
+		return
+	}
+
+	// start with system prompt
+	prompt := systemPrompt
+
+	// get the function prompt
+	if _, ok := prompts[f_function]; !ok {
+		flag.Usage()
+		log.Fatal(fmt.Errorf("invalid function: %s", f_function))
+	}
+	prompt += prompts[f_function]
+
+	// read additional prompt from stdin and flags
+	p, err := ReadPrompt(args)
+	if err != nil {
+		flag.Usage()
+		log.Fatal(fmt.Errorf("error reading prompt: %v", err))
+	}
+	prompt = prompt + "\n\n" + p
+
+	// Use default model if none specified
+	model := "claude-3-5-sonnet-latest"
+	if f_model != "" {
+		model = f_model
+	}
+
+	// Get the provider for the model
+	provider, err := sqirvy.GetProviderName(model)
+	if err != nil {
+		log.Fatal(fmt.Errorf("error getting provider for model %s: %v", model, err))
+	}
+
+	// Create client for the provider
+	client, err := sqirvy.NewClient(sqirvy.Provider(provider))
+	if err != nil {
+		log.Fatal(fmt.Errorf("error creating client for provider %s: %v", provider, err))
+	}
+
+	// Make the query
+	response, err := client.QueryText(prompt, model, sqirvy.Options{})
+	if err != nil {
+		log.Fatal(fmt.Errorf("error querying model %s: %v", model, err))
+	}
+
+	// Print response to stdout
+	fmt.Print(response)
+	fmt.Println()
+
+	os.Exit(0)
+}
+
+// "```https://sqirvy.xyz\n   Skip to content    Sqirvy.xyz              \nPosts\n   \nTags\n   \nAbout\n                                 Sqirvy.xyz Sqirvy.xyz is Dave's blog that no one looks at (:)       Featured  Adding AI To Golang AppsPosted on:January 27, 2025 | \u00a0at\u00a004:00 PMThree approaches to using AI models in GolangClone A Web Page Layout From A ScreenshotPosted on:September 3, 2024 | \u00a0at\u00a005:00 PMHow to clone a website layout from a screenshotTypes of Embedded DevelopersPosted on:April 28, 2024 | \u00a0at\u00a005:00 PMT...+712 more"

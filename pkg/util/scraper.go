@@ -11,6 +11,8 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
+const MaxScraperDepth = 2
+
 // ScrapeURL scrapes the content from a single URL and returns it as a string.
 //
 // Parameters:
@@ -36,7 +38,7 @@ func ScrapeURL(url string) (string, error) {
 	// Initialize collector
 	c := colly.NewCollector(
 		colly.AllowURLRevisit(),
-		colly.MaxDepth(2),
+		colly.MaxDepth(MaxScraperDepth),
 	)
 
 	// Store scraped content
