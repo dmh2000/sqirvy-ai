@@ -1,7 +1,5 @@
 .PHONY: build test clean
 
-BINDIR := $(CURDIR)/bin
-
 target = "sqirvy-query"
 # detect variants of Windows.PHONY: build test clean
 ifeq ($(filter Windows%, $(OS)),Windows)

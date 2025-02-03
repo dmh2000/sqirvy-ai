@@ -2,7 +2,7 @@
 
 build:
 	staticcheck ./...
-	go build -o gemini .
+	go build -o $(BINDIR)/gemini .
 
 test:
 	go run . >/dev/null

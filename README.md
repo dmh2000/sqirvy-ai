@@ -3,6 +3,9 @@
 **VERSION 0.0.1-alpha**
 
 ## What If You Could String Together Some AI Queries To Make Something Happen?
+
+You can execute this with 'run-me.sh' it the top level of the repo
+
 ```bash
 #!/bin/bash
 
@@ -12,7 +15,6 @@
 # - uses sqirvy-query and claude-3-5-sonnet-latest to generate code for the design
 # - uses sqirvy-review and gpt-4o-mini to review the code
 # - starts a web server to serve the generated code
-export BINDIR=../../bin
 
 design="create a design specification for a web project that is a \
     simple web app that implements a simple tetris game clone.       \
@@ -20,14 +22,16 @@ design="create a design specification for a web project that is a \
     code should be html, css and javascript, in a single file named index.html \
     output will be markdown. your output will be to another LLM that will generate the code. "
 
+export BINDIR=./bin  
+make
+
 rm -rf tetris && mkdir tetris 
 echo $design | \
-$BINDIR/sqirvy-query  -m gemini-1.5-flash         | tee tetris/plan.md    | \
-$BINDIR/sqirvy-code   -m claude-3-5-sonnet-latest | tee tetris/index.html | \
-$BINDIR/sqirvy-review -m gpt-4o-mini              >tetris/review.md   
+$BINDIR/sqirvy -m gemini-1.5-flash         -f query   | tee tetris/plan.md    | \
+$BINDIR/sqirvy -m claude-3-5-sonnet-latest -f code    | tee tetris/index.html | \
+$BINDIR/sqirvy -m gpt-4o-mini              -f review  >tetris/review.md   
 
 python -m http.server 8080 --directory tetris
-
 ```
 
 Imagine you are setting up some DevOps for a project, and you need a simple way to make queries to LLM providers for use in a command line program. You don't want to have to copypasta from a web app or a python script. Or, you want to automate tasks like code review or web scraping using LLMs. 
