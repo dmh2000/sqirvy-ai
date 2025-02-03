@@ -4,35 +4,8 @@
 
 ## What If You Could String Together Some AI Queries To Make Something Happen?
 
-You can execute this with 'run-me.sh' it the top level of the repo
 
-```bash
-#!/bin/bash
 
-# this script does the following:
-# - creates a directory called tetris
-# - uses sqirvy-query and gemini-1.5-flash to create a design for a web app
-# - uses sqirvy-query and claude-3-5-sonnet-latest to generate code for the design
-# - uses sqirvy-review and gpt-4o-mini to review the code
-# - starts a web server to serve the generated code
-
-design="create a design specification for a web project that is a \
-    simple web app that implements a simple tetris game clone.       \
-    do not generate any code, just describe  what is needed to create the project. \
-    code should be html, css and javascript, in a single file named index.html \
-    output will be markdown. your output will be to another LLM that will generate the code. "
-
-export BINDIR=./bin  
-make
-
-rm -rf tetris && mkdir tetris 
-echo $design | \
-$BINDIR/sqirvy -m gemini-1.5-flash         -f query   | tee tetris/plan.md    | \
-$BINDIR/sqirvy -m claude-3-5-sonnet-latest -f code    | tee tetris/index.html | \
-$BINDIR/sqirvy -m gpt-4o-mini              -f review  >tetris/review.md   
-
-python -m http.server 8080 --directory tetris
-```
 
 Imagine you are setting up some DevOps for a project, and you need a simple way to make queries to LLM providers for use in a command line program. You don't want to have to copypasta from a web app or a python script. Or, you want to automate tasks like code review or web scraping using LLMs. 
 
@@ -55,8 +28,51 @@ Note: Each LLM model will give different results for a given prompt, and each ex
 Sqirvy-llm has some preconfigured command line programs that allow you to send prompts to LLM providers. And it provides a simple API for making queries to LLM providers in Go if you want to use it in your own Go programs.
 
 
+## Example Scripts
+There are several example bash scripts that illustrate the type of actions you can take with the **sqirvy** program:
+
+### Tetris
+1. use "-f query" and gemini-1.5-flash to generate a design for a tetris clone
+2. use "-f code" and anthropic claude-3-5-sonnet to generate the code based on the design
+3. use "-f review" and gpt-4o-mini to perform a code review of the generated code
+4. use python to run the program
+5. output files for each step are written to the ./tetris directory
+
+```bash
+#!/bin/bash
+
+# this script does the following:
+# - creates a directory called tetris
+# - uses sqirvy-query and gemini-1.5-flash to create a design for a web app
+# - uses sqirvy-query and claude-3-5-sonnet-latest to generate code for the design
+# - uses sqirvy-review and gpt-4o-mini to review the code
+# - starts a web server to serve the generated code
+
+design="create a design specification for a web project that is a \
+    simple web app that implements a simple tetris game clone.       \
+    do not generate any code, just describe  what is needed to create the project. \
+    code should be html, css and javascript, in a single file named index.html \
+    output will be markdown. your output will be to another LLM that will generate the code. "
+
+export BINDIR=../../bin  
+make
+
+rm -rf tetris && mkdir tetris 
+echo $design | \
+$BINDIR/sqirvy -m gemini-1.5-flash         -f query   | tee tetris/plan.md    | \
+$BINDIR/sqirvy -m claude-3-5-sonnet-latest -f code    | tee tetris/index.html | \
+$BINDIR/sqirvy -m gpt-4o-mini              -f review  >tetris/review.md   
+
+python -m http.server 8080 --directory tetris
+```
+
+### Generate a Git commit comment
 
 
+```bash
+# output the diff to stdout and pipe it into sqirvy -f commit
+git diff | $BINDIR/sqirvy . -f commit -m gpt-4o-mini
+```
 ## Sqirvy-llm Command Line Programs
 
 ### Supported Models

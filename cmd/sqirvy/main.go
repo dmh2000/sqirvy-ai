@@ -39,12 +39,16 @@ var codePrompt string
 //go:embed prompts/scrape.md
 var scrapePrompt string
 
+//go:embed prompts/commit.md
+var commitPrompt string
+
 // a map from function names to their corresponding prompts
 var prompts = map[string]string{
 	"query":  queryPrompt,
 	"review": reviewPrompt,
 	"code":   codePrompt,
 	"scrape": scrapePrompt,
+	"commit": commitPrompt,
 }
 
 func main() {

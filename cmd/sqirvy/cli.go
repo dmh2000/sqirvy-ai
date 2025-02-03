@@ -36,6 +36,7 @@ var validFunctions = map[string]bool{
 	"review": true,
 	"code":   true,
 	"scrape": true,
+	"commit": true,
 }
 
 func CliFlags() (help bool, model string, function string, files []string, err error) {
