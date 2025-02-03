@@ -2,6 +2,8 @@
 
 SUBDIRS = sqirvy-review sqirvy-code sqirvy-scrape anthropic gemini openai web
 
+export BINDIR=$(CURDIR)/build
+
 build:
 	@for dir in $(SUBDIRS); do \
 		$(MAKE) $(SILENT)  -C $$dir build; \

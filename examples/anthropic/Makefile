@@ -2,7 +2,7 @@
 
 build:
 	staticcheck ./...
-	go build -o anthropic .
+	go build -o $(BINDIR)/anthropic .
 	
 test:
 	go run . >/dev/null

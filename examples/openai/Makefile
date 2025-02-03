@@ -2,7 +2,7 @@
 
 build:
 	staticcheck ./...
-	go build -o openai .
+	go build -o $(BINDIR)/openai .
 
 test:
 	go run . >/dev/null

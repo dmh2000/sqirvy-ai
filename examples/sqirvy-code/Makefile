@@ -1,7 +1,5 @@
 .PHONY: build test clean
 
-BINDIR := $(CURDIR)/bin
-
 target = "sqirvy-code"
 
 # detect variants of Windows.PHONY: build test clean
