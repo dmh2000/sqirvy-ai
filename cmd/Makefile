@@ -18,3 +18,4 @@ clean:
 		$(MAKE) $(SILENT)  -C $$dir clean; \
 	done
 	rm -rf build
+	@echo "cmd/sqirvy"

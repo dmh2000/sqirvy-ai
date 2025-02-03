@@ -23,7 +23,7 @@ endif
 build: 
 	staticcheck ./...
 	mkdir -p $(BINDIR)
-	GOOS=$(arch) GOARCH=amd64 go build -o $(BINDIR)/$(PROJECT)-linux .
+	GOOS=$(arch) GOARCH=amd64 go build -o $(BINDIR)/$(PROJECT) .
 
 test:
 	@./test.sh 

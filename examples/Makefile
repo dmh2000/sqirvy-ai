@@ -1,6 +1,6 @@
 .PHONY: build test clean
 
-SUBDIRS = sqirvy-review sqirvy-code sqirvy-code sqirvy-scrape anthropic gemini openai web
+SUBDIRS = sqirvy-review sqirvy-code sqirvy-scrape anthropic gemini openai web
 
 build:
 	@for dir in $(SUBDIRS); do \

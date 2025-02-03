@@ -1,14 +1,14 @@
 #!/bin/bash
 
+BINDIR=../../bin
+
 # a test must pass
 check_return_code() {
     local cmd="$1"
     $cmd $2 $3 $4 $5 $6 $7 $8 $9
     local return_code=$?
     
-    if [ $return_code -eq 0 ]; then
-        echo "Command '$cmd' executed successfully"
-    else
+    if [ $return_code -ne 0 ]; then
         echo "Command '$cmd' failed with exit code $return_code"
         exit 1
     fi
@@ -45,25 +45,26 @@ code="create a simple webpage with a counter and buttons to increment and decrem
 query="what is the sum of 1 + 2 + 3"   
 
 mkdir -p tmp
+
 echo "-------------------------------"
 echo "sqirvy no flags or args"
-check_return_code go run .                                                            >tmp/no-flags-or-args.md
+check_return_code               $BINDIR/sqirvy                                               >tmp/no-flags-or-args.md
 echo "-------------------------------"
 echo "sqirvy -h"
-check_return_code go run . -h                                                         >tmp/help.md
+check_return_code                $BINDIR/sqirvy -h                                           2>tmp/help.md
 echo "-------------------------------"
 echo "sqirvy https://sqirvy.xyz"
-check_return_code echo $scrape  | go run . -f scrape https://sqirvy.xyz                >tmp/scrape.html
+check_return_code echo $scrape  | $BINDIR/sqirvy -f scrape https://sqirvy.xyz                >tmp/scrape.html
 echo "-------------------------------"
 echo "sqirvy -f code"
-check_return_code echo $code |    go run . -f code                                      >tmp/code.html
+check_return_code echo $code |    $BINDIR/sqirvy -f code                                      >tmp/code.html
 echo "-------------------------------"
 echo "sqirvy -f review"
-check_return_code                 go run . -m gemini-2.0-flash-exp -f review main.go     >tmp/review.md
+check_return_code                 $BINDIR/sqirvy -m gemini-2.0-flash-exp -f review main.go     >tmp/review.md
 echo "-------------------------------"
 echo "sqirvy -f query"
-check_return_code echo $query |   go run . -m gpt-4-turbo          -f query main.go      >tmp/query1.md
+check_return_code echo $query |   $BINDIR/sqirvy -m gpt-4-turbo          -f query main.go      >tmp/query1.md
 echo "-------------------------------"
 echo "sqirvy -f query (default if no -f)"
-check_return_code echo $query |   go run . -m meta-llama/meta-llama-3.1-8b-instruct-turbo >tmp/query2.md
+check_return_code echo $query |   $BINDIR/sqirvy -m meta-llama/meta-llama-3.1-8b-instruct-turbo >tmp/query2.md
 echo "-------------------------------"

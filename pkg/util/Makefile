@@ -4,8 +4,8 @@ build:
 	staticcheck ./...
 
 test:
-	@echo "Testing util"
+	@echo "Testing pkg/util"
 	go test .
 
 clean:
-	@echo "Skipping Clean for util"
+	@echo "pkg/util"
