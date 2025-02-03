@@ -1,0 +1,2980 @@
+diff --git a/.gitignore b/.gitignore
+index 6db0256..d79a7a9 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -4,4 +4,4 @@
+ build
+ bin
+ REVIEW.*
+-fmt.Errorf(.*\%v", err)
+\ No newline at end of file
++pkg/prompts
+\ No newline at end of file
+diff --git a/Makefile b/Makefile
+index 1cd4978..f15bc9f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,12 +1,12 @@
+ .PHONY: build test clean
+ 
+-SUBDIRS = cmd web pkg/sqirvy 
++SUBDIRS = cmd examples pkg/sqirvy 
+ PKG_SOURCES := $(shell find pkg -type f -name '*.go')
+ CMD_SOURCES := $(shell find cmd -type f -name '*.go')
+ SOURCES:= $(PKG_SOURCES) $(CMD_SOURCES)
+ 
+ # silence make output. remove -s to see make output
+-export SILENT=-s
++export SILENT=
+ 
+ build:
+ 	@for dir in $(SUBDIRS); do \
+diff --git a/cmd/Makefile b/cmd/Makefile
+index ef31321..ff90965 100644
+--- a/cmd/Makefile
++++ b/cmd/Makefile
+@@ -1,7 +1,6 @@
+ .PHONY: build test clean
+ 
+-SUBDIRS = sqirvy-query sqirvy-review sqirvy-scrape sqirvy-code gemini openai anthropic
+-export BINDIR:=../../bin
++SUBDIRS = sqirvy
+ 
+ build:
+ 	@for dir in $(SUBDIRS); do \
+diff --git a/cmd/anthropic/Makefile b/cmd/anthropic/Makefile
+deleted file mode 100644
+index 141ffbd..0000000
+--- a/cmd/anthropic/Makefile
++++ /dev/null
+@@ -1,12 +0,0 @@
+-.PHONY: build test clean
+-
+-build:
+-	staticcheck ./...
+-	mkdir -p $(BINDIR)
+-	go build -o $(BINDIR)/anthropic .
+-	
+-test:
+-	go run . >/dev/null
+-
+-clean:
+-	rm -f $(BINDIR)/anthropic
+diff --git a/cmd/anthropic/main.go b/cmd/anthropic/main.go
+deleted file mode 100644
+index 5134c5c..0000000
+--- a/cmd/anthropic/main.go
++++ /dev/null
+@@ -1,23 +0,0 @@
+-package main
+-
+-import (
+-	"fmt"
+-	"log"
+-	sqirvy "sqirvy-llm/pkg/sqirvy"
+-)
+-
+-func main() {
+-	// Create a new Anthropic client
+-	client, err := sqirvy.NewClient(sqirvy.Anthropic)
+-	if err != nil {
+-		log.Fatalf("Failed to create client: %v", err)
+-	}
+-
+-	// Make the query
+-	response, err := client.QueryText("say hello world", "claude-3-sonnet-20240229", sqirvy.Options{})
+-	if err != nil {
+-		log.Fatalf("Query failed: %v", err)
+-	}
+-
+-	fmt.Println("Response:", response)
+-}
+diff --git a/cmd/deepseek/main.go b/cmd/deepseek/main.go
+deleted file mode 100644
+index 8f9256a..0000000
+--- a/cmd/deepseek/main.go
++++ /dev/null
+@@ -1,23 +0,0 @@
+-package main
+-
+-import (
+-	"fmt"
+-	"log"
+-	sqirvy "sqirvy-llm/pkg/sqirvy"
+-)
+-
+-func main() {
+-	// Create a new DeepSeek client
+-	client, err := sqirvy.NewClient(sqirvy.DeepSeek)
+-	if err != nil {
+-		log.Fatalf("Failed to create client: %v", err)
+-	}
+-
+-	// Make the query
+-	response, err := client.QueryText("say hello world", "deepseek-chat", sqirvy.Options{})
+-	if err != nil {
+-		log.Fatalf("Query failed: %v", err)
+-	}
+-
+-	fmt.Println("Response:", response)
+-}
+diff --git a/cmd/gemini/Makefile b/cmd/gemini/Makefile
+deleted file mode 100644
+index 3a9154e..0000000
+--- a/cmd/gemini/Makefile
++++ /dev/null
+@@ -1,12 +0,0 @@
+-.PHONY: build test clean
+-
+-build:
+-	staticcheck ./...
+-	mkdir -p $(BINDIR)
+-	go build -o $(BINDIR)/gemini .
+-
+-test:
+-	go run . >/dev/null
+-
+-clean:
+-	rm -f $(BINDIR)/gemini
+diff --git a/cmd/gemini/main.go b/cmd/gemini/main.go
+deleted file mode 100644
+index cded3cf..0000000
+--- a/cmd/gemini/main.go
++++ /dev/null
+@@ -1,23 +0,0 @@
+-package main
+-
+-import (
+-	"fmt"
+-	"log"
+-	sqirvy "sqirvy-llm/pkg/sqirvy"
+-)
+-
+-func main() {
+-	// Create a new Gemini client
+-	client, err := sqirvy.NewClient(sqirvy.Gemini)
+-	if err != nil {
+-		log.Fatalf("Failed to create client: %v", err)
+-	}
+-
+-	// Make the query
+-	response, err := client.QueryText("say hello world", "gemini-2.0-flash-exp", sqirvy.Options{})
+-	if err != nil {
+-		log.Fatalf("Query failed: %v", err)
+-	}
+-
+-	fmt.Println("Response:", response)
+-}
+diff --git a/cmd/openai/Makefile b/cmd/openai/Makefile
+deleted file mode 100644
+index 0737c6e..0000000
+--- a/cmd/openai/Makefile
++++ /dev/null
+@@ -1,12 +0,0 @@
+-.PHONY: build test clean
+-
+-build:
+-	staticcheck ./...
+-	mkdir -p $(BINDIR)
+-	go build -o $(BINDIR)/openai .
+-
+-test:
+-	go run . >/dev/null
+-
+-clean:
+-	rm -f $(BINDIR)/openai
+diff --git a/cmd/openai/main.go b/cmd/openai/main.go
+deleted file mode 100644
+index 0f2e35e..0000000
+--- a/cmd/openai/main.go
++++ /dev/null
+@@ -1,23 +0,0 @@
+-package main
+-
+-import (
+-	"fmt"
+-	"log"
+-	sqirvy "sqirvy-llm/pkg/sqirvy"
+-)
+-
+-func main() {
+-	// Create a new OpenAI client
+-	client, err := sqirvy.NewClient(sqirvy.OpenAI)
+-	if err != nil {
+-		log.Fatalf("Failed to create client: %v", err)
+-	}
+-
+-	// Make the query
+-	response, err := client.QueryText("say hello world", "gpt-4-turbo-preview", sqirvy.Options{})
+-	if err != nil {
+-		log.Fatalf("Query failed: %v", err)
+-	}
+-
+-	fmt.Println("Response:", response)
+-}
+diff --git a/cmd/sqirvy-code/Makefile b/cmd/sqirvy-code/Makefile
+deleted file mode 100644
+index 11e1e22..0000000
+--- a/cmd/sqirvy-code/Makefile
++++ /dev/null
+@@ -1,38 +0,0 @@
+-.PHONY: build test clean
+-# detect variants of Windows
+-ifeq ($(filter Windows%, $(OS)),Windows)
+-    DETECTED_OS := Windows
+-else
+-    DETECTED_OS := $(shell uname -s)
+-endif
+-
+-build: build-linux build-macos build-windows
+-	@case "$$(uname -s)" in \
+-		Linux*) cp $(BINDIR)/sqirvy-code-linux $(BINDIR)/sqirvy-code ;; \
+-		Darwin*) cp $(BINDIR)/sqirvy-code-darwin $(BINDIR)/sqirvy-code ;; \
+-		MINGW*|MSYS*|CYGWIN*) cp $(BINDIR)/sqirvy-code.exe $(BINDIR)/sqirvy-code ;; \
+-	esac
+-
+-build-linux:
+-	staticcheck ./...
+-	mkdir -p $(BINDIR)
+-	GOOS=linux GOARCH=amd64 go build -o $(BINDIR)/sqirvy-code-linux .
+-
+-build-macos:
+-	staticcheck ./...
+-	mkdir -p $(BINDIR)
+-	GOOS=darwin GOARCH=amd64 go build -o $(BINDIR)/sqirvy-code-darwin .
+-
+-build-windows:
+-	staticcheck ./...
+-	mkdir -p $(BINDIR)
+-	GOOS=windows GOARCH=amd64 go build -o $(BINDIR)/sqirvy-code.exe .
+-
+-test:
+-	@echo "skip tests for sqirvy-code"
+-
+-clean:
+-	rm -f $(BINDIR)/sqirvy-code-linux
+-	rm -f $(BINDIR)/sqirvy-code-darwin
+-	rm -f $(BINDIR)/sqirvy-code.exe
+-	rm -f $(BINDIR)/sqirvy-code
+diff --git a/cmd/sqirvy-code/cli.go b/cmd/sqirvy-code/cli.go
+deleted file mode 100644
+index 3650b52..0000000
+--- a/cmd/sqirvy-code/cli.go
++++ /dev/null
+@@ -1,130 +0,0 @@
+-// Package main provides command line interface functionality for the code gen tool.
+-//
+-// This package handles:
+-// - Command line argument parsing and validation
+-// - File reading and content aggregation
+-// - Size limit enforcement for API requests
+-// - Help message formatting and display
+-// - Model selection and validation
+-//
+-// The CLI supports reviewing multiple files in a single pass while ensuring the
+-// total content size stays within the AI model's context limits.
+-package main
+-
+-import (
+-	"flag"
+-	"fmt"
+-	"sort"
+-	sqirvy "sqirvy-llm/pkg/sqirvy"
+-	util "sqirvy-llm/pkg/util"
+-	"strings"
+-)
+-
+-const MaxTotalBytes = 262144 // 256KB limit
+-
+-// helpMessage displays comprehensive usage information for the command line tool.
+-//
+-// Parameters:
+-//   - prefix: Optional message to display before the usage information.
+-//     Typically used for error messages or warnings.
+-//
+-// The help message includes:
+-// - Basic usage syntax
+-// - Available command line options
+-// - List of supported AI models
+-// - Size limits and other constraints
+-func helpMessage(prefix string) {
+-	if prefix != "" {
+-		fmt.Println(prefix)
+-	}
+-	fmt.Println("Usage: sqirvy-code[options] files...")
+-	fmt.Println("Generates code based on the input prompt")
+-	fmt.Println("initializes the context from stdin, pipe or redirection (if any)")
+-	fmt.Println("concatenates files to the context in order")
+-	fmt.Println("Options:")
+-	fmt.Println("  -h    print this help message")
+-	fmt.Println("  -m    AI model to use (default: gemini-1.5-flash)")
+-	fmt.Println("")
+-	fmt.Println("Supported models:")
+-	keys := make([]string, 0, len(sqirvy.ModelToProvider))
+-	for key := range sqirvy.ModelToProvider {
+-		keys = append(keys, key)
+-	}
+-	sort.Strings(keys)
+-	for _, key := range keys {
+-		fmt.Printf("  %s\n", key)
+-	}
+-}
+-
+-// processCommandLine handles command line argument processing and input file handling.
+-//
+-// The function:
+-// - Parses and validates command line flags
+-// - Processes help requests
+-// - Reads and concatenates input files
+-// - Enforces size limits (MaxTotalBytes)
+-// - Validates model selection
+-//
+-// Returns:
+-//   - string: Concatenated content from all input files
+-//   - string: Selected AI model name (or empty for default)
+-//   - error: Any error encountered during processing
+-//
+-// Size limits are enforced to ensure the total input stays within
+-// the AI model's context window (default 256KB).
+-// processCommandLine parses command line arguments and assembles the input prompt.
+-// It handles input from both files and stdin, enforcing size limits.
+-//
+-// Returns:
+-//   - string: The assembled prompt text
+-//   - string: The specified AI model name (or empty for default)
+-//   - error: Any error that occurred during processing
+-func processCommandLine() (string, string, error) {
+-	// suppress the default help message
+-	flag.Usage = func() {}
+-
+-	var help bool
+-	var model string
+-
+-	flag.BoolVar(&help, "h", false, "print help message")
+-	flag.StringVar(&model, "m", "", "AI model to use")
+-	flag.Parse()
+-
+-	if help {
+-		helpMessage("")
+-		return "help", "", nil
+-	}
+-
+-	var builder strings.Builder
+-
+-	// Check if we have data from stdin
+-	p, err := util.InputIsFromPipe()
+-	if err != nil {
+-		return "", "", fmt.Errorf("error checking if input is from pipe: %w", err)
+-	}
+-
+-	// Read stdin
+-	var stdinData string
+-	if p {
+-		stdinData, _, err = util.ReadStdin(MaxTotalBytes)
+-		if err != nil {
+-			return "", "", fmt.Errorf("error reading from stdin: %w", err)
+-		}
+-	}
+-
+-	// Check if total size of stdin exceeds MaxTotalBytes
+-	builder.WriteString(string(stdinData))
+-
+-	// Read all files (will return error if MaxTotalBytes exceeded)
+-	fileData, _, err := util.ReadFiles(flag.Args(), MaxTotalBytes)
+-	if err != nil {
+-		return "", "", fmt.Errorf("error reading files: %w", err)
+-	}
+-
+-	builder.WriteString(fileData)
+-	if builder.Len() == 0 {
+-		return "", "", fmt.Errorf("no files specified or files have no data")
+-	}
+-
+-	return builder.String(), model, nil
+-}
+diff --git a/cmd/sqirvy-code/code.md b/cmd/sqirvy-code/code.md
+deleted file mode 100644
+index 5baf655..0000000
+--- a/cmd/sqirvy-code/code.md
++++ /dev/null
+@@ -1,17 +0,0 @@
+-# what to do
+-- generate code for the design specification
+-- output only the code, no comments or annotations. 
+-- do not wrap the output with triple backticks
+-
+-# the code should have these properties if they apply for the design specification
+-- Readability: The code should be easy to understand and follow, using clear naming conventions, proper indentation, and self-explanatory structure.
+-- Reliability: The program should consistently produce correct results and function as intended without crashing or malfunctioning.
+-- Maintainability: The code should be easy to modify, update, and fix, allowing for future improvements and adaptations.
+-- Efficiency: Good code optimizes resource usage, including processor time, memory, and other system resources.
+-- Portability: The program should be able to run on different hardware and operating system platforms with minimal modifications.
+-- Robustness: The code should anticipate and handle potential errors, unexpected inputs, and resource unavailability.
+-- Usability: The program should be user-friendly and intuitive for its intended purpose12.
+-- Testability: The code should be structured in a way that facilitates thorough testing and verification of its functionality.
+-- Security: Good code incorporate measures to protect against unauthorized access and potential vulnerabilities.
+-- Scalability: The program should be able to handle increasing amounts of data and traffic without significant performance degradation.
+-- Consistency: The code should maintain a uniform style and structure throughout the project, making it easier for multiple developers to work on it.
+diff --git a/cmd/sqirvy-code/main.go b/cmd/sqirvy-code/main.go
+deleted file mode 100644
+index 7c32453..0000000
+--- a/cmd/sqirvy-code/main.go
++++ /dev/null
+@@ -1,79 +0,0 @@
+-// Package main implements an automated code generation tool that leverages AI language models
+-// to perform comprehensive code analysis and provide detailed feedback.
+-// //
+-// It supports multiple AI providers (OpenAI, Anthropic, Google) and uses embedded
+-// system and generator prompts
+-//
+-// Usage:
+-//
+-//	sqirvy-code [options] files...
+-//
+-// The tool will analyze all provided files and generate a detailed markdown report
+-// containing findings and recommendations across multiple categories.
+-package main
+-
+-import (
+-	_ "embed"
+-	"fmt"
+-	"log"
+-	sqirvy "sqirvy-llm/pkg/sqirvy"
+-)
+-
+-// build the system prompt and code requirements into the binary
+-
+-//go:embed system.md
+-var systemPrompt string
+-
+-//go:embed code.md
+-var codePrompt string
+-
+-var DEFAULT_MODEL = "claude-3-5-sonnet-latest"
+-
+-func main() {
+-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+-
+-	prompt, modelFlag, err := processCommandLine()
+-	if err != nil {
+-		helpMessage("Error:" + err.Error())
+-		log.Fatal(err)
+-	}
+-	// -h ?
+-	if prompt == "help" {
+-		return
+-	}
+-
+-	if prompt == "" {
+-		log.Fatal("no prompt provided")
+-	}
+-
+-	// prepend the system prompt and codegen instructions
+-	prompt = systemPrompt + "\n\n" + codePrompt + "\n\n" + prompt
+-
+-	// Use default model if none specified
+-	model := DEFAULT_MODEL
+-	if modelFlag != "" {
+-		model = modelFlag
+-	}
+-
+-	// Get the provider for the model
+-	provider, err := sqirvy.GetProviderName(model)
+-	if err != nil {
+-		log.Fatal(err)
+-	}
+-
+-	// Create client for the provider
+-	client, err := sqirvy.NewClient(sqirvy.Provider(provider))
+-	if err != nil {
+-		log.Fatal(err)
+-	}
+-
+-	// Make the query
+-	response, err := client.QueryText(prompt, model, sqirvy.Options{})
+-	if err != nil {
+-		log.Fatal(err)
+-	}
+-
+-	// Print response to stdout
+-	fmt.Print(response)
+-	fmt.Println()
+-}
+diff --git a/cmd/sqirvy-code/system.md b/cmd/sqirvy-code/system.md
+deleted file mode 100644
+index 6f6632c..0000000
+--- a/cmd/sqirvy-code/system.md
++++ /dev/null
+@@ -1,74 +0,0 @@
+-## AI System Prompt for Experienced Software Engineers
+-
+-### Primary Objective
+-
+-As an AI assistant, your primary role is to support experienced software engineers in all aspects of software development, from conceptualization to deployment and maintenance. Provide expert-level guidance, code snippets, best practices, and problem-solving strategies across a wide range of programming languages, frameworks, and technologies.
+-
+-### Key Responsibilities
+-
+-1. **Technical Expertise**
+-
+-   - Offer in-depth knowledge of multiple programming languages including Python, JavaScript, C++, Go, C and C#
+-   - Provide insights on various frameworks and libraries relevant to different project types
+-   - Explain complex algorithms, data structures, and design patterns
+-
+-2. **Project Planning and Architecture**
+-
+-   - Assist in creating system architectures and designing scalable solutions
+-   - Guide on choosing appropriate tech stacks for different project requirements
+-   - Advise on microservices, serverless architectures, and cloud-native development
+-
+-3. **Code Quality and Best Practices**
+-
+-   - Recommend coding standards and best practices for clean, maintainable code
+-   - Suggest refactoring strategies to improve code quality and performance
+-   - Provide guidance on writing effective unit tests and implementing CI/CD pipelines
+-
+-4. **Problem-Solving and Debugging**
+-
+-   - Help diagnose and resolve complex technical issues
+-   - Offer strategies for optimizing performance and improving efficiency
+-   - Provide step-by-step debugging approaches for various scenarios
+-
+-5. **Security and Data Privacy**
+-
+-   - Advise on implementing robust security measures in software development
+-   - Guide on best practices for handling sensitive data and ensuring compliance with regulations (e.g., GDPR, CCPA)
+-
+-6. **DevOps and Deployment**
+-
+-   - Assist with containerization strategies (e.g., Docker, Kubernetes)
+-   - Provide guidance on cloud deployment (AWS, Azure, GCP) and infrastructure as code
+-   - Advise on monitoring, logging, and observability best practices
+-
+-7. **Emerging Technologies**
+-   - Offer insights on AI/ML integration in software projects
+-   - Provide information on blockchain, IoT, and other cutting-edge technologies
+-   - Guide on adopting new tools and methodologies in software development
+-
+-### Communication Guidelines
+-
+-- Provide clear, concise, and technically accurate responses
+-- Use appropriate technical jargon but be prepared to explain complex concepts when needed
+-- Offer multiple solutions or approaches when applicable, highlighting pros and cons
+-- Include code snippets, pseudocode, or diagrams when they enhance understanding
+-
+-### Ethical Considerations
+-
+-- Emphasize the importance of ethical coding practices and responsible AI development
+-- Encourage consideration of accessibility and inclusivity in software design
+-- Promote sustainable and environmentally conscious development practices
+-
+-### Continuous Learning
+-
+-- Stay updated on the latest trends, tools, and best practices in software engineering
+-- Encourage ongoing learning and professional development
+-- Provide resources for further reading and skill enhancement
+-
+-### Project-Specific Adaptability
+-
+-- Tailor advice to specific project types (web, mobile, desktop, embedded systems, etc.)
+-- Consider project scale, from small startups to enterprise-level applications
+-- Adapt recommendations based on team size and composition
+-
+-Remember to maintain a professional yet approachable tone, acknowledging the expertise of the software engineers while providing valuable insights and support.
+diff --git a/cmd/sqirvy-query/Makefile b/cmd/sqirvy-query/Makefile
+deleted file mode 100644
+index 97b457f..0000000
+--- a/cmd/sqirvy-query/Makefile
++++ /dev/null
+@@ -1,41 +0,0 @@
+-.PHONY: build test clean
+-
+-# detect variants of Windows
+-ifeq ($(filter Windows%, $(OS)),Windows)
+-    DETECTED_OS := Windows
+-else
+-    DETECTED_OS := $(shell uname -s)
+-endif
+-
+-build: build-linux build-macos build-windows
+-	@case "$$(uname -s)" in \
+-		Linux*) cp $(BINDIR)/sqirvy-query-linux $(BINDIR)/sqirvy-query ;; \
+-		Darwin*) cp $(BINDIR)/sqirvy-query-darwin $(BINDIR)/sqirvy-query ;; \
+-		MINGW*|MSYS*|CYGWIN*) cp $(BINDIR)/sqirvy-query.exe $(BINDIR)/sqirvy-query ;; \
+-	esac
+-
+-build-linux:
+-	staticcheck ./...
+-	mkdir -p $(BINDIR)
+-	GOOS=linux GOARCH=amd64 go build -o $(BINDIR)/sqirvy-query-linux .
+-
+-build-macos:
+-	staticcheck ./...
+-	mkdir -p $(BINDIR)
+-	GOOS=darwin GOARCH=amd64 go build -o $(BINDIR)/sqirvy-query-darwin .
+-
+-build-windows:
+-	staticcheck ./...
+-	mkdir -p $(BINDIR)
+-	GOOS=windows GOARCH=amd64 go build -o $(BINDIR)/sqirvy-query.exe .
+-
+-test:
+-	@./test_query.sh >/dev/null
+-	@./test_models.sh >/dev/null
+-	@echo "Test Passed"
+-
+-clean:
+-	rm -f $(BINDIR)/sqirvy-query-linux
+-	rm -f $(BINDIR)/sqirvy-query-darwin
+-	rm -f $(BINDIR)/sqirvy-query.exe
+-	rm -f $(BINDIR)/sqirvy-query
+diff --git a/cmd/sqirvy-query/README.md b/cmd/sqirvy-query/README.md
+deleted file mode 100644
+index d09653a..0000000
+--- a/cmd/sqirvy-query/README.md
++++ /dev/null
+@@ -1,79 +0,0 @@
+-# sqirvy-query
+-
+-A command line tool for querying AI language models from multiple providers.
+-
+-## Description
+-
+-sqirvy-query is a command line interface that allows you to send prompts to various AI language models and receive their responses. It can read prompts from standard input (stdin) and/or files, concatenate them, and send the combined prompt to the specified AI model.
+-
+-## Usage
+-
+-```bash
+-sqirvy-query [options] files...
+-```
+-
+-### Options
+-
+-- `-h`: Print help message
+-- `-m`: Specify the AI model to use (default: claude-3-5-sonnet-latest)
+-
+-### Environment Variables Required
+-
+-Depending on which model you select, you'll need to set the appropriate API key:
+-
+-- For Anthropic models: `ANTHROPIC_API_KEY`
+-- For OpenAI models: `OPENAI_API_KEY`
+-- For Gemini models: `GEMINI_API_KEY`
+-
+-### Examples
+-
+-1. Send a prompt from stdin:
+-
+-```bash
+-echo "What is the capital of France?" | sqirvy-query
+-```
+-
+-2. Send a prompt from a file:
+-
+-```bash
+-sqirvy-query prompt.txt
+-```
+-
+-3. Combine stdin and files:
+-
+-```bash
+-echo "Please answer this question:" | sqirvy-query prompt.txt
+-```
+-
+-4. Use a specific model:
+-
+-```bash
+-sqirvy-query -m gpt-4-turbo-preview prompt.txt
+-```
+-
+-### Supported Models
+-
+-The tool supports various models from different providers:
+-
+-Anthropic:
+-
+-- claude-3-opus-20240229
+-- claude-3-sonnet-20240229
+-- claude-2.1
+-- claude-instant-1.2
+-
+-OpenAI:
+-
+-- gpt-4-turbo-preview
+-- gpt-4
+-- gpt-3.5-turbo
+-
+-Gemini:
+-
+-- gemini-
+-- gemini-pro-vision
+-
+-## Exit Status
+-
+-- 0: Success
+-- 1: Error (invalid arguments, API errors, etc.)
+diff --git a/cmd/sqirvy-query/cli.go b/cmd/sqirvy-query/cli.go
+deleted file mode 100644
+index 0d6f6ba..0000000
+--- a/cmd/sqirvy-query/cli.go
++++ /dev/null
+@@ -1,127 +0,0 @@
+-// Package main provides command line interface functionality for the AI query tool.
+-//
+-// This file contains the command-line processing logic including:
+-// - Argument parsing
+-// - Input handling from both files and stdin
+-// - Size limit enforcement
+-// - Help message formatting
+-package main
+-
+-import (
+-	"flag"
+-	"fmt"
+-	"os"
+-	"sort"
+-	sqirvy "sqirvy-llm/pkg/sqirvy"
+-	util "sqirvy-llm/pkg/util"
+-	"strings"
+-)
+-
+-// Max Bytes To Read
+-// MaxTotalBytes is the maximum allowed size for all input files combined
+-// assume the model will return an error if max context length is exceeded
+-// it is impractical to know the exact max context length beforehand for all models
+-// assume max 64k tokens
+-// assuming 4 characters per token
+-// total 262144 bytes
+-// since the bytes are converted to UTF-8, the upload could be larger than the byte limit
+-const maxTokens = 65536
+-const bytesPerToken = 4
+-const MaxTotalBytes = maxTokens * bytesPerToken // 262144 bytes limit
+-
+-// helpMessage prints usage information for the command line tool,
+-// including available options and supported AI models.
+-func helpMessage() {
+-	fmt.Println("Usage: sqirvy-query [options] files...")
+-	fmt.Println("initializes the context from stdin, pipe or redirection (if any)")
+-	fmt.Println("concatenates files to the context in order")
+-	fmt.Println("Options:")
+-	fmt.Println("  -h    print this help message")
+-	fmt.Println("  -m    AI model to use (default: claude-3-5-sonnet-latest)")
+-	fmt.Println("")
+-	fmt.Println("Supported models:")
+-	keys := make([]string, 0, len(sqirvy.ModelToProvider))
+-	for key := range sqirvy.ModelToProvider {
+-		keys = append(keys, key)
+-	}
+-	sort.Strings(keys)
+-	for _, key := range keys {
+-		fmt.Printf("  %s\n", key)
+-	}
+-}
+-
+-func processCommandLine() (string, string, error) {
+-
+-	// suppress the default help message
+-	flag.Usage = func() {}
+-	// add a -h flag
+-	var help bool
+-	var model string
+-
+-	flag.BoolVar(&help, "h", false, "print help message")
+-	flag.StringVar(&model, "m", "", "AI model to use (default: claude-3.5-sonnet-latest)")
+-	flag.Parse()
+-	if help {
+-		helpMessage()
+-		os.Exit(0)
+-	}
+-
+-	var builder strings.Builder
+-	var totalSize int64
+-
+-	// Initialize prompt with system.md if it exists
+-	builder.WriteString("")
+-	sysprompt, totalSize, err := util.ReadFile("./system.md", MaxTotalBytes)
+-	if err != nil {
+-		// no system.md file, skip a system prompt
+-		totalSize = 0
+-	}
+-	if totalSize > 0 {
+-		builder.WriteString(string(sysprompt))
+-		builder.WriteString("\n\n")
+-		totalSize += int64(builder.Len())
+-	}
+-
+-	// Check if we have data from stdin
+-	p, err := util.InputIsFromPipe()
+-	if err != nil {
+-		return "", "", fmt.Errorf("error checking if input is from pipe: %w", err)
+-	}
+-
+-	// Read stdin
+-	var stdinData string
+-	var stdinSize int64
+-	if p {
+-		stdinData, stdinSize, err = util.ReadStdin(MaxTotalBytes)
+-		if err != nil {
+-			return "", "", fmt.Errorf("error reading from stdin: %w", err)
+-		}
+-	}
+-
+-	// Check if total size of stdin exceeds MaxTotalBytes
+-	totalSize += stdinSize
+-	if totalSize > MaxTotalBytes {
+-		return "", "", fmt.Errorf("total size would exceed limit of %d bytes", MaxTotalBytes)
+-	}
+-	builder.WriteString(string(stdinData))
+-
+-	// Read all files
+-	fileData, fileSize, err := util.ReadFiles(flag.Args(), MaxTotalBytes)
+-	if err != nil {
+-		return "", "", fmt.Errorf("error reading files: %w", err)
+-	}
+-
+-	// check if total size of stdin + files exceeds MaxTotalBytes
+-	totalSize += fileSize
+-	if totalSize > MaxTotalBytes {
+-		return "", "", fmt.Errorf("total size would exceed limit of %d bytes", MaxTotalBytes)
+-	}
+-
+-	builder.WriteString(fileData)
+-	if builder.Len() == 0 {
+-		return "", "", fmt.Errorf("no prompts specified, stdin and files have no data")
+-	}
+-
+-	// return the consolidated prompt
+-	return builder.String(), model, nil
+-}
+diff --git a/cmd/sqirvy-query/goodbye.txt b/cmd/sqirvy-query/goodbye.txt
+deleted file mode 100644
+index 877b740..0000000
+--- a/cmd/sqirvy-query/goodbye.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-then say goodbye
+\ No newline at end of file
+diff --git a/cmd/sqirvy-query/hello.txt b/cmd/sqirvy-query/hello.txt
+deleted file mode 100644
+index b1f5d4a..0000000
+--- a/cmd/sqirvy-query/hello.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-say hello
+\ No newline at end of file
+diff --git a/cmd/sqirvy-query/main.go b/cmd/sqirvy-query/main.go
+deleted file mode 100644
+index 7e32d24..0000000
+--- a/cmd/sqirvy-query/main.go
++++ /dev/null
+@@ -1,63 +0,0 @@
+-// Package main implements a command-line interface for querying AI language models.
+-//
+-// The program accepts input from both files and standard input, concatenates them,
+-// and sends the combined text as a prompt to the specified AI model. It supports
+-// multiple AI providers including Anthropic, OpenAI, and Google's Gemini.
+-//
+-// Usage:
+-//
+-//	sqirvy-query [options] files...
+-//
+-// The program will read from stdin if available, and concatenate any specified files.
+-// A system prompt can be provided via system.md in the current directory.
+-package main
+-
+-import (
+-	"fmt"
+-	"log"
+-	"os"
+-	sqirvy "sqirvy-llm/pkg/sqirvy"
+-)
+-
+-func main() {
+-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+-
+-	prompt, modelFlag, err := processCommandLine()
+-	if err != nil {
+-		helpMessage()
+-		log.Fatal(err)
+-	}
+-	if prompt == "" {
+-		log.Fatal("no prompt provided")
+-	}
+-
+-	// Use default model if none specified
+-	model := "claude-3-5-sonnet-latest"
+-	if modelFlag != "" {
+-		model = modelFlag
+-	}
+-
+-	// Get the provider for the model
+-	provider, err := sqirvy.GetProviderName(model)
+-	if err != nil {
+-		log.Fatal(err)
+-	}
+-
+-	// Create client for the provider
+-	client, err := sqirvy.NewClient(sqirvy.Provider(provider))
+-	if err != nil {
+-		log.Fatal(err)
+-	}
+-
+-	// Make the query
+-	response, err := client.QueryText(prompt, model, sqirvy.Options{})
+-	if err != nil {
+-		log.Fatal(err)
+-	}
+-
+-	// Print response to stdout
+-	fmt.Print(response)
+-	fmt.Println()
+-
+-	os.Exit(0)
+-}
+diff --git a/cmd/sqirvy-query/test_models.sh b/cmd/sqirvy-query/test_models.sh
+deleted file mode 100755
+index 74aa5f9..0000000
+--- a/cmd/sqirvy-query/test_models.sh
++++ /dev/null
+@@ -1,50 +0,0 @@
+-#!/bin/bash
+-
+-models=(
+-	"claude-3-5-sonnet-latest"
+-	"claude-3-5-haiku-latest"
+-	"claude-3-opus-latest"
+-	"gemini-2.0-flash-exp"
+-	"gemini-1.5-flash"
+-	"gemini-1.5-pro"
+-	"gpt-4o"
+-	"gpt-4o-mini"
+-	"gpt-4-turbo"
+-	"o1-mini"
+-)
+-
+-
+-check_return_code() {
+-    echo ""
+-    local cmd="$1"
+-    $cmd $2 $3 $4 $5 $6 $7 $8 $9
+-    local return_code=$?
+-    
+-    if [ $return_code -eq 0 ]; then
+-        echo ""
+-        echo ""
+-        echo "$cmd $2 $3 executed successfully"
+-    else
+-        echo "$cmd $2 $3 failed with exit code $return_code"
+-        exit 1
+-    fi
+-    
+-    return $return_code
+-}
+-
+-
+-
+-# use the latest build
+-# Build latest
+-export BINDIR=./bin
+-mkdir -p $BINDIR
+-make -s build
+-
+-for item in "${models[@]}"
+-do
+-	echo "------ $item ------"
+-	echo "$BINDIR/sqirvy-query -m $item < hello.txt"
+-	check_return_code $BINDIR/sqirvy-query -m $item < hello.txt
+-done
+-
+-rm -rf bin
+\ No newline at end of file
+diff --git a/cmd/sqirvy-query/test_query.sh b/cmd/sqirvy-query/test_query.sh
+deleted file mode 100755
+index 6017e57..0000000
+--- a/cmd/sqirvy-query/test_query.sh
++++ /dev/null
+@@ -1,65 +0,0 @@
+-#!/bin/sh
+-
+-check_return_code() {
+-    local cmd="$1"
+-    $cmd $2 $3 $4 $5 $6 $7 $8 $9
+-    local return_code=$?
+-    
+-    if [ $return_code -eq 0 ]; then
+-        echo "Command '$cmd' executed successfully"
+-    else
+-        echo "Command '$cmd' failed with exit code $return_code"
+-        exit 1
+-    fi
+-    
+-    return $return_code
+-}
+-
+-ignore_return_code() {
+-    local cmd="$1"
+-    $cmd $2 $3 $4 $5 $6 $7 $8 $9
+-    local return_code=$?
+-    
+-    return 0
+-}
+-
+-# Build latest
+-export BINDIR=./bin
+-mkdir -p $BINDIR
+-make -s build
+-
+-make build 
+-echo "-------------------------------"
+-echo "sqiry-query (should fail)"
+-ignore_return_code $BINDIR/sqirvy-query
+-echo "-------------------------------"
+-echo "sqiry-query -h"
+-check_return_code $BINDIR/sqirvy-query -h
+-echo "-------------------------------"
+-echo "$BINDIR/sqirvy-query < hello.txt"
+-check_return_code $BINDIR/sqirvy-query < hello.txt
+-echo "sqiry-query file"
+-echo "-------------------------------"
+-echo "$BINDIR/sqirvy-query hello.txt"
+-check_return_code $BINDIR/sqirvy-query hello.txt
+-echo "-------------------------------"
+-echo "$BINDIR/sqirvy-query goodbye.txt < hello.txt"
+-check_return_code $BINDIR/sqirvy-query goodbye.txt < hello.txt
+-echo "-------------------------------"
+-echo "$BINDIR/sqirvy-query  hello.txt goodbye.txt"
+-check_return_code $BINDIR/sqirvy-query  hello.txt goodbye.txt
+-echo "-------------------------------"
+-echo "$BINDIR/sqirvy-query  -m gemini-2.0-flash-exp < hello.txt goodbye.txt"
+-check_return_code $BINDIR/sqirvy-query  -m gemini-2.0-flash-exp < hello.txt goodbye.txt
+-echo "-------------------------------"
+-echo "$BINDIR/sqirvy-query  -m gpt-4o < hello.txt goodbye.txt"
+-check_return_code $BINDIR/sqirvy-query  -m gpt-4o < hello.txt goodbye.txt
+-echo "-------------------------------"
+-echo "$BINDIR/sqirvy-query  -m gpt-4o < hello.txt goodbye.txt"
+-ignore_return_code $BINDIR/sqirvy-query  -m xyz < hello.txt 
+-echo "-------------------------------"
+-echo "$BINDIR/sqirvy-query  -m gpt-4o xyz"
+-ignore_return_code $BINDIR/sqirvy-query  xyz
+-echo "-------------------------------"
+-
+-rm -rf $BINDIR
+\ No newline at end of file
+diff --git a/cmd/sqirvy-review/Makefile b/cmd/sqirvy-review/Makefile
+deleted file mode 100644
+index d873498..0000000
+--- a/cmd/sqirvy-review/Makefile
++++ /dev/null
+@@ -1,38 +0,0 @@
+-.PHONY: build test clean
+-# detect variants of Windows
+-ifeq ($(filter Windows%, $(OS)),Windows)
+-    DETECTED_OS := Windows
+-else
+-    DETECTED_OS := $(shell uname -s)
+-endif
+-
+-build: build-linux build-macos build-windows
+-	@case "$$(uname -s)" in \
+-		Linux*) cp $(BINDIR)/sqirvy-review-linux $(BINDIR)/sqirvy-review ;; \
+-		Darwin*) cp $(BINDIR)/sqirvy-review-darwin $(BINDIR)/sqirvy-review ;; \
+-		MINGW*|MSYS*|CYGWIN*) cp $(BINDIR)/sqirvy-review.exe $(BINDIR)/sqirvy-review ;; \
+-	esac
+-
+-build-linux:
+-	staticcheck ./...
+-	mkdir -p $(BINDIR)
+-	GOOS=linux GOARCH=amd64 go build -o $(BINDIR)/sqirvy-review-linux .
+-
+-build-macos:
+-	staticcheck ./...
+-	mkdir -p $(BINDIR)
+-	GOOS=darwin GOARCH=amd64 go build -o $(BINDIR)/sqirvy-review-darwin .
+-
+-build-windows:
+-	staticcheck ./...
+-	mkdir -p $(BINDIR)
+-	GOOS=windows GOARCH=amd64 go build -o $(BINDIR)/sqirvy-review.exe .
+-
+-test:
+-	@echo "skip tests for sqirvy-review"
+-
+-clean:
+-	rm -f $(BINDIR)/sqirvy-review-linux
+-	rm -f $(BINDIR)/sqirvy-review-darwin
+-	rm -f $(BINDIR)/sqirvy-review.exe
+-	rm -f $(BINDIR)/sqirvy-review
+diff --git a/cmd/sqirvy-review/cli.go b/cmd/sqirvy-review/cli.go
+deleted file mode 100644
+index 719b7db..0000000
+--- a/cmd/sqirvy-review/cli.go
++++ /dev/null
+@@ -1,129 +0,0 @@
+-// Package main provides command line interface functionality for the code review tool.
+-//
+-// This package handles:
+-// - Command line argument parsing and validation
+-// - File reading and content aggregation
+-// - Size limit enforcement for API requests
+-// - Help message formatting and display
+-// - Model selection and validation
+-//
+-// The CLI supports reviewing multiple files in a single pass while ensuring the
+-// total content size stays within the AI model's context limits.
+-package main
+-
+-import (
+-	"flag"
+-	"fmt"
+-	"sort"
+-	sqirvy "sqirvy-llm/pkg/sqirvy"
+-	util "sqirvy-llm/pkg/util"
+-	"strings"
+-)
+-
+-const MaxTotalBytes = 262144 // 256KB limit
+-
+-// helpMessage displays comprehensive usage information for the command line tool.
+-//
+-// Parameters:
+-//   - prefix: Optional message to display before the usage information.
+-//     Typically used for error messages or warnings.
+-//
+-// The help message includes:
+-// - Basic usage syntax
+-// - Available command line options
+-// - List of supported AI models
+-// - Size limits and other constraints
+-func helpMessage(prefix string) {
+-	if prefix != "" {
+-		fmt.Println(prefix)
+-	}
+-	fmt.Println("Usage: sqirvy-review [options] files...")
+-	fmt.Println("initializes the context from stdin, pipe or redirection (if any)")
+-	fmt.Println("concatenates files to the context in order")
+-	fmt.Println("Options:")
+-	fmt.Println("  -h    print this help message")
+-	fmt.Println("  -m    AI model to use (default: gemini-1.5-flash)")
+-	fmt.Println("")
+-	fmt.Println("Supported models:")
+-	keys := make([]string, 0, len(sqirvy.ModelToProvider))
+-	for key := range sqirvy.ModelToProvider {
+-		keys = append(keys, key)
+-	}
+-	sort.Strings(keys)
+-	for _, key := range keys {
+-		fmt.Printf("  %s\n", key)
+-	}
+-}
+-
+-// processCommandLine handles command line argument processing and input file handling.
+-//
+-// The function:
+-// - Parses and validates command line flags
+-// - Processes help requests
+-// - Reads and concatenates input files
+-// - Enforces size limits (MaxTotalBytes)
+-// - Validates model selection
+-//
+-// Returns:
+-//   - string: Concatenated content from all input files
+-//   - string: Selected AI model name (or empty for default)
+-//   - error: Any error encountered during processing
+-//
+-// Size limits are enforced to ensure the total input stays within
+-// the AI model's context window (default 256KB).
+-// processCommandLine parses command line arguments and assembles the input prompt.
+-// It handles input from both files and stdin, enforcing size limits.
+-//
+-// Returns:
+-//   - string: The assembled prompt text
+-//   - string: The specified AI model name (or empty for default)
+-//   - error: Any error that occurred during processing
+-func processCommandLine() (string, string, error) {
+-	// suppress the default help message
+-	flag.Usage = func() {}
+-
+-	var help bool
+-	var model string
+-
+-	flag.BoolVar(&help, "h", false, "print help message")
+-	flag.StringVar(&model, "m", "", "AI model to use")
+-	flag.Parse()
+-
+-	if help {
+-		helpMessage("")
+-		return "help", "", nil
+-	}
+-
+-	var builder strings.Builder
+-
+-	// Check if we have data from stdin
+-	p, err := util.InputIsFromPipe()
+-	if err != nil {
+-		return "", "", fmt.Errorf("error checking if input is from pipe: %w", err)
+-	}
+-
+-	// Read stdin
+-	var stdinData string
+-	if p {
+-		stdinData, _, err = util.ReadStdin(MaxTotalBytes)
+-		if err != nil {
+-			return "", "", fmt.Errorf("error reading from stdin: %w", err)
+-		}
+-	}
+-
+-	// Check if total size of stdin exceeds MaxTotalBytes
+-	builder.WriteString(string(stdinData))
+-
+-	// Read all files (will return error if MaxTotalBytes exceeded)
+-	fileData, _, err := util.ReadFiles(flag.Args(), MaxTotalBytes)
+-	if err != nil {
+-		return "", "", fmt.Errorf("error reading files: %w", err)
+-	}
+-
+-	builder.WriteString(fileData)
+-	if builder.Len() == 0 {
+-		return "", "", fmt.Errorf("no files specified or files have no data")
+-	}
+-
+-	return builder.String(), model, nil
+-}
+diff --git a/cmd/sqirvy-review/main.go b/cmd/sqirvy-review/main.go
+deleted file mode 100644
+index 42f6f87..0000000
+--- a/cmd/sqirvy-review/main.go
++++ /dev/null
+@@ -1,86 +0,0 @@
+-// Package main implements an automated code review tool that leverages AI language models
+-// to perform comprehensive code analysis and provide detailed feedback.
+-//
+-// The tool analyzes source code for:
+-// - Potential bugs and logic errors
+-// - Security vulnerabilities and best practices
+-// - Performance optimizations
+-// - Style and idiomatic code usage
+-// - Documentation and comment quality
+-//
+-// It supports multiple AI providers (OpenAI, Anthropic, Google) and uses embedded
+-// system prompts to ensure consistent and thorough reviews.
+-//
+-// Usage:
+-//
+-//	sqirvy-review [options] files...
+-//
+-// The tool will analyze all provided files and generate a detailed markdown report
+-// containing findings and recommendations across multiple categories.
+-package main
+-
+-import (
+-	_ "embed"
+-	"fmt"
+-	"log"
+-	sqirvy "sqirvy-llm/pkg/sqirvy"
+-)
+-
+-// build the system prompt and review requirements into the binary
+-
+-//go:embed system.md
+-var systemPrompt string
+-
+-//go:embed review.md
+-var reviewPrompt string
+-
+-var DEFAULT_MODEL = "gemini-1.5-flash"
+-
+-func main() {
+-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+-
+-	prompt, modelFlag, err := processCommandLine()
+-	if err != nil {
+-		helpMessage("Error:" + err.Error())
+-		log.Fatal(err)
+-	}
+-	// -h ?
+-	if prompt == "help" {
+-		return
+-	}
+-
+-	if prompt == "" {
+-		log.Fatal("no prompt provided")
+-	}
+-
+-	// prepend the system prompt and review instructions
+-	prompt = systemPrompt + "\n\n" + reviewPrompt + "\n\n" + prompt
+-
+-	// Use default model if none specified
+-	model := DEFAULT_MODEL
+-	if modelFlag != "" {
+-		model = modelFlag
+-	}
+-
+-	// Get the provider for the model
+-	provider, err := sqirvy.GetProviderName(model)
+-	if err != nil {
+-		log.Fatal(err)
+-	}
+-
+-	// Create client for the provider
+-	client, err := sqirvy.NewClient(sqirvy.Provider(provider))
+-	if err != nil {
+-		log.Fatal(err)
+-	}
+-
+-	// Make the query
+-	response, err := client.QueryText(prompt, model, sqirvy.Options{})
+-	if err != nil {
+-		log.Fatal(err)
+-	}
+-
+-	// Print response to stdout
+-	fmt.Print(response)
+-	fmt.Println()
+-}
+diff --git a/cmd/sqirvy-review/review.md b/cmd/sqirvy-review/review.md
+deleted file mode 100644
+index 8590117..0000000
+--- a/cmd/sqirvy-review/review.md
++++ /dev/null
+@@ -1,52 +0,0 @@
+-# review the included code for the following categories:
+-
+-- bugs
+-- security
+-- performance
+-- style and idiomatic code for the given language
+-- summary of findings
+-
+-# other requirements:
+-
+-- include filename and line number of any findings.
+-- code is well-designed.
+-- code isn’t more complex than it needs to be.
+-- no extraneous or unused code is present.
+-- naming conventions are consistent and descriptive.
+-- code is readable
+-- code is well-commented
+-- code is formatted properly.
+-- comments are clear and useful.
+-- the code conforms to the appropriate style practices and guides.
+-- output in markdown format.
+-- if there are any referenced or imported functions or packages that are not in the context, assume they are external and have no issues.
+-
+-# use the following markdown template:
+-
+-```markdown
+-# Code Review
+-
+-## Bugs
+-
+-list any bugs
+-
+-## Security
+-
+-list any security issues
+-
+-## Performance
+-
+-list any performance issues
+-
+-## Style and Idiomatic Code
+-
+-list any style and idiomatic code issues
+-
+-## Recommendations
+-
+-    list recommendations based on the above categories
+-
+-## Summary
+-
+-summary of findings
+-```
+diff --git a/cmd/sqirvy-review/system.md b/cmd/sqirvy-review/system.md
+deleted file mode 100644
+index 6f6632c..0000000
+--- a/cmd/sqirvy-review/system.md
++++ /dev/null
+@@ -1,74 +0,0 @@
+-## AI System Prompt for Experienced Software Engineers
+-
+-### Primary Objective
+-
+-As an AI assistant, your primary role is to support experienced software engineers in all aspects of software development, from conceptualization to deployment and maintenance. Provide expert-level guidance, code snippets, best practices, and problem-solving strategies across a wide range of programming languages, frameworks, and technologies.
+-
+-### Key Responsibilities
+-
+-1. **Technical Expertise**
+-
+-   - Offer in-depth knowledge of multiple programming languages including Python, JavaScript, C++, Go, C and C#
+-   - Provide insights on various frameworks and libraries relevant to different project types
+-   - Explain complex algorithms, data structures, and design patterns
+-
+-2. **Project Planning and Architecture**
+-
+-   - Assist in creating system architectures and designing scalable solutions
+-   - Guide on choosing appropriate tech stacks for different project requirements
+-   - Advise on microservices, serverless architectures, and cloud-native development
+-
+-3. **Code Quality and Best Practices**
+-
+-   - Recommend coding standards and best practices for clean, maintainable code
+-   - Suggest refactoring strategies to improve code quality and performance
+-   - Provide guidance on writing effective unit tests and implementing CI/CD pipelines
+-
+-4. **Problem-Solving and Debugging**
+-
+-   - Help diagnose and resolve complex technical issues
+-   - Offer strategies for optimizing performance and improving efficiency
+-   - Provide step-by-step debugging approaches for various scenarios
+-
+-5. **Security and Data Privacy**
+-
+-   - Advise on implementing robust security measures in software development
+-   - Guide on best practices for handling sensitive data and ensuring compliance with regulations (e.g., GDPR, CCPA)
+-
+-6. **DevOps and Deployment**
+-
+-   - Assist with containerization strategies (e.g., Docker, Kubernetes)
+-   - Provide guidance on cloud deployment (AWS, Azure, GCP) and infrastructure as code
+-   - Advise on monitoring, logging, and observability best practices
+-
+-7. **Emerging Technologies**
+-   - Offer insights on AI/ML integration in software projects
+-   - Provide information on blockchain, IoT, and other cutting-edge technologies
+-   - Guide on adopting new tools and methodologies in software development
+-
+-### Communication Guidelines
+-
+-- Provide clear, concise, and technically accurate responses
+-- Use appropriate technical jargon but be prepared to explain complex concepts when needed
+-- Offer multiple solutions or approaches when applicable, highlighting pros and cons
+-- Include code snippets, pseudocode, or diagrams when they enhance understanding
+-
+-### Ethical Considerations
+-
+-- Emphasize the importance of ethical coding practices and responsible AI development
+-- Encourage consideration of accessibility and inclusivity in software design
+-- Promote sustainable and environmentally conscious development practices
+-
+-### Continuous Learning
+-
+-- Stay updated on the latest trends, tools, and best practices in software engineering
+-- Encourage ongoing learning and professional development
+-- Provide resources for further reading and skill enhancement
+-
+-### Project-Specific Adaptability
+-
+-- Tailor advice to specific project types (web, mobile, desktop, embedded systems, etc.)
+-- Consider project scale, from small startups to enterprise-level applications
+-- Adapt recommendations based on team size and composition
+-
+-Remember to maintain a professional yet approachable tone, acknowledging the expertise of the software engineers while providing valuable insights and support.
+diff --git a/cmd/sqirvy-scrape/.gitignore b/cmd/sqirvy-scrape/.gitignore
+deleted file mode 100644
+index d938ed4..0000000
+--- a/cmd/sqirvy-scrape/.gitignore
++++ /dev/null
+@@ -1 +0,0 @@
+-xyz.html
+\ No newline at end of file
+diff --git a/cmd/sqirvy-scrape/Makefile b/cmd/sqirvy-scrape/Makefile
+deleted file mode 100644
+index 4a50aca..0000000
+--- a/cmd/sqirvy-scrape/Makefile
++++ /dev/null
+@@ -1,39 +0,0 @@
+-# detect variants of Windows
+-ifeq ($(filter Windows%, $(OS)),Windows)
+-    DETECTED_OS := Windows
+-else
+-    DETECTED_OS := $(shell uname -s)
+-endif
+-
+-build: build-linux build-macos build-windows
+-	@case "$$(uname -s)" in \
+-		Linux*) cp $(BINDIR)/sqirvy-scrape-linux $(BINDIR)/sqirvy-scrape ;; \
+-		Darwin*) cp $(BINDIR)/sqirvy-scrape-darwin $(BINDIR)/sqirvy-scrape ;; \
+-		MINGW*|MSYS*|CYGWIN*) cp $(BINDIR)/sqirvy-scrape.exe $(BINDIR)/sqirvy-scrape ;; \
+-	esac
+-
+-build-linux:
+-	staticcheck ./...
+-	mkdir -p $(BINDIR)
+-	GOOS=linux GOARCH=amd64 go build -o $(BINDIR)/sqirvy-scrape-linux .
+-
+-build-macos:
+-	staticcheck ./...
+-	mkdir -p $(BINDIR)
+-	GOOS=darwin GOARCH=amd64 go build -o $(BINDIR)/sqirvy-scrape-darwin .
+-
+-build-windows:
+-	staticcheck ./...
+-	mkdir -p $(BINDIR)
+-	GOOS=windows GOARCH=amd64 go build -o $(BINDIR)/sqirvy-scrape.exe .
+-
+-test:
+-	@./test.sh >/dev/null
+-	@echo "Test Passed"
+-
+-
+-clean:
+-	rm -f $(BINDIR)/sqirvy-scrape-linux
+-	rm -f $(BINDIR)/sqirvy-scrape-darwin
+-	rm -f $(BINDIR)/sqirvy-scrape.exe
+-	rm -f $(BINDIR)/sqirvy-scrape
+diff --git a/cmd/sqirvy-scrape/cli.go b/cmd/sqirvy-scrape/cli.go
+deleted file mode 100644
+index 18957d9..0000000
+--- a/cmd/sqirvy-scrape/cli.go
++++ /dev/null
+@@ -1,116 +0,0 @@
+-// Package main provides command line interface functionality for web scraping.
+-//
+-// This package handles:
+-// - Command line argument parsing and validation
+-// - File reading and content aggregation
+-// - Web scraping of provided URLs
+-// - Size limit enforcement for API requests
+-// - Help message formatting and display
+-// - Model selection and validation
+-package main
+-
+-import (
+-	"flag"
+-	"fmt"
+-	"sort"
+-	sqirvy "sqirvy-llm/pkg/sqirvy"
+-	util "sqirvy-llm/pkg/util"
+-	"strings"
+-)
+-
+-const MaxTotalBytes = 262144 // 256KB limit
+-
+-// helpMessage displays usage information for the command line tool.
+-func helpMessage(prefix string) {
+-	if prefix != "" {
+-		fmt.Println(prefix)
+-	}
+-	fmt.Println("Usage: sqirvy-scrape [options] urls...")
+-	fmt.Println("initializes the context from stdin, pipe or redirection (if any)")
+-	fmt.Println("scrapes content from URLs and sends it to the specified AI model")
+-	fmt.Println("Options:")
+-	fmt.Println("  -h     print this help message")
+-	fmt.Println("  -m     AI model to use (default: claude-3-5-sonnet-latest)")
+-	fmt.Println("")
+-	fmt.Println("Supported models:")
+-	keys := make([]string, 0, len(sqirvy.ModelToProvider))
+-	for key := range sqirvy.ModelToProvider {
+-		keys = append(keys, key)
+-	}
+-	sort.Strings(keys)
+-	for _, key := range keys {
+-		fmt.Printf("  %s\n", key)
+-	}
+-}
+-
+-// processCommandLine handles command line argument processing and input handling.
+-func processCommandLine() (string, string, error) {
+-	// Suppress default help message
+-	flag.Usage = func() {}
+-
+-	var help bool
+-	var model string
+-
+-	flag.BoolVar(&help, "h", false, "print help message")
+-	flag.StringVar(&model, "m", "", "AI model to use")
+-	flag.Parse()
+-
+-	if help {
+-		helpMessage("")
+-		return "help", "", nil
+-	}
+-
+-	var builder strings.Builder
+-	var totalSize int64
+-
+-	// Read system.md if it exists
+-	sysprompt, size, err := util.ReadFile("./system.md", MaxTotalBytes)
+-	if err == nil && size > 0 {
+-		builder.Write(sysprompt)
+-		builder.WriteString("\n\n")
+-		totalSize += int64(builder.Len())
+-	}
+-
+-	// Check for stdin input
+-	isPipe, err := util.InputIsFromPipe()
+-	if err != nil {
+-		return "", "", fmt.Errorf("error checking stdin: %w", err)
+-	}
+-
+-	if isPipe {
+-		stdinData, stdinSize, err := util.ReadStdin(MaxTotalBytes - totalSize)
+-		if err != nil {
+-			return "", "", fmt.Errorf("error reading stdin: %w", err)
+-		}
+-		builder.WriteString(stdinData)
+-		builder.WriteString("\n\n")
+-		totalSize += stdinSize
+-	}
+-
+-	// Process command line arguments as URLs or files
+-	for _, arg := range flag.Args() {
+-		// Try to read as file first
+-		fileData, fileSize, err := util.ReadFile(arg, MaxTotalBytes-totalSize)
+-		if err == nil {
+-			builder.Write(fileData)
+-			builder.WriteString("\n\n")
+-			totalSize += fileSize
+-			continue
+-		}
+-
+-		// If not a file, try to scrape as URL
+-		content, err := util.ScrapeURL(arg)
+-		if err != nil {
+-			return "", "", fmt.Errorf("failed to process %s as file or URL: %w", arg, err)
+-		}
+-		builder.WriteString(content)
+-		builder.WriteString("\n\n")
+-	}
+-
+-	// Check if we have any content
+-	if builder.Len() == 0 {
+-		return "", "", fmt.Errorf("no content from files, URLs, or stdin")
+-	}
+-
+-	return builder.String(), model, nil
+-}
+diff --git a/cmd/sqirvy-scrape/main.go b/cmd/sqirvy-scrape/main.go
+deleted file mode 100644
+index 51ebeb6..0000000
+--- a/cmd/sqirvy-scrape/main.go
++++ /dev/null
+@@ -1,53 +0,0 @@
+-// Package main implements a command-line tool for web scraping and AI analysis.
+-//
+-// The program accepts URLs and files as input, scrapes web content, and sends
+-// the combined content to an AI model for analysis. It supports multiple AI
+-// providers and models, with configurable options for processing and output.
+-package main
+-
+-import (
+-	"fmt"
+-	"log"
+-	sqirvy "sqirvy-llm/pkg/sqirvy"
+-)
+-
+-var DEFAULT_MODEL = "claude-3-5-haiku-latest"
+-
+-func main() {
+-	// Process command line arguments
+-	prompt, modelFlag, err := processCommandLine()
+-	if err != nil {
+-		log.Fatal(err)
+-	}
+-	if prompt == "help" {
+-		return
+-	}
+-
+-	// Use default model if none specified
+-	model := DEFAULT_MODEL
+-	if modelFlag != "" {
+-		model = modelFlag
+-	}
+-
+-	// Get the provider for the model
+-	provider, err := sqirvy.GetProviderName(model)
+-	if err != nil {
+-		log.Fatal(err)
+-	}
+-
+-	// Create client for the provider
+-	client, err := sqirvy.NewClient(sqirvy.Provider(provider))
+-	if err != nil {
+-		log.Fatal(err)
+-	}
+-
+-	// Make the query
+-	response, err := client.QueryText(prompt, model, sqirvy.Options{})
+-	if err != nil {
+-		log.Fatal(err)
+-	}
+-
+-	// Print response to stdout
+-	fmt.Print(response)
+-	fmt.Println()
+-}
+diff --git a/cmd/sqirvy-scrape/test.sh b/cmd/sqirvy-scrape/test.sh
+deleted file mode 100755
+index 8623fff..0000000
+--- a/cmd/sqirvy-scrape/test.sh
++++ /dev/null
+@@ -1,54 +0,0 @@
+-#!/bin/bash
+-
+-check_return_code() {
+-    local cmd="$1"
+-    $cmd $2 $3 $4 $5 $6 $7 $8 $9
+-    local return_code=$?
+-    
+-    if [ $return_code -eq 0 ]; then
+-        echo "Command '$cmd' executed successfully"
+-    else
+-        echo "Command '$cmd' failed with exit code $return_code"
+-        exit 1
+-    fi
+-    
+-    return $return_code
+-}
+-
+-ignore_return_code() {
+-    local cmd="$1"
+-    $cmd $2 $3 $4 $5 $6 $7 $8 $9
+-    local return_code=$?
+-    
+-    return 0
+-}
+-
+-makecopy="scrape this url and create a single html file containing html,css and js that \
+-   creates a dummy webpage that has the same layout and styling as the original webpage. \
+-   do not include any explanations or other text in the output. remove any triple backticks from the output.  \
+-   the output should be ready to be served as a webpage"
+-
+-
+-# Build latest
+-export BINDIR=./bin
+-mkdir -p $BINDIR
+-make -s build
+-
+-echo "-------------------------------"
+-echo "$BINDIR/sqirvy-scrape (should fail)"
+-ignore_return_code go run .
+-echo "-------------------------------"
+-echo "$BINDIR/sqirvy-scrape -h"
+-check_return_code go run . -h
+-echo "-------------------------------"
+-echo "$BINDIR/sqirvy-scrape https://sqirvy.xyz"
+-check_return_code echo "summarize the url" | go run . https://sqirvy.xyz
+-echo "-------------------------------"
+-echo "$BINDIR/sqirvy-scrape https://sqirvy.xyz https://test-alert.vercel.app/"
+-check_return_code echo "summarize the urls" | go run . https://sqirvy.xyz https://test-alert.vercel.app/
+-echo "-------------------------------"
+-echo "'copy' $BINDIR/sqirvy-scrape https://sqirvy.xyz "
+-check_return_code echo $makecopy | go run . https://sqirvy.xyz  xyz.html
+-echo "-------------------------------"
+-
+-rm -rf bin
+\ No newline at end of file
+diff --git a/examples/chain/.gitignore b/examples/chain/.gitignore
+deleted file mode 100644
+index f104652..0000000
+--- a/examples/chain/.gitignore
++++ /dev/null
+@@ -1 +0,0 @@
+-*.py
+diff --git a/examples/chain/chain.sh b/examples/chain/chain.sh
+deleted file mode 100755
+index 6a51400..0000000
+--- a/examples/chain/chain.sh
++++ /dev/null
+@@ -1,17 +0,0 @@
+-#!/bin/bash
+-query="../../bin/sqirvy-query"
+-
+-# this example uses the system.md prompt by default and 
+-# then uses a chain of prompts to generate the code.py file
+-# system.md   : a system prompt for software engineers
+-#             : this is the default system prompt used by sqirvy-query if it is in the local directory
+-# describe.md : a general description of well formed python code
+-#             : uses gemini-1.5-flash model for this query
+-# generate.md : a description of the specific code to generate
+-#             : uses claude-3-5-sonnet-latest model for this query
+-
+-
+-# create the prompt files then pipe them to the queries
+-$query -m gemini-1.5-flash describe.md |\
+-$query -m claude-3-5-sonnet-latest generate.md |\
+-tee code.py 
+diff --git a/examples/chain/describe.md b/examples/chain/describe.md
+deleted file mode 100644
+index 5090bc8..0000000
+--- a/examples/chain/describe.md
++++ /dev/null
+@@ -1 +0,0 @@
+-describe the components of a well organized and idiomatic python program. be specifc and detailed.
+diff --git a/examples/chain/generate.md b/examples/chain/generate.md
+deleted file mode 100644
+index b43b181..0000000
+--- a/examples/chain/generate.md
++++ /dev/null
+@@ -1,3 +0,0 @@
+-write a general purpose python web server that can serve static files . the server should be able to handle multiple clients simultaneously and provide a user-friendly interface for interacting with the server.
+-output only the code, no header, trailer or description
+-output python code, not markdown. do not wrap the output with ```
+diff --git a/examples/chain/system.md b/examples/chain/system.md
+deleted file mode 100644
+index 6f6632c..0000000
+--- a/examples/chain/system.md
++++ /dev/null
+@@ -1,74 +0,0 @@
+-## AI System Prompt for Experienced Software Engineers
+-
+-### Primary Objective
+-
+-As an AI assistant, your primary role is to support experienced software engineers in all aspects of software development, from conceptualization to deployment and maintenance. Provide expert-level guidance, code snippets, best practices, and problem-solving strategies across a wide range of programming languages, frameworks, and technologies.
+-
+-### Key Responsibilities
+-
+-1. **Technical Expertise**
+-
+-   - Offer in-depth knowledge of multiple programming languages including Python, JavaScript, C++, Go, C and C#
+-   - Provide insights on various frameworks and libraries relevant to different project types
+-   - Explain complex algorithms, data structures, and design patterns
+-
+-2. **Project Planning and Architecture**
+-
+-   - Assist in creating system architectures and designing scalable solutions
+-   - Guide on choosing appropriate tech stacks for different project requirements
+-   - Advise on microservices, serverless architectures, and cloud-native development
+-
+-3. **Code Quality and Best Practices**
+-
+-   - Recommend coding standards and best practices for clean, maintainable code
+-   - Suggest refactoring strategies to improve code quality and performance
+-   - Provide guidance on writing effective unit tests and implementing CI/CD pipelines
+-
+-4. **Problem-Solving and Debugging**
+-
+-   - Help diagnose and resolve complex technical issues
+-   - Offer strategies for optimizing performance and improving efficiency
+-   - Provide step-by-step debugging approaches for various scenarios
+-
+-5. **Security and Data Privacy**
+-
+-   - Advise on implementing robust security measures in software development
+-   - Guide on best practices for handling sensitive data and ensuring compliance with regulations (e.g., GDPR, CCPA)
+-
+-6. **DevOps and Deployment**
+-
+-   - Assist with containerization strategies (e.g., Docker, Kubernetes)
+-   - Provide guidance on cloud deployment (AWS, Azure, GCP) and infrastructure as code
+-   - Advise on monitoring, logging, and observability best practices
+-
+-7. **Emerging Technologies**
+-   - Offer insights on AI/ML integration in software projects
+-   - Provide information on blockchain, IoT, and other cutting-edge technologies
+-   - Guide on adopting new tools and methodologies in software development
+-
+-### Communication Guidelines
+-
+-- Provide clear, concise, and technically accurate responses
+-- Use appropriate technical jargon but be prepared to explain complex concepts when needed
+-- Offer multiple solutions or approaches when applicable, highlighting pros and cons
+-- Include code snippets, pseudocode, or diagrams when they enhance understanding
+-
+-### Ethical Considerations
+-
+-- Emphasize the importance of ethical coding practices and responsible AI development
+-- Encourage consideration of accessibility and inclusivity in software design
+-- Promote sustainable and environmentally conscious development practices
+-
+-### Continuous Learning
+-
+-- Stay updated on the latest trends, tools, and best practices in software engineering
+-- Encourage ongoing learning and professional development
+-- Provide resources for further reading and skill enhancement
+-
+-### Project-Specific Adaptability
+-
+-- Tailor advice to specific project types (web, mobile, desktop, embedded systems, etc.)
+-- Consider project scale, from small startups to enterprise-level applications
+-- Adapt recommendations based on team size and composition
+-
+-Remember to maintain a professional yet approachable tone, acknowledging the expertise of the software engineers while providing valuable insights and support.
+diff --git a/examples/code-review/.gitignore b/examples/code-review/.gitignore
+deleted file mode 100644
+index 3d293cc..0000000
+--- a/examples/code-review/.gitignore
++++ /dev/null
+@@ -1,4 +0,0 @@
+-review-anthropic.md
+-review-gemini.md
+-review-openai.md
+-*.pdf
+\ No newline at end of file
+diff --git a/examples/code-review/review.sh b/examples/code-review/review.sh
+deleted file mode 100755
+index 7e5595c..0000000
+--- a/examples/code-review/review.sh
++++ /dev/null
+@@ -1,21 +0,0 @@
+-#!/bin/bash
+-query="../../bin/sqirvy-query"
+-
+-# this example uses the system.md prompt by default 
+-prompt="review the following code for \
+-    bugs, style, clarity, security, performance and idiomatic code. \
+-    include filename and line number of any findings. \
+-    output in markdown format.  \
+-    code is well-designed. \
+-    code isn’t more complex than it needs to be. \
+-    no extraneous or unused code is present.\
+-    naming conventions are consistent and descriptive. \
+-    code is formatted properly. \
+-    Comments are clear and useful. \
+-    The code conforms to the appropriate style guide."
+-
+-# use the smaller models for the review
+-echo $prompt | $query  -m claude-3-5-haiku-latest ../../cmd/sqirvy-query/*.go > review-anthropic.md
+-echo $prompt | $query  -m gemini-1.5-flash ../../cmd/sqirvy-query/*.go > review-gemini.md
+-echo $prompt | $query  -m gpt-4o-mini ../../cmd/sqirvy-query/*.go > review-openai.md
+-
+diff --git a/examples/code-review/system.md b/examples/code-review/system.md
+deleted file mode 100644
+index 6f6632c..0000000
+--- a/examples/code-review/system.md
++++ /dev/null
+@@ -1,74 +0,0 @@
+-## AI System Prompt for Experienced Software Engineers
+-
+-### Primary Objective
+-
+-As an AI assistant, your primary role is to support experienced software engineers in all aspects of software development, from conceptualization to deployment and maintenance. Provide expert-level guidance, code snippets, best practices, and problem-solving strategies across a wide range of programming languages, frameworks, and technologies.
+-
+-### Key Responsibilities
+-
+-1. **Technical Expertise**
+-
+-   - Offer in-depth knowledge of multiple programming languages including Python, JavaScript, C++, Go, C and C#
+-   - Provide insights on various frameworks and libraries relevant to different project types
+-   - Explain complex algorithms, data structures, and design patterns
+-
+-2. **Project Planning and Architecture**
+-
+-   - Assist in creating system architectures and designing scalable solutions
+-   - Guide on choosing appropriate tech stacks for different project requirements
+-   - Advise on microservices, serverless architectures, and cloud-native development
+-
+-3. **Code Quality and Best Practices**
+-
+-   - Recommend coding standards and best practices for clean, maintainable code
+-   - Suggest refactoring strategies to improve code quality and performance
+-   - Provide guidance on writing effective unit tests and implementing CI/CD pipelines
+-
+-4. **Problem-Solving and Debugging**
+-
+-   - Help diagnose and resolve complex technical issues
+-   - Offer strategies for optimizing performance and improving efficiency
+-   - Provide step-by-step debugging approaches for various scenarios
+-
+-5. **Security and Data Privacy**
+-
+-   - Advise on implementing robust security measures in software development
+-   - Guide on best practices for handling sensitive data and ensuring compliance with regulations (e.g., GDPR, CCPA)
+-
+-6. **DevOps and Deployment**
+-
+-   - Assist with containerization strategies (e.g., Docker, Kubernetes)
+-   - Provide guidance on cloud deployment (AWS, Azure, GCP) and infrastructure as code
+-   - Advise on monitoring, logging, and observability best practices
+-
+-7. **Emerging Technologies**
+-   - Offer insights on AI/ML integration in software projects
+-   - Provide information on blockchain, IoT, and other cutting-edge technologies
+-   - Guide on adopting new tools and methodologies in software development
+-
+-### Communication Guidelines
+-
+-- Provide clear, concise, and technically accurate responses
+-- Use appropriate technical jargon but be prepared to explain complex concepts when needed
+-- Offer multiple solutions or approaches when applicable, highlighting pros and cons
+-- Include code snippets, pseudocode, or diagrams when they enhance understanding
+-
+-### Ethical Considerations
+-
+-- Emphasize the importance of ethical coding practices and responsible AI development
+-- Encourage consideration of accessibility and inclusivity in software design
+-- Promote sustainable and environmentally conscious development practices
+-
+-### Continuous Learning
+-
+-- Stay updated on the latest trends, tools, and best practices in software engineering
+-- Encourage ongoing learning and professional development
+-- Provide resources for further reading and skill enhancement
+-
+-### Project-Specific Adaptability
+-
+-- Tailor advice to specific project types (web, mobile, desktop, embedded systems, etc.)
+-- Consider project scale, from small startups to enterprise-level applications
+-- Adapt recommendations based on team size and composition
+-
+-Remember to maintain a professional yet approachable tone, acknowledging the expertise of the software engineers while providing valuable insights and support.
+diff --git a/pkg/util/cli.go b/pkg/util/cli.go
+deleted file mode 100644
+index 303ec29..0000000
+--- a/pkg/util/cli.go
++++ /dev/null
+@@ -1,129 +0,0 @@
+-// Package main provides command line interface functionality for the AI query tool.
+-//
+-// This file contains the command-line processing logic including:
+-// - Argument parsing
+-// - Input handling from both files and stdin
+-// - Size limit enforcement
+-// - Help message formatting
+-package util
+-
+-import (
+-	"flag"
+-	"fmt"
+-	"strings"
+-)
+-
+-// Max Bytes To Read
+-// MaxTotalBytes is the maximum allowed size for all input files combined
+-// assume the model will return an error if max context length is exceeded
+-// it is impractical to know the exact max context length beforehand for all models
+-// assume max 64k tokens
+-// assuming 4 characters per token
+-// total 262144 bytes
+-// since the bytes are converted to UTF-8, the upload could be larger than the byte limit
+-const maxTokens = 65536
+-const bytesPerToken = 4
+-const MaxTotalBytes = maxTokens * bytesPerToken // 262144 bytes limit
+-
+-func CliFlags() (help bool, model string, function string, files []string, err error) {
+-	// create a dummy help function
+-	flag.Usage = func() {
+-		// print the help message
+-	}
+-
+-	// suppress the default help message
+-	// add a -h flag
+-	var h bool
+-	var m string
+-	var f string
+-
+-	flag.BoolVar(&h, "h", false, "print help message")
+-	flag.StringVar(&m, "m", "", "AI model to use (default: claude-3.5-sonnet-latest)")
+-	flag.StringVar(&f, "f", "", "AI function to use (default: generate)")
+-
+-	flag.Parse()
+-
+-	// check if help flag is set
+-	help = h
+-
+-	// check if model flag is set
+-	if m != "" {
+-		model = m
+-	}
+-
+-	// check if function flag is set
+-	if f != "" {
+-		function = f
+-	}
+-
+-	// get the files
+-	files = flag.Args()
+-
+-	return help, model, function, files, nil
+-}
+-
+-// ReadPrompt reads and concatenates the contents of the given files and stdin,
+-// input strings are concatenated in the following order:
+-// 1. ./system.md (if it exists)
+-// 2. stdin (if it has input on stding, like a pipe)
+-// 3. files (if any are provided)
+-func ReadPrompt() (string, error) {
+-	var builder strings.Builder
+-	var totalSize int64
+-
+-	// Initialize prompt with system.md if it exists
+-	builder.WriteString("")
+-	sysprompt, totalSize, err := ReadFile("./system.md", MaxTotalBytes)
+-	if err != nil {
+-		// no system.md file, skip a system prompt
+-		totalSize = 0
+-	}
+-	if totalSize > 0 {
+-		builder.WriteString(string(sysprompt))
+-		builder.WriteString("\n\n")
+-		totalSize += int64(builder.Len())
+-	}
+-
+-	// Check if we have data from stdin
+-	p, err := InputIsFromPipe()
+-	if err != nil {
+-		return "", fmt.Errorf("error checking if input is from pipe: %w", err)
+-	}
+-
+-	// Read stdin
+-	var stdinData string
+-	var stdinSize int64
+-	if p {
+-		stdinData, stdinSize, err = ReadStdin(MaxTotalBytes)
+-		if err != nil {
+-			return "", fmt.Errorf("error reading from stdin: %w", err)
+-		}
+-	}
+-
+-	// Check if total size of stdin exceeds MaxTotalBytes
+-	totalSize += stdinSize
+-	if totalSize > MaxTotalBytes {
+-		return "", fmt.Errorf("total size would exceed limit of %d bytes", MaxTotalBytes)
+-	}
+-	builder.WriteString(string(stdinData))
+-
+-	// Read all files
+-	fileData, fileSize, err := ReadFiles(flag.Args(), MaxTotalBytes)
+-	if err != nil {
+-		return "", fmt.Errorf("error reading files: %w", err)
+-	}
+-
+-	// check if total size of stdin + files exceeds MaxTotalBytes
+-	totalSize += fileSize
+-	if totalSize > MaxTotalBytes {
+-		return "", fmt.Errorf("total size would exceed limit of %d bytes", MaxTotalBytes)
+-	}
+-
+-	builder.WriteString(fileData)
+-	if builder.Len() == 0 {
+-		return "", fmt.Errorf("no prompts specified, stdin and files have no data")
+-	}
+-
+-	// return the consolidated prompt
+-	return builder.String(), nil
+-}
+diff --git a/pkg/util/cli_test.go b/pkg/util/cli_test.go
+deleted file mode 100644
+index 728fee1..0000000
+--- a/pkg/util/cli_test.go
++++ /dev/null
+@@ -1,128 +0,0 @@
+-package util
+-
+-import (
+-	"flag"
+-	"os"
+-	"reflect"
+-	"testing"
+-)
+-
+-func TestCliFlags(t *testing.T) {
+-	tests := []struct {
+-		name         string
+-		args         []string
+-		wantHelp     bool
+-		wantModel    string
+-		wantFunction string
+-		wantFiles    []string
+-		wantErr      bool
+-	}{
+-		{
+-			name:         "no flags",
+-			args:         []string{"app"},
+-			wantHelp:     false,
+-			wantModel:    "",
+-			wantFunction: "",
+-			wantFiles:    []string{},
+-			wantErr:      false,
+-		},
+-		{
+-			name:         "short help flag",
+-			args:         []string{"app", "-h"},
+-			wantHelp:     true,
+-			wantModel:    "",
+-			wantFunction: "",
+-			wantFiles:    []string{},
+-			wantErr:      false,
+-		},
+-		{
+-			name:         "short model flag",
+-			args:         []string{"app", "-m", "gpt-4"},
+-			wantHelp:     false,
+-			wantModel:    "gpt-4",
+-			wantFunction: "",
+-			wantFiles:    []string{},
+-			wantErr:      false,
+-		},
+-		{
+-			name:         "short function flag",
+-			args:         []string{"app", "-f", "analyze"},
+-			wantHelp:     false,
+-			wantModel:    "",
+-			wantFunction: "analyze",
+-			wantFiles:    []string{},
+-			wantErr:      false,
+-		},
+-		{
+-			name:         "all flags",
+-			args:         []string{"app", "-h", "-m", "gpt-4", "-f", "analyze"},
+-			wantHelp:     true,
+-			wantModel:    "gpt-4",
+-			wantFunction: "analyze",
+-			wantFiles:    []string{},
+-			wantErr:      false,
+-		},
+-		{
+-			name:         "single file after flags",
+-			args:         []string{"app", "-m", "gpt-4", "file1.txt"},
+-			wantHelp:     false,
+-			wantModel:    "gpt-4",
+-			wantFunction: "",
+-			wantFiles:    []string{"file1.txt"},
+-			wantErr:      false,
+-		},
+-		{
+-			name:         "multiple files after flags",
+-			args:         []string{"app", "-m", "gpt-4", "file1.txt", "file2.txt", "file3.txt"},
+-			wantHelp:     false,
+-			wantModel:    "gpt-4",
+-			wantFunction: "",
+-			wantFiles:    []string{"file1.txt", "file2.txt", "file3.txt"},
+-			wantErr:      false,
+-		},
+-		{
+-			name:         "all flags with files",
+-			args:         []string{"app", "-h", "-m", "gpt-4", "-f", "analyze", "file1.txt", "file2.txt"},
+-			wantHelp:     true,
+-			wantModel:    "gpt-4",
+-			wantFunction: "analyze",
+-			wantFiles:    []string{"file1.txt", "file2.txt"},
+-			wantErr:      false,
+-		},
+-		{
+-			name:         "files with spaces in names",
+-			args:         []string{"app", "-m", "gpt-4", "my file.txt", "another file.md"},
+-			wantHelp:     false,
+-			wantModel:    "gpt-4",
+-			wantFunction: "",
+-			wantFiles:    []string{"my file.txt", "another file.md"},
+-			wantErr:      false,
+-		},
+-	}
+-
+-	for _, tt := range tests {
+-		t.Run(tt.name, func(t *testing.T) {
+-			// Reset command-line flags before each test
+-			flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+-			os.Args = tt.args
+-
+-			help, model, function, files, err := CliFlags()
+-			if (err != nil) != tt.wantErr {
+-				t.Errorf("CliFlags() error = %v, wantErr %v", err, tt.wantErr)
+-				return
+-			}
+-			if help != tt.wantHelp {
+-				t.Errorf("CliFlags() help = %v, want %v", help, tt.wantHelp)
+-			}
+-			if model != tt.wantModel {
+-				t.Errorf("CliFlags() model = %v, want %v", model, tt.wantModel)
+-			}
+-			if function != tt.wantFunction {
+-				t.Errorf("CliFlags() function = %v, want %v", function, tt.wantFunction)
+-			}
+-			if !reflect.DeepEqual(files, tt.wantFiles) {
+-				t.Errorf("CliFlags() files = %v, want %v", files, tt.wantFiles)
+-			}
+-		})
+-	}
+-}
+diff --git a/pkg/util/files.go b/pkg/util/files.go
+index 704f2ef..000e097 100644
+--- a/pkg/util/files.go
++++ b/pkg/util/files.go
+@@ -20,12 +20,23 @@ func InputIsFromPipe() (bool, error) {
+ }
+ 
+ // ReadStdin reads and concatenates the contents of stdin,
+-func ReadStdin(maxTotalBytes int64) (string, int64, error) {
++func ReadStdin(maxTotalBytes int64) (data string, size int64, err error) {
++	pipe, err := InputIsFromPipe()
++
++	if err != nil {
++		return "", 0, err
++	}
++
++	// not a pipe/stdin, so just return
++	if !pipe {
++		return "", 0, nil
++	}
++
+ 	stdinBytes, err := io.ReadAll(os.Stdin)
+ 	if err != nil {
+ 		return "", 0, fmt.Errorf("error reading from stdin: %w", err)
+ 	}
+-	size := int64(len(stdinBytes))
++	size = int64(len(stdinBytes))
+ 	if size > maxTotalBytes {
+ 		return "", 0, fmt.Errorf("total size would exceed limit of %d bytes", maxTotalBytes)
+ 	}
+diff --git a/pkg/util/pdf.go b/pkg/util/pdf.go
+deleted file mode 100644
+index 4b82788..0000000
+--- a/pkg/util/pdf.go
++++ /dev/null
+@@ -1,143 +0,0 @@
+-// Package util provides utility functions for file operations, web scraping,
+-// and PDF processing. The PDF functionality includes text extraction and
+-// AI-powered summarization capabilities.
+-package util
+-
+-import (
+-	"bytes"
+-	"fmt"
+-	"os"
+-	"os/exec"
+-	"path/filepath"
+-
+-	api "sqirvy-llm/pkg/sqirvy"
+-)
+-
+-// ExtractPDF extracts text content from PDF binary data using pdftotext.
+-//
+-// Parameters:
+-//   - pdfData: []byte containing the raw PDF file data
+-//
+-// Returns:
+-//   - string: Extracted text content from the PDF
+-//   - error: Returns error if:
+-//   - pdfData is empty
+-//   - pdftotext command fails
+-//   - text extraction fails
+-//   - temporary file operations fail
+-//
+-// Example usage:
+-//
+-// pdfData, err := os.ReadFile("document.pdf")
+-//
+-//	if err != nil {
+-//	   log.Fatal(err)
+-//	}
+-//
+-// text, err := ExtractPDF(pdfData)
+-//
+-//	if err != nil {
+-//	   log.Fatal(err)
+-//	}
+-//
+-// fmt.Println(text)
+-func ExtractPDF(pdfData []byte) (string, error) {
+-	// Validate input
+-	if len(pdfData) == 0 {
+-		return "", fmt.Errorf("PDF data cannot be empty")
+-	}
+-
+-	// Create temporary directory for processing
+-	tempDir, err := os.MkdirTemp("", "pdf_extract_*")
+-	if err != nil {
+-		return "", fmt.Errorf("failed to create temporary directory: %w", err)
+-	}
+-	defer os.RemoveAll(tempDir) // Clean up temp directory
+-
+-	// Create temporary PDF file
+-	pdfPath := filepath.Join(tempDir, "input.pdf")
+-	if err := os.WriteFile(pdfPath, pdfData, 0600); err != nil {
+-		return "", fmt.Errorf("failed to write temporary PDF file: %w", err)
+-	}
+-
+-	// Create output path for text
+-	txtPath := filepath.Join(tempDir, "output.txt")
+-
+-	// Execute pdftotext command
+-	cmd := exec.Command("pdftotext", "-layout", pdfPath, txtPath)
+-	var stderr bytes.Buffer
+-	cmd.Stderr = &stderr
+-	if err := cmd.Run(); err != nil {
+-		return "", fmt.Errorf("pdftotext failed: %w: %s", err, stderr.String())
+-	}
+-
+-	// Read extracted text
+-	content, err := os.ReadFile(txtPath)
+-	if err != nil {
+-		return "", fmt.Errorf("failed to read extracted text: %w", err)
+-	}
+-
+-	return string(content), nil
+-}
+-
+-// SummarizePDF generates an AI-powered summary of PDF content using the sqirvy library.
+-//
+-// Parameters:
+-//   - pdfData: []byte containing the raw PDF file data
+-//   - maxTokens: Maximum number of tokens for the summary (must be > 0)
+-//
+-// Returns:
+-//   - string: AI-generated summary of the PDF content
+-//   - error: Returns error if:
+-//   - pdfData is empty
+-//   - maxTokens is invalid
+-//   - text extraction fails
+-//   - AI summarization fails
+-//
+-// Example usage:
+-//
+-// pdfData, err := os.ReadFile("document.pdf")
+-//
+-//	if err != nil {
+-//	   log.Fatal(err)
+-//	}
+-//
+-// summary, err := SummarizePDF(pdfData, 1024)
+-//
+-//	if err != nil {
+-//	   log.Fatal(err)
+-//	}
+-//
+-// fmt.Println(summary)
+-func SummarizePDF(pdfData []byte, maxTokens int) (string, error) {
+-	// Validate input
+-	if len(pdfData) == 0 {
+-		return "", fmt.Errorf("PDF data cannot be empty")
+-	}
+-	if maxTokens <= 0 {
+-		return "", fmt.Errorf("maxTokens must be greater than 0")
+-	}
+-
+-	// Extract text from PDF
+-	text, err := ExtractPDF(pdfData)
+-	if err != nil {
+-		return "", fmt.Errorf("failed to extract PDF text: %w", err)
+-	}
+-
+-	// Initialize AI client
+-	client, err := api.NewClient(api.Anthropic)
+-	if err != nil {
+-		return "", fmt.Errorf("failed to initialize AI client: %w", err)
+-	}
+-
+-	// Create summarization prompt
+-	prompt := fmt.Sprintf("Please provide a concise summary of the following text, focusing on the main points and key information:\n\n%s", text)
+-
+-	// Get summary from AI
+-	summary, err := client.QueryText(prompt, "claude-3-sonnet-20240229", api.Options{})
+-	if err != nil {
+-		return "", fmt.Errorf("failed to generate summary: %w", err)
+-	}
+-
+-	return summary, nil
+-}
+diff --git a/pkg/util/pdf_test.go b/pkg/util/pdf_test.go
+deleted file mode 100644
+index e5cfff6..0000000
+--- a/pkg/util/pdf_test.go
++++ /dev/null
+@@ -1,121 +0,0 @@
+-package util
+-
+-import (
+-	"os"
+-	"os/exec"
+-	"strings"
+-	"testing"
+-)
+-
+-func TestExtractPDF(t *testing.T) {
+-	// Skip if pdftotext is not installed
+-	if _, err := exec.LookPath("pdftotext"); err != nil {
+-		t.Skip("pdftotext not found in PATH")
+-	}
+-
+-	tests := []struct {
+-		name    string
+-		pdfPath string
+-		want    string
+-		wantErr bool
+-	}{
+-		{
+-			name:    "Valid PDF",
+-			pdfPath: "README.pdf",
+-			want:    "Sqirvy",
+-			wantErr: false,
+-		},
+-		{
+-			name:    "Empty Data",
+-			pdfPath: "",
+-			want:    "",
+-			wantErr: true,
+-		},
+-	}
+-
+-	for _, tt := range tests {
+-		t.Run(tt.name, func(t *testing.T) {
+-			var pdfData []byte
+-			var err error
+-
+-			if tt.pdfPath != "" {
+-				pdfData, err = os.ReadFile(tt.pdfPath)
+-				if err != nil {
+-					t.Fatalf("failed to read test PDF: %v", err)
+-				}
+-			}
+-
+-			got, err := ExtractPDF(pdfData)
+-			if (err != nil) != tt.wantErr {
+-				t.Errorf("ExtractPDF() error = %v, wantErr %v", err, tt.wantErr)
+-				return
+-			}
+-
+-			if !tt.wantErr && !strings.Contains(got, tt.want) {
+-				t.Errorf("ExtractPDF() = %v, want %v", got, tt.want)
+-			}
+-		})
+-	}
+-}
+-
+-func TestSummarizePDF(t *testing.T) {
+-	// Skip if no API key
+-	if os.Getenv("ANTHROPIC_API_KEY") == "" {
+-		t.Skip("ANTHROPIC_API_KEY not set")
+-	}
+-
+-	// Skip if pdftotext is not installed
+-	if _, err := exec.LookPath("pdftotext"); err != nil {
+-		t.Skip("pdftotext not found in PATH")
+-	}
+-
+-	tests := []struct {
+-		name      string
+-		pdfPath   string
+-		maxTokens int
+-		wantErr   bool
+-	}{
+-		{
+-			name:      "Valid PDF",
+-			pdfPath:   "README.pdf",
+-			maxTokens: 1024,
+-			wantErr:   false,
+-		},
+-		{
+-			name:      "Empty Data",
+-			pdfPath:   "",
+-			maxTokens: 1024,
+-			wantErr:   true,
+-		},
+-		{
+-			name:      "Invalid MaxTokens",
+-			pdfPath:   "README.pdf",
+-			maxTokens: 0,
+-			wantErr:   true,
+-		},
+-	}
+-
+-	for _, tt := range tests {
+-		t.Run(tt.name, func(t *testing.T) {
+-			var pdfData []byte
+-			var err error
+-
+-			if tt.pdfPath != "" {
+-				pdfData, err = os.ReadFile(tt.pdfPath)
+-				if err != nil {
+-					t.Fatalf("failed to read test PDF: %v", err)
+-				}
+-			}
+-
+-			got, err := SummarizePDF(pdfData, tt.maxTokens)
+-			if (err != nil) != tt.wantErr {
+-				t.Errorf("SummarizePDF() error = %v, wantErr %v", err, tt.wantErr)
+-				return
+-			}
+-
+-			if !tt.wantErr && len(got) == 0 {
+-				t.Error("SummarizePDF() returned empty summary")
+-			}
+-		})
+-	}
+-}
+diff --git a/pkg/util/scraper.go b/pkg/util/scraper.go
+index ff54aa7..277fa62 100644
+--- a/pkg/util/scraper.go
++++ b/pkg/util/scraper.go
+@@ -11,6 +11,8 @@ import (
+ 	"github.com/gocolly/colly/v2"
+ )
+ 
++const MaxScraperDepth = 2
++
+ // ScrapeURL scrapes the content from a single URL and returns it as a string.
+ //
+ // Parameters:
+@@ -36,7 +38,7 @@ func ScrapeURL(url string) (string, error) {
+ 	// Initialize collector
+ 	c := colly.NewCollector(
+ 		colly.AllowURLRevisit(),
+-		colly.MaxDepth(2),
++		colly.MaxDepth(MaxScraperDepth),
+ 	)
+ 
+ 	// Store scraped content
+diff --git a/prompts/system.md b/prompts/system.md
+index 6f6632c..42d50ad 100644
+--- a/prompts/system.md
++++ b/prompts/system.md
+@@ -2,7 +2,7 @@
+ 
+ ### Primary Objective
+ 
+-As an AI assistant, your primary role is to support experienced software engineers in all aspects of software development, from conceptualization to deployment and maintenance. Provide expert-level guidance, code snippets, best practices, and problem-solving strategies across a wide range of programming languages, frameworks, and technologies.
++As an AI assistant, your primary role is to support experienced software engineers in all aspects of software development, from conceptualization to coding, maintenance and deployment. Provide expert-level guidance, code , best practices, and problem-solving strategies across a wide range of programming languages, frameworks, and technologies.
+ 
+ ### Key Responsibilities
+ 
+diff --git a/test/dp/python-web-prompt.md b/test/dp/python-web-prompt.md
+deleted file mode 100644
+index b55a883..0000000
+--- a/test/dp/python-web-prompt.md
++++ /dev/null
+@@ -1,8 +0,0 @@
+-i want to create a python program that 
+-- takes a web url as input on the command line
+-- scrapes the web url
+-- generates a summary of the web site, 
+-- create a new web file that will display the summary
+-- uses html, css and js in a single index.html file
+-- creates a python web server for that index.html
+-- starts the web sever
+\ No newline at end of file
+diff --git a/test/dp/test.sh b/test/dp/test.sh
+deleted file mode 100644
+index b3c1afa..0000000
+--- a/test/dp/test.sh
++++ /dev/null
+@@ -1,7 +0,0 @@
+-#!/bin/bash
+-
+-# USE REASONER
+-../../bin/sqirvy-query -m deepseek-reasoner <python-web-prompt.md >peasoner.md
+-
+-# USE CHAT
+-../../bin/sqirvy-query -m deepseek-chat <python-web-prompt.md >chat.md
+\ No newline at end of file
+diff --git a/web/.gitkeep b/web/.gitkeep
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/web/Makefile b/web/Makefile
+deleted file mode 100644
+index 95ca7a6..0000000
+--- a/web/Makefile
++++ /dev/null
+@@ -1,18 +0,0 @@
+-.PHONY: build test clean
+-
+-SUBDIRS = sqirvy-web
+-
+-build:
+-	@for dir in $(SUBDIRS); do \
+-		$(MAKE) -s  -C $$dir build; \
+-	done
+-
+-test:
+-	@for dir in $(SUBDIRS); do \
+-		$(MAKE) -s  -C $$dir test; \
+-	done
+-
+-clean:
+-	@for dir in $(SUBDIRS); do \
+-		$(MAKE) -s  -C $$dir clean; \
+-	done
+diff --git a/web/sqirvy-web/Makefile b/web/sqirvy-web/Makefile
+deleted file mode 100644
+index 055bf0b..0000000
+--- a/web/sqirvy-web/Makefile
++++ /dev/null
+@@ -1,15 +0,0 @@
+-.PHONY: build run clean
+-
+-build:
+-	mkdir -p build
+-	go build -o build/sqirvy-web main.go
+-	cp -r static build/
+-
+-run: build
+-	./build/server
+-
+-test:
+-	echo "Skipping tests for web"
+-
+-clean:
+-	rm -rf build
+diff --git a/web/sqirvy-web/main.go b/web/sqirvy-web/main.go
+deleted file mode 100644
+index 081170b..0000000
+--- a/web/sqirvy-web/main.go
++++ /dev/null
+@@ -1,89 +0,0 @@
+-package main
+-
+-import (
+-	"encoding/json"
+-	"log"
+-	"net/http"
+-	sqirvy "sqirvy-llm/pkg/sqirvy"
+-)
+-
+-type ProviderResponse struct {
+-	Result string `json:"result"`
+-	Error  string `json:"error,omitempty"`
+-}
+-
+-type QueryResponse struct {
+-	Anthropic ProviderResponse `json:"anthropic"`
+-	OpenAI    ProviderResponse `json:"openai"`
+-	Gemini    ProviderResponse `json:"gemini"`
+-}
+-
+-func main() {
+-	// Serve static files from the static directory
+-	fs := http.FileServer(http.Dir("./static"))
+-	http.Handle("/", fs)
+-
+-	// Handle API requests
+-	http.HandleFunc("/api/query", handleQuery)
+-
+-	log.Println("Server starting on http://localhost:8080")
+-	if err := http.ListenAndServe(":8080", nil); err != nil {
+-		log.Fatal(err)
+-	}
+-}
+-
+-func handleQuery(w http.ResponseWriter, r *http.Request) {
+-	if r.Method != http.MethodGet {
+-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+-		return
+-	}
+-
+-	prompt := r.URL.Query().Get("prompt")
+-	if prompt == "" {
+-		http.Error(w, "Prompt parameter is required", http.StatusBadRequest)
+-		return
+-	}
+-
+-	response := QueryResponse{}
+-
+-	// Query Anthropic
+-	if client, err := sqirvy.NewClient(sqirvy.Anthropic); err == nil {
+-		if result, err := client.QueryText(prompt, "claude-3-sonnet-20240229", sqirvy.Options{}); err == nil {
+-			response.Anthropic.Result = result
+-		} else {
+-			response.Anthropic.Error = err.Error()
+-		}
+-	} else {
+-		response.Anthropic.Error = err.Error()
+-	}
+-
+-	// Query OpenAI
+-	if client, err := sqirvy.NewClient(sqirvy.OpenAI); err == nil {
+-		if result, err := client.QueryText(prompt, "gpt-4-turbo-preview", sqirvy.Options{}); err == nil {
+-			response.OpenAI.Result = result
+-		} else {
+-			response.OpenAI.Error = err.Error()
+-		}
+-	} else {
+-		response.OpenAI.Error = err.Error()
+-	}
+-
+-	// Query Gemini
+-	if client, err := sqirvy.NewClient(sqirvy.Gemini); err == nil {
+-		if result, err := client.QueryText(prompt, "gemini-2.0-flash-exp", sqirvy.Options{}); err == nil {
+-			response.Gemini.Result = result
+-		} else {
+-			response.Gemini.Error = err.Error()
+-		}
+-	} else {
+-		response.Gemini.Error = err.Error()
+-	}
+-
+-	sendJSONResponse(w, response, http.StatusOK)
+-}
+-
+-func sendJSONResponse(w http.ResponseWriter, response QueryResponse, status int) {
+-	w.Header().Set("Content-Type", "application/json")
+-	w.WriteHeader(status)
+-	json.NewEncoder(w).Encode(response)
+-}
+diff --git a/web/sqirvy-web/static/index.html b/web/sqirvy-web/static/index.html
+deleted file mode 100644
+index 1cf5512..0000000
+--- a/web/sqirvy-web/static/index.html
++++ /dev/null
+@@ -1,36 +0,0 @@
+-<!DOCTYPE html>
+-<html lang="en">
+-  <head>
+-    <meta charset="UTF-8" />
+-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-    <title>AI Model Comparison</title>
+-    <link rel="stylesheet" href="styles.css" />
+-  </head>
+-  <body>
+-    <div class="container">
+-      <h1>AI Model Comparison</h1>
+-      <div class="query-section">
+-        <textarea
+-          id="prompt"
+-          placeholder="Enter your prompt here..."
+-        ></textarea>
+-        <button id="submit">Send Query</button>
+-      </div>
+-      <div class="responses-grid">
+-        <div class="response-box">
+-          <h2>Anthropic</h2>
+-          <div id="anthropic-response" class="response"></div>
+-        </div>
+-        <div class="response-box">
+-          <h2>OpenAI</h2>
+-          <div id="openai-response" class="response"></div>
+-        </div>
+-        <div class="response-box">
+-          <h2>Google Gemini</h2>
+-          <div id="gemini-response" class="response"></div>
+-        </div>
+-      </div>
+-    </div>
+-    <script src="script.js"></script>
+-  </body>
+-</html>
+diff --git a/web/sqirvy-web/static/script.js b/web/sqirvy-web/static/script.js
+deleted file mode 100644
+index eeef916..0000000
+--- a/web/sqirvy-web/static/script.js
++++ /dev/null
+@@ -1,53 +0,0 @@
+-document.addEventListener('DOMContentLoaded', () => {
+-    const promptTextarea = document.getElementById('prompt');
+-    const submitButton = document.getElementById('submit');
+-    const anthropicResponse = document.getElementById('anthropic-response');
+-    const openaiResponse = document.getElementById('openai-response');
+-    const geminiResponse = document.getElementById('gemini-response');
+-
+-    submitButton.addEventListener('click', async () => {
+-        const prompt = promptTextarea.value.trim();
+-        
+-        if (!prompt) {
+-            alert('Please enter a prompt');
+-            return;
+-        }
+-
+-        submitButton.disabled = true;
+-        anthropicResponse.textContent = 'Loading...';
+-        openaiResponse.textContent = 'Loading...';
+-        geminiResponse.textContent = 'Loading...';
+-
+-        try {
+-            const response = await fetch(`/api/query?prompt=${encodeURIComponent(prompt)}`);
+-            const data = await response.json();
+-            
+-            // Update Anthropic response
+-            if (data.anthropic.error) {
+-                anthropicResponse.textContent = `Error: ${data.anthropic.error}`;
+-            } else {
+-                anthropicResponse.textContent = data.anthropic.result;
+-            }
+-
+-            // Update OpenAI response
+-            if (data.openai.error) {
+-                openaiResponse.textContent = `Error: ${data.openai.error}`;
+-            } else {
+-                openaiResponse.textContent = data.openai.result;
+-            }
+-
+-            // Update Gemini response
+-            if (data.gemini.error) {
+-                geminiResponse.textContent = `Error: ${data.gemini.error}`;
+-            } else {
+-                geminiResponse.textContent = data.gemini.result;
+-            }
+-        } catch (error) {
+-            anthropicResponse.textContent = `Error: ${error.message}`;
+-            openaiResponse.textContent = `Error: ${error.message}`;
+-            geminiResponse.textContent = `Error: ${error.message}`;
+-        } finally {
+-            submitButton.disabled = false;
+-        }
+-    });
+-});
+diff --git a/web/sqirvy-web/static/styles.css b/web/sqirvy-web/static/styles.css
+deleted file mode 100644
+index d3e9fd5..0000000
+--- a/web/sqirvy-web/static/styles.css
++++ /dev/null
+@@ -1,82 +0,0 @@
+-body {
+-    font-family: Arial, sans-serif;
+-    line-height: 1.6;
+-    margin: 0;
+-    padding: 20px;
+-    background-color: #f5f5f5;
+-}
+-
+-.container {
+-    max-width: 1200px;
+-    margin: 0 auto;
+-    background-color: white;
+-    padding: 20px;
+-    border-radius: 8px;
+-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+-}
+-
+-h1 {
+-    text-align: center;
+-    color: #333;
+-    margin-bottom: 20px;
+-}
+-
+-h2 {
+-    color: #444;
+-    margin-top: 0;
+-    font-size: 1.2em;
+-}
+-
+-.query-section {
+-    margin-bottom: 20px;
+-}
+-
+-textarea {
+-    width: 100%;
+-    height: 100px;
+-    padding: 10px;
+-    margin-bottom: 10px;
+-    border: 1px solid #ddd;
+-    border-radius: 4px;
+-    resize: vertical;
+-}
+-
+-button {
+-    display: block;
+-    width: 100%;
+-    padding: 10px;
+-    background-color: #007bff;
+-    color: white;
+-    border: none;
+-    border-radius: 4px;
+-    cursor: pointer;
+-}
+-
+-button:hover {
+-    background-color: #0056b3;
+-}
+-
+-button:disabled {
+-    background-color: #cccccc;
+-    cursor: not-allowed;
+-}
+-
+-.responses-grid {
+-    display: grid;
+-    grid-template-columns: repeat(3, 1fr);
+-    gap: 20px;
+-    margin-top: 20px;
+-}
+-
+-.response-box {
+-    background-color: #f8f9fa;
+-    padding: 15px;
+-    border-radius: 4px;
+-    border: 1px solid #ddd;
+-}
+-
+-.response {
+-    min-height: 200px;
+-    white-space: pre-wrap;
+-    overflow-wrap: break-word;
+-}

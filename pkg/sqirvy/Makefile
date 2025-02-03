@@ -4,7 +4,8 @@ build:
 	staticcheck ./...
 
 test:
+	@echo "Testing pkg/sqirvy"
 	go test .
 
 clean:
-	@echo "Skipping clean"
+	@echo "pkg/sqirvy"
