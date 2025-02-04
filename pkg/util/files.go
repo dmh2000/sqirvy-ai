@@ -40,7 +40,9 @@ func ReadStdin(maxTotalBytes int64) (data string, size int64, err error) {
 	if size > maxTotalBytes {
 		return "", 0, fmt.Errorf("total size would exceed limit of %d bytes", maxTotalBytes)
 	}
-	return string(stdinBytes), size, nil
+	// wrap thje input in backticks
+	s := "```stdin\n" + string(stdinBytes) + "```"
+	return s, size, nil
 }
 
 // validateFilePath checks if the given file path is safe and returns a cleaned version
@@ -107,12 +109,6 @@ func ReadFile(fname string, maxTotalBytes int64) ([]byte, int64, error) {
 		content = append(content, buf[:n]...)
 	}
 
-	// // Read file
-	// content, err := os.ReadFile(cleanPath)
-	// if err != nil {
-	// 	return nil, 0, fmt.Errorf("error reading file %s: %v", fname, err)
-	// }
-
 	return content, int64(len(content)), nil
 }
 
@@ -127,6 +123,8 @@ func ReadFiles(filenames []string, maxTotalBytes int64) (string, int64, error) {
 	var totalSize int64
 	builder := strings.Builder{}
 	for _, fname := range filenames {
+		start := []byte(fmt.Sprintf("```%s", fname))
+		builder.Write(start)
 		// Read file
 		s, size, err := ReadFile(fname, maxTotalBytes)
 		if err != nil {
@@ -139,6 +137,9 @@ func ReadFiles(filenames []string, maxTotalBytes int64) (string, int64, error) {
 		}
 		// add to builder
 		builder.Write(s)
+
+		end := []byte("```")
+		builder.Write(end)
 	}
 
 	return builder.String(), totalSize, nil
