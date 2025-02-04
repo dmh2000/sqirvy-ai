@@ -1,4 +1,4 @@
-```prompt
+```instructions
 - Analyze the git diff and summarize the differences for a git commit comment
 - do not suggest improvements or fixes
 - Do not wrap the commit comment in triple back ticks and do not add extra comments outside of the commit comment itself. 
