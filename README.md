@@ -71,7 +71,10 @@ python -m http.server 8080 --directory tetris
 
 ```bash
 # output the diff to stdout and pipe it into sqirvy -f commit
-git diff | $BINDIR/sqirvy . -f commit -m gpt-4o-mini
+message=mktemp
+git diff | $BINDIR/sqirvy . -f commit -m gpt-4o-mini >message
+git commit -m $(cat $message)
+rm message
 ```
 ## Sqirvy-llm Command Line Programs
 

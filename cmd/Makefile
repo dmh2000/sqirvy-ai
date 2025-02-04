@@ -1,5 +1,6 @@
 .PHONY: build test clean
 
+BINDIR=../bin
 SUBDIRS = sqirvy
 
 build:
