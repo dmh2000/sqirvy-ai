@@ -9,7 +9,7 @@ run: build
 	./build/server
 
 test:
-	echo "examples/web"
+	echo "Testinng examples/web"
 
 clean:
 	rm -rf build

@@ -30,6 +30,9 @@ var systemPrompt string
 //go:embed prompts/query.md
 var queryPrompt string
 
+//go:embed prompts/plan.md
+var planPrompt string
+
 //go:embed prompts/review.md
 var reviewPrompt string
 
@@ -39,16 +42,13 @@ var codePrompt string
 //go:embed prompts/scrape.md
 var scrapePrompt string
 
-//go:embed prompts/commit.md
-var commitPrompt string
-
 // a map from function names to their corresponding prompts
 var prompts = map[string]string{
 	"query":  queryPrompt,
+	"plan":   planPrompt,
 	"review": reviewPrompt,
 	"code":   codePrompt,
 	"scrape": scrapePrompt,
-	"commit": commitPrompt,
 }
 
 func main() {

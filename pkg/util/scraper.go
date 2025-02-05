@@ -6,6 +6,7 @@ package util
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/gocolly/colly/v2"
@@ -29,10 +30,16 @@ const MaxScraperDepth = 2
 //	    log.Fatal(err)
 //	}
 //	fmt.Println(content)
-func ScrapeURL(url string) (string, error) {
+func ScrapeURL(link string) (string, error) {
 	// Validate URL is not empty
-	if url == "" {
+	if link == "" {
 		return "", fmt.Errorf("URL cannot be empty")
+	}
+
+	// validate the url
+	_, err := url.ParseRequestURI(link)
+	if err != nil {
+		return "", fmt.Errorf("failed to scrape URL %s: %w", link, err)
 	}
 
 	// Initialize collector
@@ -56,12 +63,12 @@ func ScrapeURL(url string) (string, error) {
 	})
 
 	// Start scraping
-	err := c.Visit(url)
+	err = c.Visit(link)
 	if err != nil {
-		return "", fmt.Errorf("failed to scrape URL %s: %w", url, err)
+		return "", fmt.Errorf("failed to scrape URL %s: %w", link, err)
 	}
 
-	text := fmt.Sprintf("```%s\n%s```\n", url, content.String())
+	text := fmt.Sprintf("```%s\n%s```\n", link, content.String())
 	return text, nil
 }
 
@@ -99,8 +106,7 @@ func ScrapeAll(urls []string) (string, error) {
 	for _, url := range urls {
 		content, err := ScrapeURL(url)
 		if err != nil {
-			fmt.Printf("Warning: failed to scrape %s: %v\n", url, err)
-			continue
+			return "", fmt.Errorf("failed to scrape URL %s: %w", url, err)
 		}
 
 		// Add separator between URLs

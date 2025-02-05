@@ -33,10 +33,10 @@ const MaxTotalBytes = maxTokens * bytesPerToken // 262144 bytes limit
 // a list of values that the function flag can take
 var validFunctions = map[string]bool{
 	"query":  true,
-	"review": true,
+	"plan":   true,
 	"code":   true,
+	"review": true,
 	"scrape": true,
-	"commit": true,
 }
 
 func CliFlags() (help bool, model string, function string, files []string, err error) {

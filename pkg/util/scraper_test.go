@@ -29,13 +29,13 @@ func TestScrapeURL(t *testing.T) {
 			name:    "Invalid URL format",
 			url:     "not-a-url",
 			wantErr: true,
-			errMsg:  "failed to scrape URL",
+			errMsg:  "failed to scrape",
 		},
 		{
 			name:    "Non-existent domain",
 			url:     "https://this-domain-should-not-exist-123456789.com",
 			wantErr: true,
-			errMsg:  "failed to scrape URL",
+			errMsg:  "failed to scrape",
 		},
 	}
 
@@ -94,7 +94,7 @@ func TestScrapeAll(t *testing.T) {
 				"not-a-url",
 				"https://this-domain-should-not-exist-123456789.com",
 			},
-			wantErr: false,
+			wantErr: true,
 			want:    "Example Domain",
 		},
 		{
@@ -104,7 +104,7 @@ func TestScrapeAll(t *testing.T) {
 				"https://this-domain-should-not-exist-123456789.com",
 			},
 			wantErr: true,
-			errMsg:  "failed to scrape any URLs",
+			errMsg:  "failed to scrape",
 		},
 	}
 

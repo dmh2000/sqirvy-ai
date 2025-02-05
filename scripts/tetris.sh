@@ -9,16 +9,15 @@
 
 design="create a design specification for a web project that is a \
     simple web app that implements a simple tetris game clone.       \
-    do not generate any code, just describe  what is needed to create the project. \
-    code should be html, css and javascript, in a single file named index.html \
-    output will be markdown. your output will be to another LLM that will generate the code. "
+    Code should be html, css and javascript, in a single file named index.html. \
+    Output will be markdown.  "
 
 export BINDIR=./bin  
 make -C cmd
 
 rm -rf tetris && mkdir tetris 
 echo $design | \
-$BINDIR/sqirvy -m gemini-1.5-flash         -f query   | tee tetris/plan.md    | \
+$BINDIR/sqirvy -m gemini-1.5-flash         -f plan   | tee tetris/plan.md    | \
 $BINDIR/sqirvy -m claude-3-5-sonnet-latest -f code    | tee tetris/index.html | \
 $BINDIR/sqirvy -m gpt-4o-mini              -f review  >tetris/review.md   
 
