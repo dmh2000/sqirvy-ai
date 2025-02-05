@@ -4,9 +4,6 @@
 
 ## What If You Could String Together Some AI Queries To Make Something Happen?
 
-
-
-
 Imagine you are setting up some DevOps for a project, and you need a simple way to make queries to LLM providers for use in a command line program. You don't want to have to copypasta from a web app or a python script. Or, you want to automate tasks like code review or web scraping using LLMs. 
 
 How about this: have a set of simple command line programs that perform various fixed queries to LLM providers. You can use them to automate tasks like code review, testing, and deployment. They could be used in CI/CD pipelines, or as part of a devops workflow.
@@ -29,14 +26,18 @@ Sqirvy-llm has some preconfigured command line programs that allow you to send p
 
 
 ## Example Scripts
+
 There are several example bash scripts that illustrate the type of actions you can take with the **sqirvy** program:
 
 ### Tetris
+<img src="./doc/sqirvy.png" width="80%"/>
+
 1. use "-f query" and gemini-1.5-flash to generate a design for a tetris clone
 2. use "-f code" and anthropic claude-3-5-sonnet to generate the code based on the design
 3. use "-f review" and gpt-4o-mini to perform a code review of the generated code
 4. use python to run the program
-5. output files for each step are written to the ./tetris directory
+5. open the web app in the browser
+- output files for each step are written to the ./tetris directory
 
 ```bash
 #!/bin/bash
