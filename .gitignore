@@ -6,3 +6,4 @@ bin
 REVIEW.*
 pkg/prompts
 tetris
+diffs
