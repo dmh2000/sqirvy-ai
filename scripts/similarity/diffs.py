@@ -14,7 +14,6 @@ if len(sys.argv) < 2:
 
 filename = sys.argv[1]
 
-
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
@@ -39,8 +38,6 @@ zmax = np.max(z)
 
 ax.set_xticks(np.arange(np.min(x), np.max(x), 1))
 ax.set_yticks(np.arange(np.min(y), np.max(y), 1))
-#ax.set_ylim(np.min(y), np.max(y))
-#ax.set_zlim(zmin, zmax)
 ax.set_xlabel('X axis')
 ax.set_ylabel('Y axis')
 ax.set_zlabel('Z axis')
