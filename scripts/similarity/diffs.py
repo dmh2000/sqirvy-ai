@@ -7,45 +7,76 @@ import numpy as np
 import csv
 import sys
 
-# get a filename from the command line
-if len(sys.argv) < 2:
-    print("Usage: python diffs.py <filename>")
-    sys.exit(1)
 
-filename = sys.argv[1]
+def create_diff_matrix(fname):
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+    x = np.array([])
+    y = np.array([])
+    z = np.array([])
 
-x = np.array([])
-y = np.array([])
-z = np.array([])
+    try:
+        with open(fname, 'r') as f:
+            rdr = csv.reader(open(fname, 'r'))
+            data = list(rdr)
+    except:
+        print("Error reading file")
+        sys.exit(1)
 
-try:
-   with open(filename, 'r') as f:
-        data = csv.reader(open(filename, 'r'))
-        for row in data:
-            if int(row[0]) != int(row[1]):
-                x = np.append(x,float(row[0]))
-                y = np.append(y,float(row[1]))
-                z = np.append(z,float(row[2]))
-except:
-    print("Error reading file")
-    sys.exit(1)
+    # Convert string data to integers/floats
+    data = [[int(row[0]), int(row[1]), float(row[2])] for row in data]
 
-zmin = np.min(z)
-zmax = np.max(z)
+    # Find the matrix dimensions
+    max_row = max(row[0] for row in data)
+    max_col = max(row[1] for row in data)
 
-ax.set_xticks(np.arange(np.min(x), np.max(x), 1))
-ax.set_yticks(np.arange(np.min(y), np.max(y), 1))
-ax.set_xlabel('X axis')
-ax.set_ylabel('Y axis')
-ax.set_zlabel('Z axis')
+    # Create an empty matrix filled with zeros
+    diff_matrix = np.zeros((max_row, max_col))
 
-ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+    # Populate the matrix with values
+    for row, col, value in data:
+        diff_matrix[row-1, col-1] = value
 
-# normalize z
-z = (z - np.min(z)) / (np.max(z) - np.min(z))
+    # invert the matrix to match cosine similarity
+    diff_matrix = 1.0 - diff_matrix
 
-ax.scatter(x, y, z, color='r')  
-plt.show()
+    # normalize it to 0..1
+    min_val = np.min(diff_matrix)
+    max_val = np.max(diff_matrix)
+    diff_matrix = (diff_matrix - min_val) / (max_val - min_val)
+
+    return diff_matrix
+
+def plot_diff_matrix(ax,bx, diff_matrix):
+     # Plot the similarity matrix
+    sx = diff_matrix.shape[1]
+    sy = diff_matrix.shape[0]
+
+    x = np.linspace(0, 1.1, sx)
+    y = np.linspace(0, 1.1, sy)
+    X,Y = np.meshgrid(x,y)
+    Z = diff_matrix
+
+    # 2D Scatter
+    ax.set_xticks(np.arange(0,1.2, 0.2))
+    ax.set_yticks(np.arange(0,1.2, 0.2))
+    ax.set_xlabel('Diffs 1..n scaled to 0..1')
+    ax.set_ylabel('Diff Similarity (higher is more similar)')
+    scatter = ax.scatter(X,Z,c=Z, cmap='viridis')
+    plt.colorbar(scatter)
+
+    bx.hist2d(X,Z,bins=50, cmap='viridis')
+
+if __name__ == "__main__":
+    # get a filename from the command line
+    if len(sys.argv) < 2:
+        print("Usage: python diffs.py <csv file>")
+        sys.exit(1)
+    fname = sys.argv[1]
+
+    diff_matrix = create_diff_matrix(fname)
+    print(diff_matrix)
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    plot_diff_matrix(ax, diff_matrix)
+    plt.show()
+    a = 1
