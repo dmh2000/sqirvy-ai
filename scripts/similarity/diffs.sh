@@ -4,25 +4,33 @@
 # - creates a directory called diffs
 # - uses 'diff' to compare code files
 
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <code-directory>"
+    exit 1
+fi
+
+
 export PATH=$PATH:../../bin
-export CODE=./code
+export CODE=$1
+export DIFFS=$1-diffs
+export CSV=$DIFFS/diffs.csv
 
 # remove old diffs
-rm -rf diffs
-mkdir  diffs
+rm -rf $DIFFS
+mkdir  $DIFFS
 
 # create the new diffs
 count=$(ls -1 $CODE | wc -l)
-touch diffs/diffs.csv
+touch $CSV
+
 for ((i=0; i<count; i++))
 do
     for ((j=0; j<count; j++))
     do
-        echo -n "$i, $j ," >> diffs/diffs.csv
-        dname="diffs/$i-$j.diff"
-        echo $dname
-        diff  code/$i.html code/$j.html > $dname
-        words=$(wc -w diffs/$i-$j.diff | awk '{printf "%s", $1}')
-        echo "$words" >> diffs/diffs.csv
+        echo -n "$i, $j ," >> $CSV
+        dname="$DIFFS/$i-$j.diff"
+        diff  $CODE/$i.html $CODE/$j.html > $dname
+        words=$(wc -w $DIFFS/$i-$j.diff | awk '{printf "%s", $1}')
+        echo "$words" >> $CSV
     done
 done    

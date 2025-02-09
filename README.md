@@ -1,12 +1,12 @@
-# Sqirvy-llm
+# Sqirvy-AI
 
 **VERSION 0.0.1-alpha**
 
-## What If You Could String Together Some AI Queries To Make Something Happen? And Use A Differet LLM For Each Step?
+## What If You Could String Together Some AI Queries To Make Something Happen? And Use A Differet LLM For Each Step? And Do It From The Terminal Instead Of A UI?
 
 Imagine you are setting up some DevOps for a project, and you need a simple way to make queries to LLM providers for use in a command line program. You don't want to have to copypasta from a web app or a python script. Or, you want to automate tasks like code review or web scraping using LLMs. 
 
-How about this: have a set of simple command line programs that perform various fixed queries to LLM providers. You can use them to automate tasks like code review, testing, and deployment. They could be used in CI/CD pipelines, or as part of a devops workflow.
+How about this: have a set of simple command line programs that perform various fixed queries to LLM providers. You can use them to automate tasks like code review, testing, and deployment. They could be used in CI/CD pipelines, or as part of a devops workflow. And each step could use a different LLM, whatever was suitable for the options.
 
 What if you could chain multiple queries in a shell command or script, and get a single response?
 

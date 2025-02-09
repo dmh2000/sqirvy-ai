@@ -20,34 +20,18 @@ type Provider string
 
 // Supported AI providers
 const (
-	Anthropic  Provider = "anthropic"   // Anthropic's Claude models
-	DeepSeek   Provider = "deepseek"    // DeepSeek's LLM models
-	Gemini     Provider = "gemini"      // Google's Gemini models
-	OpenAI     Provider = "openai"      // OpenAI's GPT models
-	MetaLlama  Provider = "meta-llama"  // Meta's Llama models
+	Anthropic Provider = "anthropic"  // Anthropic's Claude models
+	DeepSeek  Provider = "deepseek"   // DeepSeek's LLM models
+	Gemini    Provider = "gemini"     // Google's Gemini models
+	OpenAI    Provider = "openai"     // OpenAI's GPT models
+	MetaLlama Provider = "meta-llama" // Meta's Llama models
 )
-
-// AnthropicOptions contains Anthropic-specific configuration options
-type AnthropicOptions struct {
-	// Reserved for future Anthropic-specific settings
-}
-
-// GeminiOptions contains Google Gemini-specific configuration options
-type GeminiOptions struct {
-	// Reserved for future Gemini-specific settings
-}
-
-// OpenAIOptions contains OpenAI-specific configuration options
-type OpenAIOptions struct {
-	// Reserved for future OpenAI-specific settings
-}
 
 // Options combines all provider-specific options into a single structure.
 // This allows for provider-specific configuration while maintaining a unified interface.
 type Options struct {
-	AnthropicOptions
-	GeminiOptions
-	OpenAIOptions
+	Temperature float32
+	// Controls the randomness of the output
 }
 
 // Client provides a unified interface for AI operations.

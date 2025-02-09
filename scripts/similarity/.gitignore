@@ -1,3 +1,6 @@
 code
 diffs
 __pycache__
+gemini
+gemini-diffs
+*.png

@@ -48,6 +48,8 @@ func (c *GeminiClient) QueryText(prompt string, model string, options Options) (
 	genModel := c.client.GenerativeModel(model)
 	// Set response type to plain text
 	genModel.ResponseMIMEType = "text/plain"
+	// Set temperature
+	genModel.Temperature = &options.Temperature
 
 	// Generate content from the prompt
 	resp, err := genModel.GenerateContent(c.ctx, genai.Text(prompt))
@@ -67,4 +69,3 @@ func (c *GeminiClient) QueryText(prompt string, model string, options Options) (
 
 	return result, nil
 }
-

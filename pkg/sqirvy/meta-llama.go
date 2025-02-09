@@ -48,11 +48,10 @@ func (c *MetaLlamaClient) QueryText(prompt string, model string, options Options
 	}
 
 	// Call the LLM with the prompt
-	completion, err := llms.GenerateFromSinglePrompt(context.Background(), c.llm, prompt)
+	completion, err := llms.GenerateFromSinglePrompt(context.Background(), c.llm, prompt, llms.WithTemperature(float64(options.Temperature)))
 	if err != nil {
 		return "", fmt.Errorf("failed to generate completion: %w", err)
 	}
 
 	return completion, nil
 }
-

@@ -15,7 +15,7 @@ make -C ../../cmd
 rm -rf code
 mkdir  code
 
-count=5
+count=25
 for ((i=0; i<count; i++))
 do
     fname="code/$i.html"

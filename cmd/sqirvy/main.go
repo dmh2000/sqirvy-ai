@@ -55,7 +55,7 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	// get comand line flags and arguments
-	f_h, f_model, f_function, args, err := CliFlags()
+	f_h, f_model, f_function, f_temperature, args, err := CliFlags()
 	if err != nil {
 		flag.Usage()
 		log.Fatal(fmt.Errorf("error parsing flags: %v", err))
@@ -103,7 +103,8 @@ func main() {
 	}
 
 	// Make the query
-	response, err := client.QueryText(prompt, model, sqirvy.Options{})
+	options := sqirvy.Options{Temperature: float32(f_temperature)}
+	response, err := client.QueryText(prompt, model, options)
 	if err != nil {
 		log.Fatal(fmt.Errorf("error querying model %s: %v", model, err))
 	}

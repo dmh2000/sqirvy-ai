@@ -28,6 +28,7 @@ type openAIRequest struct {
 	Messages       []openAIMessage `json:"messages"`                        // Conversation messages
 	MaxTokens      int             `json:"max_completion_tokens,omitempty"` // Max response length
 	ResponseFormat string          `json:"response_format,omitempty"`       // Desired response format
+	Temperature    float32         `json:"temperature,omitempty"`           // Controls the randomness of the output
 }
 
 type openAIMessage struct {
@@ -69,7 +70,8 @@ func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (
 		Messages: []openAIMessage{
 			{Role: "user", Content: prompt},
 		},
-		MaxTokens: MAX_TOKENS, // Limit response length
+		MaxTokens:   MAX_TOKENS,          // Limit response length
+		Temperature: options.Temperature, // Set temperature
 	}
 
 	// Send request and return response

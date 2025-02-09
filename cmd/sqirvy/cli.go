@@ -39,16 +39,18 @@ var validFunctions = map[string]bool{
 	"scrape": true,
 }
 
-func CliFlags() (help bool, model string, function string, files []string, err error) {
+func CliFlags() (help bool, model string, function string, temperature int, files []string, err error) {
 	// suppress the default help message
 	// add a -h flag
 	var h bool
 	var m string
 	var f string
+	var t int
 
 	flag.BoolVar(&h, "h", false, "print help message")
 	flag.StringVar(&m, "m", "claude-3-5-sonnet-latest", "AI model to use (default: claude-3.5-sonnet-latest)")
 	flag.StringVar(&f, "f", "query", "AI function to use (default: query)")
+	flag.IntVar(&t, "t", 50, "Temperature setting for the AI model (0-100, default: 50)")
 
 	flag.Parse()
 
@@ -63,19 +65,25 @@ func CliFlags() (help bool, model string, function string, files []string, err e
 	// check if function flag is set
 	function = f
 	if _, ok := validFunctions[function]; !ok {
-		return help, model, function, files, fmt.Errorf("invalid function: %s", function)
+		return help, model, function, temperature, files, fmt.Errorf("invalid function: %s", function)
 	}
+
+	// check if temperature flag is set
+	if t < 0 || t > 100 {
+		return help, model, function, temperature, files, fmt.Errorf("invalid temperature: %d", t)
+	}
+	temperature = t
 
 	// get the files
 	files = flag.Args()
 
 	// supress default usage
 	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [-h] [-m model] [-f function] [file1 file2 ...]\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [-h] [-m model] [-f function] [-t temperature] [file1 file2 ...]\n", os.Args[0])
 		fmt.Fprintf(flag.CommandLine.Output(), "  -h  print this help message\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "  -m  AI model to use (default: claude-3.5-sonnet-latest)\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "  -f  AI function to use (default: query)\n")
-		fmt.Fprintf(flag.CommandLine.Output(), "  ")
+		fmt.Fprintf(flag.CommandLine.Output(), "  -t  Temperature setting for the AI model (0-100, default: 50)\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "  valid functions: query, review, code, scrape\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "  file1 file2 ...  input files to process\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "  URLs can be provided as arguments\n")
@@ -93,7 +101,7 @@ func CliFlags() (help bool, model string, function string, files []string, err e
 		}
 	}
 
-	return help, model, function, files, nil
+	return help, model, function, temperature, files, nil
 }
 
 // ReadPrompt reads and concatenates the contents of the given files and stdin,
