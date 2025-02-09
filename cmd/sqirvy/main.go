@@ -85,10 +85,7 @@ func main() {
 	prompt = prompt + "\n\n" + p
 
 	// Use default model if none specified
-	model := "claude-3-5-sonnet-latest"
-	if f_model != "" {
-		model = f_model
-	}
+	model := f_model
 
 	// Get the provider for the model
 	provider, err := sqirvy.GetProviderName(model)

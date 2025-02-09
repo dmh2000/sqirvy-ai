@@ -69,7 +69,7 @@ func CliFlags() (help bool, model string, function string, temperature int, file
 	}
 
 	// check if temperature flag is set
-	if t < 0 || t > 100 {
+	if t < 1 || t > 100 {
 		return help, model, function, temperature, files, fmt.Errorf("invalid temperature: %d", t)
 	}
 	temperature = t

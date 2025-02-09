@@ -24,6 +24,16 @@ func (c *MetaLlamaClient) QueryText(prompt string, model string, options Options
 		return "", fmt.Errorf("prompt cannot be empty for text query")
 	}
 
+	// validate temperature
+	if options.Temperature < 0.0 {
+		options.Temperature = 0.0
+	}
+	if options.Temperature > 100.0 {
+		return "", fmt.Errorf("temperature must be between 1 and 100")
+	}
+	// scale Temperature for openai 0..2.0
+	options.Temperature = (options.Temperature * 2.0) / 100.0
+
 	// Initialize LLM if not already done
 	if c.llm == nil {
 		apiKey := os.Getenv("TOGETHER_API_KEY")

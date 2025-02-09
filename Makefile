@@ -13,7 +13,7 @@ build:
 		$(MAKE) $(SILENT) -C $$dir build; \
 	done
 
-test:
+test: build
 	@for dir in $(SUBDIRS); do \
 		$(MAKE)  $(SILENT) -C $$dir test; \
 	done

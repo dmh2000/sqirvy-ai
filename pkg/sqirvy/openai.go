@@ -64,6 +64,16 @@ func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (
 		}
 	}
 
+	// validate temperature
+	if options.Temperature < 0.0 {
+		options.Temperature = 0.0
+	}
+	if options.Temperature > 100.0 {
+		return "", fmt.Errorf("temperature must be between 1 and 100")
+	}
+	// scale Temperature for openai 0..2.0
+	options.Temperature = (options.Temperature * 2) / 100.0
+
 	// Construct the request body with the prompt as a user message
 	reqBody := openAIRequest{
 		Model: model,

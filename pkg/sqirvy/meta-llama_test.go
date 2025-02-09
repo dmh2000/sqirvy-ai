@@ -10,7 +10,10 @@ func TestMetaLlamaClient_QueryText(t *testing.T) {
 		t.Skip("TOGETHER_API_KEY not set")
 	}
 
-	client := &MetaLlamaClient{}
+	client, err := NewClient(Provider("meta-llama"))
+	if err != nil {
+		t.Fatalf("Failed to create client: %v", err)
+	}
 
 	tests := []struct {
 		name    string

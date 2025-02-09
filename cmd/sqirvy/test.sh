@@ -2,6 +2,9 @@
 
 BINDIR=../../bin
 
+# rebuild the binaries
+make
+
 # a test must pass
 check_return_code() {
     local cmd="$1"
