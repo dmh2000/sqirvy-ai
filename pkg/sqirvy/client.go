@@ -30,8 +30,8 @@ const (
 // Options combines all provider-specific options into a single structure.
 // This allows for provider-specific configuration while maintaining a unified interface.
 type Options struct {
-	Temperature float32
-	// Controls the randomness of the output
+	Temperature float32 // Controls the randomness of the output
+	MaxTokens   int64   // Maximum number of tokens in the response
 }
 
 // Client provides a unified interface for AI operations.
