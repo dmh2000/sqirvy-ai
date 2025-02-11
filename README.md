@@ -1,10 +1,32 @@
-# Sqirvy-AI
+# Sqirvy-AI : Command Line Agents
 
 **VERSION 0.0.1-alpha**
 
-## What If You Could String Together Some AI Queries To Make Something Happen? And Use A Differet LLM For Each Step? And Do It From The Terminal Instead Of A UI?
+## Table of Contents
+1.  [What is Sqirvy-AI?](#what-is-sqirvy-ai)
+2.  [LLMs Supported](#llms-supported)
+3.  [Example Scripts](#example-scripts)
+4.  [Sqirvy-llm Command Line Programs](#sqirvy-llm-command-line-programs)
+    *   [sqirvy-query](#sqirvy-query)
+    *   [sqirvy-review](#sqirvy-review)
+    *   [sqirvy-scrape](#sqirvy-scrape)
+    *   [Chaining](#chaining)
+5.  [SDK Library](#sdk-library)
+6.  [Example Usage](#example-usage)
+    *   [Build The Executables](#build-the-executables)
+    *   [Fixed Arguments](#fixed-arguments)
+    *   [cmd/sqirvy-query : Chainable Command Line Interface To Query Models](#cmdsqirvy-query--chainable-command-line-interface-to-query-models)
+    *   [web/sqirvy-web](#websqirvy-web)
+7.  [Clients](#clients)
+    *   [Anthropic](#anthropic)
+    *   [Gemini](#gemini)
+    *   [OpenAI](#openai)
+    *   [MetaLlama](#metalama)
+    *   [DeepSeek](#deepseek)
 
-Imagine you are setting up some DevOps for a project, and you need a simple way to make queries to LLM providers for use in a command line program. You don't want to have to copypasta from a web app or a python script. Or, you want to automate tasks like code review or web scraping using LLMs. 
+## What If You Could String Together Some AI Queries To Make Something Happen? And Use A Differet LLM For Each Step? And Do It From The Terminal Instead Of A UI? <a name="what-is-sqirvy-ai"></a>
+
+Imagine you are setting up some DevOps for a project, and you need a simple way to make queries to LLM providers for use in a command line program. You don't want to have to copypasta from a web app or a python script. Or, you want to automate tasks like code review or web scraping using LLMs.
 
 How about this: have a set of simple command line programs that perform various fixed queries to LLM providers. You can use them to automate tasks like code review, testing, and deployment. They could be used in CI/CD pipelines, or as part of a devops workflow. And each step could use a different LLM, whatever was suitable for the options.
 
@@ -12,63 +34,95 @@ What if you could chain multiple queries in a shell command or script, and get a
 
 That's what this project is all about.
 
-Here's some of the application programs in this project:
-
-- sqirvy-query:  a command line program that allows you to send arbitrary prompts to an AI model.
-- sqirvy-review: a command line program that invokes an AI model to perform code review.
-- sqirvy-scrape: a command line program that invokes an AI model to scrape data from the web and perform some action on the downloaded data.
-
 Note: Each LLM model will give different results for a given prompt, and each execution of the same program and prompt will most likely generate different results even with the same model and prompt.
 
 [GitHub Repo](https://github.com/dmh2000/sqirvy-llm)
 
-Sqirvy-llm has some preconfigured command line programs that allow you to send prompts to LLM providers. And it provides a simple API for making queries to LLM providers in Go if you want to use it in your own Go programs.
+## LLMs Supported In This Release <a name="llms-supported"></a>
 
+- https://www.anthropic.com/api
+  - claude-3-5-sonnet-latest
+  - claude-3-5-haiku-latest
+  - claude-3-opus-latest
+- https://ai.google.dev/gemini-api/docs
+  - gemini-2.0-flash-exp
+  - gemini-1.5-flash
+  - gemini-1.5-pro
+- https://platform.openai.com/docs/overview
+  - gpt-4o
+  - gpt-4o-mini
+  - gpt-4-turbo
+  - o1-mini
+- https://docs.llama-api.com/quickstart
+- llama3.3-70b
+- deepseek-r1 (tested with Meta Llama  provider)
 
-## Example Scripts
+## How It Works
 
-There are several example bash scripts that illustrate the type of actions you can take with the **sqirvy** program:
-
-### Tetris
-<img src="./doc/sqirvy.png" width="80%" style="display: block; margin: 0 auto"/>
+The main program is **sqirvy**, which is a command line utility that can perform AI queries. **sqirvy** is setup to take input from stdin, perform a query to a specified LLM and send the results to stdout. Because it uses **stdin | sqirvy | stdout**, it is possible to chain together a pipeline, using the same of different models and LLM providers at each step.
+In cases where a query needs multiple inputs, it supports taking file names and urls as arguments. 
 
 <pre>
-1. use "-f plan" and gemini-1.5-flash to generate a design for a tetris clone
-2. use "-f code" and anthropic claude-3-5-sonnet to generate the code based on the design
-3. use "-f review" and gpt-4o-mini to perform a code review of the generated code
-4. use python to run the program
-5. open the web app in the browser
-- output files for each step are written to the ./tetris directory
+Usage: bin/sqirvy [-h] [-m model] [-f function] [-t temperature] [files and/or urls  ...]
+  -h  print this help message
+  -m  AI model to use (default: claude-3.5-sonnet-latest)
+  -f  AI function to use (default: query)
+    -f query  : execute a generic query
+    -f plan   : generate a plan for further action
+    -f code   : generate code according to input specifications
+    -f review : review code or text
+    -f scrape : scrape a URL for text
+  -t  Temperature setting for the AI model (0-100, default: 50)
+  file1 file2 ...  input files to process
+  URLs can be provided as arguments
+  data from stdin will be read if there is any
 </pre>
+## Example Scripts <a name="example-scripts"></a>
+
+There are example bash scripts that illustrate the type of actions you can take with the **sqirvy** program to perform multi-step operations in a pipeline.
+
+### scripts/tetris
+<img src="./doc/sqirvy.png" width="80%" style="display: block; margin: 0 auto"/>
+
+
 ```bash
 #!/bin/bash
 
+# in scripts/tetris
 # this script does the following:
 # - creates a directory called tetris
-# - uses sqirvy-plan and gemini-1.5-flash to create a design for a web app
-# - uses sqirvy-code and claude-3-5-sonnet-latest to generate code for the design
-# - uses sqirvy-review and gpt-4o-mini to review the code
+# - echo the design prompt into stdin of sqirvy in plan mode. 
+#   - pipe the plan to stdout
+# - pipe stdin to sqirvy -f plan and gemini-1.5-flash to create a design for a web app
+#   - tee the plan to stdout and to a file
+# - pipe stdin to sqirvy -f code and claude-3-5-sonnet-latest to generate code for the design
+#   - tee the code to stdout and to a file
+# - pipe stin to sqirvy -f review and gpt-4o-mini to review the code
 # - starts a web server to serve the generated code
 
-design="create a design specification for a web project that is a \
+design_prompt="create a design specification for a web project that is a \
     simple web app that implements a simple tetris game clone.       \
-    do not generate any code, just describe  what is needed to create the project. \
-    code should be html, css and javascript, in a single file named index.html \
-    output will be markdown. your output will be to another LLM that will generate the code. "
+    the game should include a game board with a grid, a score display, and a reset button \
+    Code should be html, css and javascript, in a single file named index.html. \
+    Output will be markdown.  "
 
-export BINDIR=../../bin  
-make
+export BINDIR=../bin  
+make -C ../cmd
 
 rm -rf tetris && mkdir tetris 
-echo $design | \
+echo $design_prompt | \
 $BINDIR/sqirvy -m gemini-1.5-flash         -f plan    | tee tetris/plan.md    | \
 $BINDIR/sqirvy -m claude-3-5-sonnet-latest -f code    | tee tetris/index.html | \
 $BINDIR/sqirvy -m gpt-4o-mini              -f review  >tetris/review.md   
 
-python -m http.server 8080 --directory tetris
+python -m http.server 8080 --directory tetris &
+
+# for Ubuntu. for other platforms just open a browser to this url
+xdg-open http://localhost:8080
+
 ```
 
-## Sqirvy-llm Command Line Programs
+## Sqirvy-llm Command Line Programs <a name="sqirvy-llm-command-line-programs"></a>
 
 ### Supported Models
 
@@ -91,11 +145,11 @@ python -m http.server 8080 --directory tetris
 	  - meta-llama/Llama-3.3-70B-Instruct-Turbo
     - meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo
 
-DeepSeek is temporarily disabled due to server overload/DDOS
-  - deepseek-reasoner (temporarily disabled due to server overloads)
-  - deepseek-chat (also disabled)
+  - DeepSeek
+   - deepseek-r1
+   - deepseek-chat (also disabled)
 
-### sqirvy-query
+### sqirvy-query <a name="sqirvy-query"></a>
 
 - run an arbitrary query to an LLM provider
 - concatenates prompt from stdin and/or files and sends it to the specified AI model
@@ -128,7 +182,7 @@ Options:
 
 ```
 
-### sqirvy-review
+### sqirvy-review <a name="sqirvy-review"></a>
 
 A command line program that invokes an AI model to perform code review. This program has a built-in system and review prompt (using Go file embeddeding), so you don't need to provide any prompts if you don't want to. If you don't like those prompts, you can modify them and rebuild the program.
 
@@ -147,7 +201,7 @@ Options:
 
 ```
 
-### sqirvy-scrape
+### sqirvy-scrape <a name="sqirvy-scrape"></a>
 
 A command line program that invokes an AI model to scrape data from the web and perform some action on the downloaded data.
 
@@ -166,7 +220,7 @@ Options:
 
 ```
 
-### Chaining
+### Chaining <a name="chaining"></a>
 
 The command line programs can be chained together to perform more complex tasks. This is because the prompt inputs to the programs are added to the context in this order:
 
@@ -182,7 +236,7 @@ For example, you can use sqirvy-scrape to scrape a website and then use sqirvy-q
 sqirvy-scrape -m gpt-4-turbo-preview https://sqirvy.xyz | sqirvy-query -m gpt-4-turbo-preview "summarize the content"
 ```
 
-## SDK Library
+## SDK Library <a name="sdk-library"></a>
 
 The above preconfigure commands use the sqirvy-llm/pkg/sqirvy SDK in this repo. This is the interface you would use to make queries to LLM providers in Go if you want to use it in your own Go programs.
 
@@ -227,62 +281,40 @@ func main() {
 }
 ```
 
-## Example Usage
+## Example Usage <a name="example-usage"></a>
 
-### Build The Executables
-
-- the build system uses 'make'
+Example code is in directory **examples**.  To use them, first build the binaries.
+### Build The Executables <a name="build-the-executables"></a>
+- the build system uses GNU 'make'
 - 'make' can be run from top level or from the cmd or web directories
 - build (or default)
   - build the binaries for the cmd and web directories
-  - builds cmd binaries for the current OS platform and also Linux, MacOS, and Windows versions
-  - after a `make build` or `make test`, the binaries will be in the `bin` directory
+  - it attempts to build the version for the current OS and CPU Architecture. Has been tested on Ubuntu Linux and Windows 11. Not tested on MacOS x86 or Apple silicon
+  - after a `make` or `make test`, the binaries will be in the top level `bin` directory
 - test
   - run the tests
 - clean
-  - remove the binaries
+  - remove the binaries an clanup temporary files
 
-### Fixed Arguments
+### Examples
 
-Use these as a model if you want to create a command line app with fixed arguments. For example, this could be useful in DevOps if you want to pipeline some query output during a code review. Executables are in the 'bin' directory. source is in the 'cmd' directory.
+#### Simple hard coded queries using the specified provider:
+-  examples/anthropic
+-  examples/gemini
+-  examples/meta-llama
+-  examples/openai
 
-- cmd/Anthropic
-  - a hello world query to Anthropic
-- cmd/Gemini
-  - a hello world query to Gemini
-- cmd/OpenAI
-  - a hello world query to OpenAI
+#### Examples for the various -f <function> flags
+- examples/sqirvy-query  : generic chat query
+- examples/sqirvy-plan   : generate a plan for an application
+- examples/sqirvy-code   : generate code for an application
+- examples/sqirvy-review : review existing code
+- examples/sqirvy-scrape : scrape a web page and summarize it
 
-### cmd/sqirvy-query : Chainable Command Line Interface To Query Models
+#### Example web app
+- examples/web : for comparing results of queries from 3 different models
 
-The cmd/sqirvy-query directory contains a command line program that allows you to send prompts to specified AI models. Stand alone, it lets you pipe a prompt or specify files to use to compose a prompt. It supports chaining multiple prompts together and can read prompts from standard input (stdin) and/or files, concatenate them, and send the combined prompt to the specified AI model.
-
-Example is in the 'examples/chain' directory.
-
-#### Chaining Prompts
-
-```bash
-#!/bin/bash
-query="../../bin/sqirvy-query"
-
-# this example uses the system.md prompt by default and
-# then uses a chain of prompts to generate the code.py file
-# system.md   : a system prompt for software engineers
-#             : this is the default system prompt used by sqirvy-query if it is in the local directory
-# describe.md : a general description of well formed python code
-#             : uses gemini-1.5-flash model for this query
-# generate.md : a description of the specific code to generate
-#             : uses claude-3-5-sonnet-latest model for this query
-# tee code.py : outputs the result to the file code.py to the terminal and to the file system
-
-
-# create the prompt files then pipe them to the queries
-$query -m gemini-1.5-flash describe.md |\
-$query -m claude-3-5-sonnet-latest generate.md |\
-tee code.py
-```
-
-### web/sqirvy-web
+### web/sqirvy-web <a name="websqirvy-web"></a>
 
 A simple web app that allows you to query all three providers in parallel and compare the results.
 
@@ -294,26 +326,42 @@ A simple web app that allows you to query all three providers in parallel and co
 
 The code for the web app was generated using Aider and the claude-3-sonnet-20240229 model.
 
-## What Client API's Are Supported (for this version)
+## CLients <a name="clients"></a>
+### Anthropic <a name="anthropic"></a>
 
-### Anthropic
-
-- [github.com/anthropics/anthropic-sdk-go](https://github.com/anthropics/anthropic-sdk-go)
-- this api is a Go native client for the Anthropic API
-- this api is the one recommeded by Anthropic for Go.
+- [Anthropic](https://github.com/anthropics/anthropic-sdk-go)
+- this SDK is a Go native client for the Anthropic API
+- this SDK is the one recommeded by Anthropic for Go.
 - It's in alpha now but seems to work without problems for these use cases.
-- **The Anthropic API requires an "ANTHROPIC_API_KEY" environment variable to authenticate**
+- Environment Variables Required:
+  - export ANTHROPIC_API_KEY=<your api key>
 
-### Gemini
+### Gemini <a name="gemini"></a>
 
-- "github.com/google/generative-ai-go/genai"
-- "google.golang.org/api/option"
+
+- [	Gemini](github.com/google/generative-ai-go/genai)
 - this is the official Go client for the Gemini API supported by Google
-- **The Gemini API requires a "GEMINI_API_KEY" environment variable to authenticate**
+- **The Gemini SDK requires a "GEMINI_API_KEY" environment variable to authenticate**
+- Environment Variables REquired:
+  - export GEMINI_API_KEY=<your api key>
 
-### OpenAI
+### OpenAI <a name="openai"></a>
 
-- [OpenAI API](https://platform.openai.com/docs/api-reference)
-- Since there did not seem to be an official Go native API for OpenAI, I used the OpenAI  API directly with the "net/http" package.
-- **The OpenAI API requires a "OPENAI_API_KEY" environment variable to authenticate**
-- **If you connecting to an OpenAI model to a server besides the official OpenAI servers, you will need to set the "OPENAI_API_BASE" environment variable to the base URL of the server you are connecting to**
+- [OpenAI](https://platform.openai.com/docs/api-reference)
+- Uses OpenAI HTTP API directly
+- **The OpenAI API HTTP API requires a "OPENAI_API_KEY" environment variable to authenticate**
+- **If you connecting to an OpenAI model to a server besides the official OpenAI servers, you will need to set the "OPENAI_BASE_URL" environment variable to the base URL of the server you are connecting to**
+- Environment Variables REquired:
+  - export OPENAI_API_KEY=<your api key>
+  - export OPENAI_BASE_URL=https://api.openai.com/v1/chat/completions
+
+### MetaLlama <a name="metalama"></a>
+
+- [Meta-LLAMA](github.com/tmc/langchaingo/llms/openai)
+
+### DeepSeek <a name="deepseek"></a>
+
+- [DeepSeek](https://platform.openai.com/docs/api-reference)
+- Uses OpenAI HTTP API directly,
+- **The API requires a "DEEPSEEK_API_KEY" and "DEEPSEEK_BASE_URL environment variables to authenticate**
+- Deepseek was tested using the [LLAMA API Provider](https://console.llamaapi.com/)

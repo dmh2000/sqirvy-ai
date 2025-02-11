@@ -79,12 +79,16 @@ func CliFlags() (help bool, model string, function string, temperature int, file
 
 	// supress default usage
 	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [-h] [-m model] [-f function] [-t temperature] [file1 file2 ...]\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s [-h] [-m model] [-f function] [-t temperature] [files and/or urls  ...]\n", os.Args[0])
 		fmt.Fprintf(flag.CommandLine.Output(), "  -h  print this help message\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "  -m  AI model to use (default: claude-3.5-sonnet-latest)\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "  -f  AI function to use (default: query)\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "    -f query  : execute a generic query\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "    -f plan   : generate a plan for further action\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "    -f code   : generate code according to input specifications\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "    -f review : review code or text\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "    -f scrape : scrape a URL for text\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "  -t  Temperature setting for the AI model (0-100, default: 50)\n")
-		fmt.Fprintf(flag.CommandLine.Output(), "  valid functions: query, review, code, scrape\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "  file1 file2 ...  input files to process\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "  URLs can be provided as arguments\n")
 		fmt.Fprintf(flag.CommandLine.Output(), "  data from stdin will be read if there is any\n")

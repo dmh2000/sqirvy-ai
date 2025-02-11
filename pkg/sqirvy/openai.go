@@ -14,8 +14,6 @@ import (
 	"os"
 )
 
-var openAIEndpoint = "https://api.openai.com/v1/chat/completions"
-
 // OpenAIClient implements the Client interface for OpenAI's API
 type OpenAIClient struct {
 	apiKey string       // OpenAI API authentication key
@@ -47,11 +45,6 @@ type openAIResponse struct {
 func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (string, error) {
 	if prompt == "" {
 		return "", fmt.Errorf("prompt cannot be empty for text query")
-	}
-
-	// update the endpoing if OPENAI_API_BASE is set
-	if base := os.Getenv("OPENAI_API_BASE"); base != "" {
-		openAIEndpoint = base + "/v1/chat/completions"
 	}
 
 	// Initialize HTTP client and API key if not already done
@@ -89,6 +82,15 @@ func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (
 }
 
 func (c *OpenAIClient) makeRequest(reqBody openAIRequest) (string, error) {
+
+	// update the endpoing if OPENAI_BASE_URL is set
+	endpoint := ""
+	if base := os.Getenv("OPENAI_BASE_URL"); base != "" {
+		endpoint = base + "/v1/chat/completions"
+	} else {
+		return "", fmt.Errorf("OPENAI_BASE_URL environment variable not set")
+	}
+
 	// Convert request body to JSON
 	jsonBody, err := json.Marshal(reqBody)
 	if err != nil {
@@ -96,7 +98,7 @@ func (c *OpenAIClient) makeRequest(reqBody openAIRequest) (string, error) {
 	}
 
 	// Create new HTTP request with JSON body
-	req, err := http.NewRequest("POST", openAIEndpoint, bytes.NewBuffer(jsonBody))
+	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return "", fmt.Errorf("failed to create request: %w", err)
 	}

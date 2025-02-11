@@ -17,8 +17,8 @@ var ModelToProvider = map[string]string{
 	"claude-3-5-haiku-latest":  "anthropic",
 	"claude-3-opus-latest":     "anthropic",
 	// deepseek models
-	//"deepseek-chat": "deepseek",
-	//"deepseek-reasoner": "deepseek",
+	"deepseek-r1": "deepseek",
+	"deepseek-v3": "deepseek",
 	// google gemini models
 	// gemini-2.0-pro-exp-02-05
 	// gemini-2.0-flash-thinking-exp-01-21

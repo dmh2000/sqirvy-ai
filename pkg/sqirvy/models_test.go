@@ -44,7 +44,7 @@ func TestAllModels(t *testing.T) {
 		case "anthropic":
 			apiKey = os.Getenv("ANTHROPIC_API_KEY")
 		case "deepseek":
-			apiKey = os.Getenv("DEEPSEEK_API_KEY")
+			apiKey = os.Getenv("LLAMA_API_KEY")
 		case "gemini":
 			apiKey = os.Getenv("GEMINI_API_KEY")
 		case "openai":
