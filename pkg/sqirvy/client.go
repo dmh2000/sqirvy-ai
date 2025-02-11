@@ -13,6 +13,8 @@ import (
 	"fmt"
 )
 
+const MaxTokensDefault = 8192
+
 // Provider represents supported AI providers.
 // Currently supports Anthropic, DeepSeek, Gemini, and OpenAI.
 // Provider identifies which AI service provider to use
