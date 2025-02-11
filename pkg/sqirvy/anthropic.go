@@ -49,7 +49,7 @@ func (c *AnthropicClient) QueryText(prompt string, model string, options Options
 	// Create new message request with the provided prompt and temperature
 	message, err := c.client.Messages.New(context.TODO(), anthropic.MessageNewParams{
 		Model:       anthropic.F(model),                        // Specify which model to use
-		MaxTokens:   anthropic.F(int64(MAX_TOKENS)),            // Limit response length
+		MaxTokens:   anthropic.F(options.MaxTokens),            // Limit response length
 		Temperature: anthropic.F(float64(options.Temperature)), // Set temperature
 		Messages: anthropic.F([]anthropic.MessageParam{
 			anthropic.NewUserMessage(anthropic.NewTextBlock(prompt)), // Create user message

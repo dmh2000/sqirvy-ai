@@ -73,8 +73,8 @@ func (c *DeepSeekClient) QueryText(prompt string, model string, options Options)
 		Messages: []deepseekMessage{
 			{Role: "user", Content: prompt},
 		},
-		MaxTokens:   MAX_TOKENS,          // Limit response length
-		Temperature: options.Temperature, // Set temperature
+		MaxTokens:   int(options.MaxTokens), // Limit response length
+		Temperature: options.Temperature,    // Set temperature
 	}
 
 	// Send request and return response
