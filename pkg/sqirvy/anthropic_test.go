@@ -30,7 +30,7 @@ func TestAnthropicClient_QueryText(t *testing.T) {
 
 	tt := tests[0]
 	t.Run(tt.name, func(t *testing.T) {
-		got, err := client.QueryText(tt.prompt, "claude-3-sonnet-20240229", Options{})
+		got, err := client.QueryText(tt.prompt, "claude-3-5-sonnet-latest", Options{})
 		if err != nil {
 			t.Errorf("AnthropicClient.QueryText() error = %v", err)
 			return
@@ -42,7 +42,7 @@ func TestAnthropicClient_QueryText(t *testing.T) {
 
 	tt = tests[1]
 	t.Run(tt.name, func(t *testing.T) {
-		_, err := client.QueryText(tt.prompt, "claude-3-sonnet-20240229", Options{})
+		_, err := client.QueryText(tt.prompt, "claude-3-5-sonnet-latest", Options{})
 		if err == nil {
 			t.Errorf("AnthropicClient.QueryText() empty prompt should have failed")
 			return

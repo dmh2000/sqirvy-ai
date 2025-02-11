@@ -38,7 +38,7 @@ var ModelToMaxTokens = map[string]int64{
 	// anthropic models
 	"claude-3-5-sonnet-latest": MaxTokensDefault,
 	"claude-3-5-haiku-latest":  MaxTokensDefault,
-	"claude-3-opus-latest":     MaxTokensDefault,
+	"claude-3-opus-latest":     4096,
 	// deepseek models
 	"deepseek-r1": MaxTokensDefault,
 	"deepseek-v3": MaxTokensDefault,
@@ -49,7 +49,7 @@ var ModelToMaxTokens = map[string]int64{
 	// openai models
 	"gpt-4o":      MaxTokensDefault,
 	"gpt-4o-mini": MaxTokensDefault,
-	"gpt-4-turbo": MaxTokensDefault,
+	"gpt-4-turbo": 4096,
 	"o1-mini":     MaxTokensDefault,
 	// llama models
 	"llama3.3-70b": MaxTokensDefault,

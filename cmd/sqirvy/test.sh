@@ -63,7 +63,7 @@ echo "sqirvy -f code"
 check_return_code echo $code |    $BINDIR/sqirvy -f code                                      >tmp/code.html
 echo "-------------------------------"
 echo "sqirvy -f review"
-check_return_code                 $BINDIR/sqirvy -m gemini-2.0-flash-exp -f review main.go     >tmp/review.md
+check_return_code                 $BINDIR/sqirvy -m gemini-1.5-flash -f review main.go     >tmp/review.md
 echo "-------------------------------"
 echo "sqirvy -f query"
 check_return_code echo $query |   $BINDIR/sqirvy -m gpt-4-turbo          -f query main.go      >tmp/query1.md

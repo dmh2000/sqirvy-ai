@@ -14,7 +14,7 @@ func main() {
 	}
 
 	// Make the query
-	response, err := client.QueryText("say hello world", "claude-3-sonnet-20240229", sqirvy.Options{Temperature: 50})
+	response, err := client.QueryText("say hello world", "claude-3-5-sonnet-latest", sqirvy.Options{Temperature: 50})
 	if err != nil {
 		log.Fatalf("Query failed: %v", err)
 	}
