@@ -8,6 +8,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/anthropics/anthropic-sdk-go"
 )
@@ -18,6 +19,11 @@ type AnthropicClient struct {
 }
 
 func (c *AnthropicClient) QueryText(prompt string, model string, options Options) (string, error) {
+	// test for ANTHROPIC_API_KEY in environment
+	if os.Getenv("ANTHROPIC_API_KEY") == "" {
+		return "", fmt.Errorf("ANTHROPIC_API_KEY environment variable not set")
+	}
+
 	if prompt == "" {
 		return "", fmt.Errorf("prompt cannot be empty for text query")
 	}
@@ -28,8 +34,8 @@ func (c *AnthropicClient) QueryText(prompt string, model string, options Options
 	}
 
 	// set default for initial value
-	if options.Temperature < 1.0 {
-		options.Temperature = 1.0
+	if options.Temperature < 0.0 {
+		options.Temperature = 0.0
 	}
 	if options.Temperature > 100.0 {
 		return "", fmt.Errorf("temperature must be between 1 and 100")
@@ -40,10 +46,16 @@ func (c *AnthropicClient) QueryText(prompt string, model string, options Options
 	// Build response string
 	answer := ""
 
+	// Set default max tokens if not specified
+	maxTokens := options.MaxTokens
+	if maxTokens == 0 {
+		maxTokens = MaxTokensDefault
+	}
+
 	// Create new message request with the provided prompt and temperature
 	message, err := c.client.Messages.New(context.TODO(), anthropic.MessageNewParams{
 		Model:       anthropic.F(model),                        // Specify which model to use
-		MaxTokens:   anthropic.F(int64(MAX_TOKENS)),            // Limit response length
+		MaxTokens:   anthropic.F(maxTokens),                    // Limit response length
 		Temperature: anthropic.F(float64(options.Temperature)), // Set temperature
 		Messages: anthropic.F([]anthropic.MessageParam{
 			anthropic.NewUserMessage(anthropic.NewTextBlock(prompt)), // Create user message
@@ -60,7 +72,7 @@ func (c *AnthropicClient) QueryText(prompt string, model string, options Options
 
 	// Concatenate all text blocks from the response
 	for _, content := range message.Content {
-		answer += fmt.Sprintf("%v", content.Text)
+		answer += fmt.Sprintf("%v", string(content.Text))
 	}
 	return answer, nil
 }

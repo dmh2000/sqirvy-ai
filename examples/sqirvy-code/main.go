@@ -16,7 +16,7 @@ import (
 	_ "embed"
 	"fmt"
 	"log"
-	sqirvy "sqirvy-llm/pkg/sqirvy"
+	sqirvy "sqirvy-ai/pkg/sqirvy"
 )
 
 // build the system prompt and code requirements into the binary

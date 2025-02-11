@@ -1,8 +1,8 @@
 create a new file, pkg/sqirvy/deepseek.go to support DeepSeek LLM models, that does the following:
 - model the new file after the openai  interface in pkg/sqirvy/openai.go
 - deepseek uses the openai  interface
-- the API key is in environment variable DEEPSEEK_API_KEY
-- the endpoint is in environment variable DEEPSEEK_API_BASE
+- the API key is in environment variable LLAMA_API_KEY
+- the endpoint is in environment variable LLAMA_BASE_URL
 - the new file should have the same functionality as the openai.go file, but with the deepseek specs.
 
 update pkg/sqirvy/models.go to include a client for deepseek

@@ -13,6 +13,8 @@ import (
 	"fmt"
 )
 
+const MaxTokensDefault = 8192
+
 // Provider represents supported AI providers.
 // Currently supports Anthropic, DeepSeek, Gemini, and OpenAI.
 // Provider identifies which AI service provider to use
@@ -20,18 +22,18 @@ type Provider string
 
 // Supported AI providers
 const (
-	Anthropic Provider = "anthropic"  // Anthropic's Claude models
-	DeepSeek  Provider = "deepseek"   // DeepSeek's LLM models
-	Gemini    Provider = "gemini"     // Google's Gemini models
-	OpenAI    Provider = "openai"     // OpenAI's GPT models
-	MetaLlama Provider = "meta-llama" // Meta's Llama models
+	Anthropic Provider = "anthropic" // Anthropic's Claude models
+	DeepSeek  Provider = "deepseek"  // DeepSeek's models
+	Gemini    Provider = "gemini"    // Google's Gemini models
+	OpenAI    Provider = "openai"    // OpenAI's GPT models
+	MetaLlama Provider = "llama"     // Meta's Llama models
 )
 
 // Options combines all provider-specific options into a single structure.
 // This allows for provider-specific configuration while maintaining a unified interface.
 type Options struct {
-	Temperature float32
-	// Controls the randomness of the output
+	Temperature float32 // Controls the randomness of the output
+	MaxTokens   int64   // Maximum number of tokens in the response
 }
 
 // Client provides a unified interface for AI operations.
@@ -53,7 +55,7 @@ func NewClient(provider Provider) (Client, error) {
 	case OpenAI:
 		return &OpenAIClient{}, nil
 	case MetaLlama:
-		return &MetaLlamaClient{}, nil
+		return &LlamaClient{}, nil
 	default:
 		return nil, fmt.Errorf("unsupported provider: %s", provider)
 	}

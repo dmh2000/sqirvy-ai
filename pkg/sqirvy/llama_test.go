@@ -13,7 +13,7 @@ func TestMetaLlamaClient_QueryText(t *testing.T) {
 		t.Skip("LLAMA_BASE_URL not set")
 	}
 
-	client, err := NewClient(Provider("meta-llama"))
+	client, err := NewClient(Provider("llama"))
 	if err != nil {
 		t.Fatalf("Failed to create client: %v", err)
 	}

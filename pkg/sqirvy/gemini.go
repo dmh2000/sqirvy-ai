@@ -24,8 +24,15 @@ func (c *GeminiClient) initClient() error {
 	var err error
 	// Create a background context for API operations
 	c.ctx = context.Background()
+
+	// Check for the GEMINI_API_KEY environment variable
+	apiKey := os.Getenv("GEMINI_API_KEY")
+	if apiKey == "" {
+		return fmt.Errorf("GEMINI_API_KEY environment variable not set")
+	}
+
 	// Initialize the Gemini client with API key from environment
-	c.client, err = genai.NewClient(c.ctx, option.WithAPIKey(os.Getenv("GEMINI_API_KEY")))
+	c.client, err = genai.NewClient(c.ctx, option.WithAPIKey(apiKey))
 	if err != nil {
 		return fmt.Errorf("failed to create client: %w", err)
 	}

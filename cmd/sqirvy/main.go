@@ -19,7 +19,7 @@ import (
 	"log"
 	"os"
 
-	sqirvy "sqirvy-llm/pkg/sqirvy"
+	sqirvy "sqirvy-ai/pkg/sqirvy"
 )
 
 // bind the embedded prompts
@@ -100,7 +100,7 @@ func main() {
 	}
 
 	// Make the query
-	options := sqirvy.Options{Temperature: float32(f_temperature)}
+	options := sqirvy.Options{Temperature: float32(f_temperature), MaxTokens: sqirvy.GetMaxTokens(model)}
 	response, err := client.QueryText(prompt, model, options)
 	if err != nil {
 		log.Fatal(fmt.Errorf("error querying model %s: %v", model, err))
@@ -112,5 +112,3 @@ func main() {
 
 	os.Exit(0)
 }
-
-// "```https://sqirvy.xyz\n   Skip to content    Sqirvy.xyz              \nPosts\n   \nTags\n   \nAbout\n                                 Sqirvy.xyz Sqirvy.xyz is Dave's blog that no one looks at (:)       Featured  Adding AI To Golang AppsPosted on:January 27, 2025 | \u00a0at\u00a004:00 PMThree approaches to using AI models in GolangClone A Web Page Layout From A ScreenshotPosted on:September 3, 2024 | \u00a0at\u00a005:00 PMHow to clone a website layout from a screenshotTypes of Embedded DevelopersPosted on:April 28, 2024 | \u00a0at\u00a005:00 PMT...+712 more"

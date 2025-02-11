@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
-	sqirvy "sqirvy-llm/pkg/sqirvy"
+	sqirvy "sqirvy-ai/pkg/sqirvy"
 )
 
 func main() {
@@ -14,7 +14,7 @@ func main() {
 	}
 
 	// Make the query
-	response, err := client.QueryText("say hello world", "meta-llama/meta-llama-3.1-8b-instruct-turbo", sqirvy.Options{Temperature: 50})
+	response, err := client.QueryText("say hello world", "llama3.3-70b", sqirvy.Options{Temperature: 50})
 	if err != nil {
 		log.Fatalf("Query failed: %v", err)
 	}

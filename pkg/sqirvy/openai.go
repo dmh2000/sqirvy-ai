@@ -14,12 +14,11 @@ import (
 	"os"
 )
 
-var openAIEndpoint = "https://api.openai.com/v1/chat/completions"
-
 // OpenAIClient implements the Client interface for OpenAI's API
 type OpenAIClient struct {
-	apiKey string       // OpenAI API authentication key
-	client *http.Client // HTTP client for making API requests
+	apiKey  string       // OpenAI API authentication key
+	baseURL string       // OpenAI API base URL
+	client  *http.Client // HTTP client for making API requests
 }
 
 // openAIRequest represents the structure of a request to OpenAI's chat completion API
@@ -49,11 +48,6 @@ func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (
 		return "", fmt.Errorf("prompt cannot be empty for text query")
 	}
 
-	// update the endpoing if OPENAI_API_BASE is set
-	if base := os.Getenv("OPENAI_API_BASE"); base != "" {
-		openAIEndpoint = base + "/v1/chat/completions"
-	}
-
 	// Initialize HTTP client and API key if not already done
 	if c.client == nil {
 		c.client = &http.Client{}
@@ -61,6 +55,12 @@ func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (
 		c.apiKey = os.Getenv("OPENAI_API_KEY")
 		if c.apiKey == "" {
 			return "", fmt.Errorf("OPENAI_API_KEY environment variable not set")
+		}
+
+		// Get base URL from environment variable, or use default
+		c.baseURL = os.Getenv("OPENAI_BASE_URL")
+		if c.baseURL == "" {
+			c.baseURL = "https://api.openai.com" // Default OpenAI base URL
 		}
 	}
 
@@ -74,13 +74,19 @@ func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (
 	// scale Temperature for openai 0..2.0
 	options.Temperature = (options.Temperature * 2) / 100.0
 
+	// Set default max tokens if not specified
+	maxTokens := options.MaxTokens
+	if maxTokens == 0 {
+		maxTokens = MaxTokensDefault
+	}
+
 	// Construct the request body with the prompt as a user message
 	reqBody := openAIRequest{
 		Model: model,
 		Messages: []openAIMessage{
 			{Role: "user", Content: prompt},
 		},
-		MaxTokens:   MAX_TOKENS,          // Limit response length
+		MaxTokens:   int(maxTokens),      // Limit response length
 		Temperature: options.Temperature, // Set temperature
 	}
 
@@ -89,6 +95,9 @@ func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (
 }
 
 func (c *OpenAIClient) makeRequest(reqBody openAIRequest) (string, error) {
+	// update the endpoing if OPENAI_BASE_URL is set
+	endpoint := c.baseURL + "/v1/chat/completions"
+
 	// Convert request body to JSON
 	jsonBody, err := json.Marshal(reqBody)
 	if err != nil {
@@ -96,7 +105,7 @@ func (c *OpenAIClient) makeRequest(reqBody openAIRequest) (string, error) {
 	}
 
 	// Create new HTTP request with JSON body
-	req, err := http.NewRequest("POST", openAIEndpoint, bytes.NewBuffer(jsonBody))
+	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return "", fmt.Errorf("failed to create request: %w", err)
 	}

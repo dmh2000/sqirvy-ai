@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
-	sqirvy "sqirvy-llm/pkg/sqirvy"
+	sqirvy "sqirvy-ai/pkg/sqirvy"
 )
 
 func main() {
@@ -14,7 +14,7 @@ func main() {
 	}
 
 	// Make the query
-	response, err := client.QueryText("say hello world", "gpt-4-turbo-preview", sqirvy.Options{})
+	response, err := client.QueryText("say hello world", "gpt-4-turbo", sqirvy.Options{MaxTokens: 4096})
 	if err != nil {
 		log.Fatalf("Query failed: %v", err)
 	}

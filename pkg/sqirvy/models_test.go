@@ -44,13 +44,13 @@ func TestAllModels(t *testing.T) {
 		case "anthropic":
 			apiKey = os.Getenv("ANTHROPIC_API_KEY")
 		case "deepseek":
-			apiKey = os.Getenv("DEEPSEEK_API_KEY")
+			apiKey = os.Getenv("LLAMA_API_KEY")
 		case "gemini":
 			apiKey = os.Getenv("GEMINI_API_KEY")
 		case "openai":
 			apiKey = os.Getenv("OPENAI_API_KEY")
-		case "meta-llama":
-			apiKey = os.Getenv("TOGETHER_API_KEY")
+		case "llama":
+			apiKey = os.Getenv("LLAMA_API_KEY")
 		}
 
 		if apiKey == "" {
@@ -62,7 +62,7 @@ func TestAllModels(t *testing.T) {
 		t.Run(model+"_QueryText", func(t *testing.T) {
 			for _, tt := range tests {
 				t.Run(tt.name, func(t *testing.T) {
-					got, err := client.QueryText(tt.prompt, model, Options{})
+					got, err := client.QueryText(tt.prompt, model, Options{MaxTokens: GetMaxTokens(model)})
 					if tt.wantErr {
 						if err == nil {
 							t.Errorf("QueryText() error = nil, wantErr %v", tt.wantErr)
