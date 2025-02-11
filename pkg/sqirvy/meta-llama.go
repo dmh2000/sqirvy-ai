@@ -36,18 +36,18 @@ func (c *MetaLlamaClient) QueryText(prompt string, model string, options Options
 
 	// Initialize LLM if not already done
 	if c.llm == nil {
-		apiKey := os.Getenv("TOGETHER_API_KEY")
+		apiKey := os.Getenv("LLAMA_API_KEY")
 		if apiKey == "" {
-			return "", fmt.Errorf("TOGETHER_API_KEY environment variable not set")
+			return "", fmt.Errorf("LLAMA_API_KEY environment variable not set")
 		}
 
-		baseURL := os.Getenv("TOGETHER_API_BASE")
+		baseURL := os.Getenv("LLAMA_BASE_URL")
 		if baseURL == "" {
-			return "", fmt.Errorf("TOGETHER_API_BASE environment variable not set")
+			return "", fmt.Errorf("LLAMA_BASE_URL environment variable not set")
 		}
 
 		llm, err := openai.New(
-			openai.WithBaseURL(os.Getenv("TOGETHER_API_BASE")),
+			openai.WithBaseURL(os.Getenv("LLAMA_BASE_URL")),
 			openai.WithToken(apiKey),
 			openai.WithModel(model),
 		)

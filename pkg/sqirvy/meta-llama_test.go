@@ -6,8 +6,11 @@ import (
 )
 
 func TestMetaLlamaClient_QueryText(t *testing.T) {
-	if os.Getenv("TOGETHER_API_KEY") == "" {
-		t.Skip("TOGETHER_API_KEY not set")
+	if os.Getenv("LLAMA_API_KEY") == "" {
+		t.Skip("LLAMA_API_KEY not set")
+	}
+	if os.Getenv("LLAMA_BASE_URL") == "" {
+		t.Skip("LLAMA_BASE_URL not set")
 	}
 
 	client, err := NewClient(Provider("meta-llama"))
@@ -34,7 +37,7 @@ func TestMetaLlamaClient_QueryText(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := client.QueryText(tt.prompt, "meta-llama/meta-llama-3.1-8b-instruct-turbo", Options{})
+			got, err := client.QueryText(tt.prompt, "llama3.3-70b", Options{})
 			if tt.wantErr {
 				if err == nil {
 					t.Errorf("MetaLlamaClient.QueryText() error = %v, wantErr %v", err, tt.wantErr)
