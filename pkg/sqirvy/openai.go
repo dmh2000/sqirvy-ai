@@ -74,14 +74,20 @@ func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (
 	// scale Temperature for openai 0..2.0
 	options.Temperature = (options.Temperature * 2) / 100.0
 
+	// Set default max tokens if not specified
+	maxTokens := options.MaxTokens
+	if maxTokens == 0 {
+		maxTokens = MaxTokensDefault
+	}
+
 	// Construct the request body with the prompt as a user message
 	reqBody := openAIRequest{
 		Model: model,
 		Messages: []openAIMessage{
 			{Role: "user", Content: prompt},
 		},
-		MaxTokens:   int(options.MaxTokens), // Limit response length
-		Temperature: options.Temperature,    // Set temperature
+		MaxTokens:   int(maxTokens),      // Limit response length
+		Temperature: options.Temperature, // Set temperature
 	}
 
 	// Send request and return response
