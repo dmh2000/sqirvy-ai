@@ -28,8 +28,8 @@ func (c *AnthropicClient) QueryText(prompt string, model string, options Options
 	}
 
 	// set default for initial value
-	if options.Temperature < 1.0 {
-		options.Temperature = 1.0
+	if options.Temperature < 0.0 {
+		options.Temperature = 0.0
 	}
 	if options.Temperature > 100.0 {
 		return "", fmt.Errorf("temperature must be between 1 and 100")

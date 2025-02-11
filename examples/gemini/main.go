@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
-	sqirvy "sqirvy-llm/pkg/sqirvy"
+	sqirvy "sqirvy-ai/pkg/sqirvy"
 )
 
 func main() {

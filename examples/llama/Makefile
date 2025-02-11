@@ -2,10 +2,10 @@
 
 build:
 	staticcheck ./...
-	go build -o $(BINDIR)/meta-llama .
+	go build -o $(BINDIR)/llama .
 	
 test:
 	go run . >/dev/null
 
 clean:
-	rm -f $(BINDIR)/meta-llama
+	rm -f $(BINDIR)/llama

@@ -7,6 +7,7 @@ import (
 )
 
 func TestAnthropicClient_QueryText(t *testing.T) {
+	// Skip test if ANTHROPIC_API_KEY not set
 	if os.Getenv("ANTHROPIC_API_KEY") == "" {
 		t.Skip("ANTHROPIC_API_KEY not set")
 	}
@@ -48,4 +49,3 @@ func TestAnthropicClient_QueryText(t *testing.T) {
 		}
 	})
 }
-

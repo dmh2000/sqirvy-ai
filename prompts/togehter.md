@@ -1,2 +1,0 @@
-in directory pkg/sqirvy, create a new client for the meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo model using the together.ai rest api which is openai compatible. the provider name will be 'meta-llama'. add the client to the client.go file, and add the model to the models.go file. 
-add tests in meta-llama_test.go 

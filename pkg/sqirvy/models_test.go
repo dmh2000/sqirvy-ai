@@ -49,8 +49,8 @@ func TestAllModels(t *testing.T) {
 			apiKey = os.Getenv("GEMINI_API_KEY")
 		case "openai":
 			apiKey = os.Getenv("OPENAI_API_KEY")
-		case "meta-llama":
-			apiKey = os.Getenv("TOGETHER_API_KEY")
+		case "llama":
+			apiKey = os.Getenv("LLAMA_API_KEY")
 		}
 
 		if apiKey == "" {

@@ -20,11 +20,11 @@ type Provider string
 
 // Supported AI providers
 const (
-	Anthropic Provider = "anthropic"  // Anthropic's Claude models
-	DeepSeek  Provider = "deepseek"   // DeepSeek's LLM models
-	Gemini    Provider = "gemini"     // Google's Gemini models
-	OpenAI    Provider = "openai"     // OpenAI's GPT models
-	MetaLlama Provider = "meta-llama" // Meta's Llama models
+	Anthropic Provider = "anthropic" // Anthropic's Claude models
+	DeepSeek  Provider = "deepseek"  // DeepSeek's LLM models
+	Gemini    Provider = "gemini"    // Google's Gemini models
+	OpenAI    Provider = "openai"    // OpenAI's GPT models
+	MetaLlama Provider = "llama"     // Meta's Llama models
 )
 
 // Options combines all provider-specific options into a single structure.

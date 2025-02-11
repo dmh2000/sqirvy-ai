@@ -1,4 +1,4 @@
-module sqirvy-llm
+module sqirvy-ai
 
 go 1.23.2
 

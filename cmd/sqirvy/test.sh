@@ -69,5 +69,5 @@ echo "sqirvy -f query"
 check_return_code echo $query |   $BINDIR/sqirvy -m gpt-4-turbo          -f query main.go      >tmp/query1.md
 echo "-------------------------------"
 echo "sqirvy -f query (default if no -f)"
-check_return_code echo $query |   $BINDIR/sqirvy -m meta-llama/meta-llama-3.1-8b-instruct-turbo >tmp/query2.md
+check_return_code echo $query |   $BINDIR/sqirvy -m llama3.3-70b >tmp/query2.md
 echo "-------------------------------"

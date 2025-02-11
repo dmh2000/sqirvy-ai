@@ -19,7 +19,7 @@ import (
 	"log"
 	"os"
 
-	sqirvy "sqirvy-llm/pkg/sqirvy"
+	sqirvy "sqirvy-ai/pkg/sqirvy"
 )
 
 // bind the embedded prompts

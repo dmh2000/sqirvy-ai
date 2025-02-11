@@ -30,8 +30,8 @@ var ModelToProvider = map[string]string{
 	"gpt-4o-mini": "openai",
 	"gpt-4-turbo": "openai",
 	"o1-mini":     "openai",
-	// meta-llama models
-	"llama3.3-70b": "meta-llama",
+	// llama models
+	"llama3.3-70b": "llama",
 }
 
 // GetProviderName returns the provider name for a given model identifier.

@@ -7,7 +7,7 @@
 2.  [LLMs Supported](#llms-supported)
 3.  [How It Works](#how-it-works)
 4.  [Example Scripts](#example-scripts)
-5.  [Sqirvy-llm Command Line Programs](#sqirvy-llm-command-line-programs)
+5.  [Sqirvy-llm Command Line Programs](#sqirvy-ai-command-line-programs)
     *   [Supported Models](#supported-models)
     *   [sqirvy-query](#sqirvy-query)
     *   [sqirvy-review](#sqirvy-review)
@@ -22,7 +22,7 @@
     *   [Anthropic](#anthropic)
     *   [Gemini](#gemini)
     *   [OpenAI](#openai)
-    *   [MetaLlama](#metalama)
+    *   [Llama](#llama)
     *   [DeepSeek](#deepseek)
 
 ## What If You Could String Together Some AI Queries To Make Something Happen? And Use A Differet LLM For Each Step? And Do It From The Terminal Instead Of A UI? <a name="what-is-sqirvy-ai"></a>
@@ -31,13 +31,13 @@ Imagine you are setting up some DevOps for a project, and you need a simple way 
 
 How about this: have a set of simple command line programs that perform various fixed queries to LLM providers. You can use them to automate tasks like code review, testing, and deployment. They could be used in CI/CD pipelines, or as part of a devops workflow. And each step could use a different LLM, whatever was suitable for the options.
 
-What if you could chain multiple queries in a shell command or script, and get a single response?
+What if you could chain multiple queries in a shell command or script, and get a single response? 
+
+In addition, this project includes a simple client SDK in **pkg/sqirvy** that can connect to the supported providers and models and execute a query. This SDK can be used to write your own programs that need to connect to AI's with a very simple query function. For more involved interfacing to AI you would probably want to use LangChain, one of the native AI SDK's or a direct HTTP API. But if you just need your program to provide basic AI support, this SDK makes that easy. The SDK provides two functions, **NewClient** and **QueryText** that can access OpenAI, Gemini, Anthropic, LLama DeepSeek. And just for fun (and example), each client implementation (in pkg/sqirvy) uses a different method to execute queries.
 
 That's what this project is all about.
 
-Note: Each LLM model will give different results for a given prompt, and each execution of the same program and prompt will most likely generate different results even with the same model and prompt.
-
-[GitHub Repo](https://github.com/dmh2000/sqirvy-llm)
+[GitHub Repo](https://github.com/dmh2000/sqirvy-ai)
 
 ## LLMs Supported In This Release <a name="llms-supported"></a>
 
@@ -56,12 +56,12 @@ Note: Each LLM model will give different results for a given prompt, and each ex
   - o1-mini
 - https://docs.llama-api.com/quickstart
 - llama3.3-70b
-- deepseek-r1 (tested with Meta Llama  provider)
+- deepseek-r1 (tested with Meta Llama provider)
 
 ## How It Works
 
-The main program is **sqirvy**, which is a command line utility that can perform AI queries. **sqirvy** is setup to take input from stdin, perform a query to a specified LLM and send the results to stdout. Because it uses **stdin | sqirvy | stdout**, it is possible to chain together a pipeline, using the same of different models and LLM providers at each step.
-In cases where a query needs multiple inputs, it supports taking file names and urls as arguments. 
+The main program is **sqirvy**, which is a command line utility that can perform AI queries. **sqirvy** is setup to take prompt input from stdin, perform a query to a specified LLM and send the results to stdout. Because it uses **stdin | sqirvy | stdout**, it is possible to chain together a pipeline, using the same of different models and LLM providers at each step.
+In cases where a query needs multiple inputs, it supports taking file names and urls as arguments and combines them as additional context.
 
 <pre>
 Usage: bin/sqirvy [-h] [-m model] [-f function] [-t temperature] [files and/or urls  ...]
@@ -78,13 +78,14 @@ Usage: bin/sqirvy [-h] [-m model] [-f function] [-t temperature] [files and/or u
   URLs can be provided as arguments
   data from stdin will be read if there is any
 </pre>
-## Example Scripts <a name="example-scripts"></a>
 
-There are example bash scripts that illustrate the type of actions you can take with the **sqirvy** program to perform multi-step operations in a pipeline.
+
+## Example Pipeline Script <a name="example-scripts"></a>
+
+THere is an example bash script that illustrates the type of actions you can take with the **sqirvy** program to perform multi-step operations in a pipeline.
 
 ### scripts/tetris
 <img src="./doc/sqirvy.png" width="80%" style="display: block; margin: 0 auto"/>
-
 
 ```bash
 #!/bin/bash
@@ -123,7 +124,9 @@ xdg-open http://localhost:8080
 
 ```
 
-## Sqirvy-llm Command Line Programs <a name="sqirvy-llm-command-line-programs"></a>
+## Sqirvy-llm Command Line Program <a name="sqirvy-ai-command-line-programs"></a>
+
+**bin/sqirvy is primary command line program
 
 ### Supported Models
 
@@ -142,119 +145,24 @@ xdg-open http://localhost:8080
     - gpt-4o-mini
     - o1-mini
   - Meta-Llama
-	  - meta-llama/meta-llama-3.1-8b-instruct-turbo
-	  - meta-llama/Llama-3.3-70B-Instruct-Turbo
-    - meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo
-
+	  - llama3.3-70b
   - DeepSeek
    - deepseek-r1
-   - deepseek-chat (also disabled)
-
-### sqirvy-query <a name="sqirvy-query"></a>
-
-- run an arbitrary query to an LLM provider
-- concatenates prompt from stdin and/or files and sends it to the specified AI model
-- defaults to Anthropic claude-3-5-sonnet-latest model if no model is specified
-- example: pipe a prompt to sqirvy-query with the default claude-3-5-sonnet-latest model
-  - echo "say hello world" | sqirvy-query
-- example: read a prompt from a file and pipe it to sqirvy-query with the o1-mini model
-  - sqirvy-query -m o1-mini prompt.txt
-
-A command line program that allows you to send arbitrary prompts to an AI model.
-
-#### Usage: sqirvy-query [options] files...
-
-- Options:
-  - -h print this help message
-  - -m AI model to use (default: claude-3-5-sonnet-latest)
-
-Example usage:
-
-```bash
-sqirvy-query -m gpt-4-turbo-preview "tell me a joke"
-
-sqirvy-query -h
-Usage: sqirvy-query [options] files...
-initializes the context from stdin, pipe or redirection (if any)
-concatenates files to the context in order
-Options:
-  -h    print this help message
-  -m    AI model to use (default: claude-3-5-sonnet-latest)
-
-```
-
-### sqirvy-review <a name="sqirvy-review"></a>
-
-A command line program that invokes an AI model to perform code review. This program has a built-in system and review prompt (using Go file embeddeding), so you don't need to provide any prompts if you don't want to. If you don't like those prompts, you can modify them and rebuild the program.
-
-Example usage:
-
-```bash
-sqirvy-review -m claude-3-5-haiku-latest ../../cmd/sqirvy-query/*.go
-
-sqirvy-review -h
-Usage: sqirvy-review [options] files...
-initializes the context from stdin, pipe or redirection (if any)
-concatenates files to the context in order
-Options:
-  -h    print this help message
-  -m    AI model to use (default: gemini-1.5-flash)
-
-```
-
-### sqirvy-scrape <a name="sqirvy-scrape"></a>
-
-A command line program that invokes an AI model to scrape data from the web and perform some action on the downloaded data.
-
-Example usage:
-
-```bash
-sqirvy-scrape -m gpt-4-turbo-preview https://sqirvy.xyz
-
-sqirvy-scrape -h
-Usage: sqirvy-scrape [options] urls...
-initializes the context from stdin, pipe or redirection (if any)
-scrapes content from URLs and sends it to the specified AI model
-Options:
-  -h     print this help message
-  -m     AI model to use (default: claude-3-5-sonnet-latest)
-
-```
-
-### Chaining <a name="chaining"></a>
-
-The command line programs can be chained together to perform more complex tasks. This is because the prompt inputs to the programs are added to the context in this order:
-
-- special cases
-  - sqirvy-review has a built-in system and query prompt.
-  - sqirvy_query and sqirvy_scrape, if a file named system.md exists in the current directory, it will be first in the context.
-- stdin, pipe or redirection.
-- files specified on the command line
-
-For example, you can use sqirvy-scrape to scrape a website and then use sqirvy-query to summarize the content.
-
-```bash
-sqirvy-scrape -m gpt-4-turbo-preview https://sqirvy.xyz | sqirvy-query -m gpt-4-turbo-preview "summarize the content"
-```
 
 ## SDK Library <a name="sdk-library"></a>
 
-The above preconfigure commands use the sqirvy-llm/pkg/sqirvy SDK in this repo. This is the interface you would use to make queries to LLM providers in Go if you want to use it in your own Go programs.
-
-Most of the code was generated using [Aider](https://aider.chat/) and the [claude-3-sonnet-20240229](https://claude.ai/) model. I had to do several iterations with Aider and some manual editing to get the exact code layout I wanted.
-
-The API is in directory pkg/sqirvy. It is a very simple interface that allows you to query a provider with a prompt and get a response. It supports Anthropic, Gemini, and OpenAI providers through the 'client' interface. Here is an example of how to use the API in a command line program. Examples for the other providers are in the 'cmd' directory.
+The SDK is in directory pkg/sqirvy. It is a very simple interface that allows you to query a provider with a prompt and get a response. It supports Anthropic, Gemini, and OpenAI providers through the 'client' interface. Here is an example of how to use the API in a command line program. Examples for the other providers are in the 'cmd' directory.
 
 - Making a query to a provider
   - Create a new client for the provider you want to use
     - sqirvy.NewClient(sqirvy.<provider>)
     - anthropic, gemini or openai
-  - Make the query with a prompt, the model name, and any options (nothing supported yet). You can request the results to be plain text or JSON
+  - Make the query with a prompt, either from stdin or a file argument, and the model name,
     - client.QueryText(prompt, model string, options Options) (string, error)
-    - client.QueryJSON(prompt string, model string, options Options) (string, error)
   - Get the response
   - Handle any errors
 
+### Here's and example of very simple program that will perform a fixed query, using the NewClient and QueryText functions.
 ```go
 package main
 
@@ -262,7 +170,7 @@ import (
 	"fmt"
 	"log"
 
-	sqirvy "sqirvy-llm/pkg/sqirvy"
+	sqirvy "sqirvy-ai/pkg/sqirvy"
 )
 
 func main() {
@@ -282,7 +190,7 @@ func main() {
 }
 ```
 
-## Example Usage <a name="example-usage"></a>
+## Examples <a name="example-usage"></a>
 
 Example code is in directory **examples**.  To use them, first build the binaries.
 ### Build The Executables <a name="build-the-executables"></a>
@@ -302,7 +210,7 @@ Example code is in directory **examples**.  To use them, first build the binarie
 #### Simple hard coded queries using the specified provider:
 -  examples/anthropic
 -  examples/gemini
--  examples/meta-llama
+-  examples/llama
 -  examples/openai
 
 #### Examples for the various -f <function> flags
@@ -356,7 +264,7 @@ The code for the web app was generated using Aider and the claude-3-sonnet-20240
   - export OPENAI_API_KEY=<your api key>
   - export OPENAI_BASE_URL=https://api.openai.com/v1/chat/completions
 
-### MetaLlama <a name="metalama"></a>
+### Llama <a name="metalama"></a>
 
 - [Meta-LLAMA](github.com/tmc/langchaingo/llms/openai)
 

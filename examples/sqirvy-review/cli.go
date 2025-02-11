@@ -15,8 +15,8 @@ import (
 	"flag"
 	"fmt"
 	"sort"
-	sqirvy "sqirvy-llm/pkg/sqirvy"
-	util "sqirvy-llm/pkg/util"
+	sqirvy "sqirvy-ai/pkg/sqirvy"
+	util "sqirvy-ai/pkg/util"
 	"strings"
 )
 
