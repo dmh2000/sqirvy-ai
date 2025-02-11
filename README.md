@@ -6,15 +6,11 @@
 1.  [What is Sqirvy-AI?](#what-is-sqirvy-ai)
 2.  [LLMs Supported](#llms-supported)
 3.  [How It Works](#how-it-works)
-4.  [Example Scripts](#example-scripts)
-5.  [Sqirvy-llm Command Line Programs](#sqirvy-ai-command-line-programs)
+4.  [Example Pipeline Script](#example-pipeline-script)
+5.  [Sqirvy-llm Command Line Program](#sqirvy-ai-command-line-programs)
     *   [Supported Models](#supported-models)
-    *   [sqirvy-query](#sqirvy-query)
-    *   [sqirvy-review](#sqirvy-review)
-    *   [sqirvy-scrape](#sqirvy-scrape)
-    *   [Chaining](#chaining)
 6.  [SDK Library](#sdk-library)
-7.  [Example Usage](#example-usage)
+7.  [Examples](#example-usage)
     *   [Build The Executables](#build-the-executables)
     *   [Examples](#examples)
     *   [web/sqirvy-web](#websqirvy-web)
@@ -151,6 +147,8 @@ xdg-open http://localhost:8080
 
 ## SDK Library <a name="sdk-library"></a>
 
+SDK Documentation is in pkg/sqirvy/README.md
+
 The SDK is in directory pkg/sqirvy. It is a very simple interface that allows you to query a provider with a prompt and get a response. It supports Anthropic, Gemini, and OpenAI providers through the 'client' interface. Here is an example of how to use the API in a command line program. Examples for the other providers are in the 'cmd' directory.
 
 - Making a query to a provider
@@ -181,7 +179,7 @@ func main() {
 	}
 
 	// Make the query with a prompt, the model name, and any options (nothing supported yet)
-	response, err := client.QueryText("say hello world", "claude-3-sonnet-20240229", sqirvy.Options{})
+	response, err := client.QueryText("say hello world", "claude-3-5-haiku-lates", sqirvy.Options{})
 	if err != nil {
 		log.Fatalf("Query failed: %v", err)
 	}
@@ -233,7 +231,7 @@ A simple web app that allows you to query all three providers in parallel and co
 
 <img src="webapp.png" alt="Web App" width="600"/>
 
-The code for the web app was generated using Aider and the claude-3-sonnet-20240229 model.
+The code for the web app was generated using Aider and the claude-3-5-sonnet-latest model.
 
 ## CLients <a name="clients"></a>
 ### Anthropic <a name="anthropic"></a>
