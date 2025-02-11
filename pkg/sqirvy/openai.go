@@ -16,8 +16,9 @@ import (
 
 // OpenAIClient implements the Client interface for OpenAI's API
 type OpenAIClient struct {
-	apiKey string       // OpenAI API authentication key
-	client *http.Client // HTTP client for making API requests
+	apiKey  string       // OpenAI API authentication key
+	baseURL string       // OpenAI API base URL
+	client  *http.Client // HTTP client for making API requests
 }
 
 // openAIRequest represents the structure of a request to OpenAI's chat completion API
@@ -55,6 +56,12 @@ func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (
 		if c.apiKey == "" {
 			return "", fmt.Errorf("OPENAI_API_KEY environment variable not set")
 		}
+
+		// Get base URL from environment variable, or use default
+		c.baseURL = os.Getenv("OPENAI_BASE_URL")
+		if c.baseURL == "" {
+			c.baseURL = "https://api.openai.com" // Default OpenAI base URL
+		}
 	}
 
 	// validate temperature
@@ -82,14 +89,8 @@ func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (
 }
 
 func (c *OpenAIClient) makeRequest(reqBody openAIRequest) (string, error) {
-
 	// update the endpoing if OPENAI_BASE_URL is set
-	endpoint := ""
-	if base := os.Getenv("OPENAI_BASE_URL"); base != "" {
-		endpoint = base + "/v1/chat/completions"
-	} else {
-		return "", fmt.Errorf("OPENAI_BASE_URL environment variable not set")
-	}
+	endpoint := c.baseURL + "/v1/chat/completions"
 
 	// Convert request body to JSON
 	jsonBody, err := json.Marshal(reqBody)

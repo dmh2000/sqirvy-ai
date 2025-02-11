@@ -6,7 +6,7 @@ package api
 
 import "fmt"
 
-const MAX_TOKENS = 4096
+const MAX_TOKENS = 1024 * 8
 
 // ModelToProvider maps model names to their respective providers.
 // This mapping is used to determine which client implementation should handle
@@ -22,9 +22,9 @@ var ModelToProvider = map[string]string{
 	// google gemini models
 	// gemini-2.0-pro-exp-02-05
 	// gemini-2.0-flash-thinking-exp-01-21
-	"gemini-2.0-flash-exp": "gemini",
-	"gemini-1.5-flash":     "gemini",
-	"gemini-1.5-pro":       "gemini",
+	"gemini-2.0-flash": "gemini",
+	"gemini-1.5-flash": "gemini",
+	"gemini-1.5-pro":   "gemini",
 	// openai models
 	"gpt-4o":      "openai",
 	"gpt-4o-mini": "openai",

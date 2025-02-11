@@ -14,12 +14,12 @@ import (
 	"github.com/tmc/langchaingo/llms/openai"
 )
 
-// MetaLlamaClient implements the Client interface for Meta's Llama models
-type MetaLlamaClient struct {
+// LlamaClient implements the Client interface for Meta's Llama models
+type LlamaClient struct {
 	llm llms.Model // OpenAI-compatible LLM client
 }
 
-func (c *MetaLlamaClient) QueryText(prompt string, model string, options Options) (string, error) {
+func (c *LlamaClient) QueryText(prompt string, model string, options Options) (string, error) {
 	if prompt == "" {
 		return "", fmt.Errorf("prompt cannot be empty for text query")
 	}
@@ -43,6 +43,7 @@ func (c *MetaLlamaClient) QueryText(prompt string, model string, options Options
 
 		baseURL := os.Getenv("LLAMA_BASE_URL")
 		if baseURL == "" {
+			// baseurl must be provided for Llama models
 			return "", fmt.Errorf("LLAMA_BASE_URL environment variable not set")
 		}
 

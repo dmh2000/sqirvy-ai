@@ -21,7 +21,7 @@ type Provider string
 // Supported AI providers
 const (
 	Anthropic Provider = "anthropic" // Anthropic's Claude models
-	DeepSeek  Provider = "deepseek"  // DeepSeek's LLM models
+	DeepSeek  Provider = "deepseek"  // DeepSeek's models
 	Gemini    Provider = "gemini"    // Google's Gemini models
 	OpenAI    Provider = "openai"    // OpenAI's GPT models
 	MetaLlama Provider = "llama"     // Meta's Llama models
@@ -53,7 +53,7 @@ func NewClient(provider Provider) (Client, error) {
 	case OpenAI:
 		return &OpenAIClient{}, nil
 	case MetaLlama:
-		return &MetaLlamaClient{}, nil
+		return &LlamaClient{}, nil
 	default:
 		return nil, fmt.Errorf("unsupported provider: %s", provider)
 	}

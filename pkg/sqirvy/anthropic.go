@@ -8,6 +8,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/anthropics/anthropic-sdk-go"
 )
@@ -18,6 +19,11 @@ type AnthropicClient struct {
 }
 
 func (c *AnthropicClient) QueryText(prompt string, model string, options Options) (string, error) {
+	// test for ANTHROPIC_API_KEY in environment
+	if os.Getenv("ANTHROPIC_API_KEY") == "" {
+		return "", fmt.Errorf("ANTHROPIC_API_KEY environment variable not set")
+	}
+
 	if prompt == "" {
 		return "", fmt.Errorf("prompt cannot be empty for text query")
 	}
@@ -60,7 +66,7 @@ func (c *AnthropicClient) QueryText(prompt string, model string, options Options
 
 	// Concatenate all text blocks from the response
 	for _, content := range message.Content {
-		answer += fmt.Sprintf("%v", content.Text)
+		answer += fmt.Sprintf("%v", string(content.Text))
 	}
 	return answer, nil
 }
