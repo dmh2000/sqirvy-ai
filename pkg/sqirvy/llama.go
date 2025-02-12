@@ -3,7 +3,7 @@
 // This file implements the Client interface for Meta's Llama models using
 // langchaingo's OpenAI-compatible interface. It handles model initialization,
 // prompt formatting, and response parsing.
-package api
+package sqirvy
 
 import (
 	"context"

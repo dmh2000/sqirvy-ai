@@ -3,7 +3,7 @@
 // This file implements the Client interface for deepseek's API, supporting
 // both text and JSON queries to GPT models. It handles authentication,
 // request formatting, and response parsing specific to deepseek's requirements.
-package api
+package sqirvy
 
 import (
 	"bytes"

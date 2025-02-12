@@ -3,7 +3,7 @@
 // This file implements the Client interface for Google's Gemini API, supporting
 // both text and JSON queries. It handles authentication, request formatting,
 // and response parsing specific to the Gemini API requirements.
-package api
+package sqirvy
 
 import (
 	"context"

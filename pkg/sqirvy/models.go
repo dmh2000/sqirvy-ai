@@ -2,7 +2,7 @@
 //
 // This file contains model-to-provider mappings and utility functions for
 // working with different AI models across supported providers.
-package api
+package sqirvy
 
 import "fmt"
 

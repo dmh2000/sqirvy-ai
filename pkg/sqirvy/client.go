@@ -7,7 +7,7 @@
 //
 // It provides a consistent interface for making text and JSON queries while handling
 // provider-specific implementation details internally.
-package api
+package sqirvy
 
 import (
 	"fmt"
