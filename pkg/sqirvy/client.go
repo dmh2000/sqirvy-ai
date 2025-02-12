@@ -13,7 +13,14 @@ import (
 	"fmt"
 )
 
-const MaxTokensDefault = 8192
+const (
+	// MaxTokensDefault is the default maximum number of tokens in responses
+	MaxTokensDefault = 8192
+
+	// Temperature limits for model queries (0-100 scale)
+	MinTemperature = 0.0
+	MaxTemperature = 100.0
+)
 
 // Provider represents supported AI providers.
 // Currently supports Anthropic, DeepSeek, Gemini, and OpenAI.
@@ -47,15 +54,15 @@ type Client interface {
 func NewClient(provider Provider) (Client, error) {
 	switch provider {
 	case Anthropic:
-		return &AnthropicClient{}, nil
+		return NewAnthropicClient()
 	case DeepSeek:
-		return &DeepSeekClient{}, nil
+		return NewDeepSeekClient()
 	case Gemini:
-		return &GeminiClient{}, nil
+		return NewGeminiClient()
 	case OpenAI:
-		return &OpenAIClient{}, nil
+		return NewOpenAIClient()
 	case MetaLlama:
-		return &LlamaClient{}, nil
+		return NewLlamaClient()
 	default:
 		return nil, fmt.Errorf("unsupported provider: %s", provider)
 	}

@@ -14,10 +14,41 @@ import (
 	"os"
 )
 
-// DeepSeekClient implements the Client interface for deepseek's API
+const (
+	// DeepSeekTempScale is the scaling factor for DeepSeek's 0-2 temperature range
+	DeepSeekTempScale = 2.0
+)
+
+// DeepSeekClient implements the Client interface for DeepSeek's API.
+// It provides methods for querying DeepSeek's language models through
+// their HTTP API.
 type DeepSeekClient struct {
-	apiKey string       // deepseek API authentication key
-	client *http.Client // HTTP client for making API requests
+	apiKey  string       // DeepSeek API authentication key
+	baseURL string       // DeepSeek API base URL
+	client  *http.Client // HTTP client for making API requests
+}
+
+// Ensure DeepSeekClient implements the Client interface
+var _ Client = (*DeepSeekClient)(nil)
+
+// NewDeepSeekClient creates a new instance of DeepSeekClient.
+// It returns an error if the required environment variables are not set.
+func NewDeepSeekClient() (*DeepSeekClient, error) {
+	apiKey := os.Getenv("DEEPSEEK_API_KEY")
+	if apiKey == "" {
+		return nil, fmt.Errorf("DEEPSEEK_API_KEY environment variable not set")
+	}
+
+	baseURL := os.Getenv("DEEPSEEK_BASE_URL")
+	if baseURL == "" {
+		return nil, fmt.Errorf("DEEPSEEK_BASE_URL environment variable not set")
+	}
+
+	return &DeepSeekClient{
+		apiKey:  apiKey,
+		baseURL: baseURL,
+		client:  &http.Client{},
+	}, nil
 }
 
 // deepseekRequest represents the structure of a request to deepseek's chat completion API
@@ -47,25 +78,15 @@ func (c *DeepSeekClient) QueryText(prompt string, model string, options Options)
 		return "", fmt.Errorf("prompt cannot be empty for text query")
 	}
 
-	// Initialize HTTP client and API key if not already done
-	if c.client == nil {
-		c.client = &http.Client{}
-		// Get API key from environment variable
-		c.apiKey = os.Getenv("DEEPSEEK_API_KEY")
-		if c.apiKey == "" {
-			return "", fmt.Errorf("DEEPSEEK_API_KEY environment variable not set")
-		}
+	// Set default and validate temperature
+	if options.Temperature < MinTemperature {
+		options.Temperature = MinTemperature
 	}
-
-	// validate temperature
-	if options.Temperature < 0.0 {
-		options.Temperature = 0.0
+	if options.Temperature > MaxTemperature {
+		return "", fmt.Errorf("temperature must be between %.1f and %.1f", MinTemperature, MaxTemperature)
 	}
-	if options.Temperature > 100.0 {
-		return "", fmt.Errorf("temperature must be between 1 and 100")
-	}
-	// scale Temperature for deepseek 0..2.0
-	options.Temperature = (options.Temperature * 2) / 100.0
+	// Scale temperature for DeepSeek's 0-2 range
+	options.Temperature = (options.Temperature * DeepSeekTempScale) / MaxTemperature
 
 	// Set default max tokens if not specified
 	maxTokens := options.MaxTokens
@@ -95,13 +116,7 @@ func (c *DeepSeekClient) makeRequest(reqBody deepseekRequest) (string, error) {
 	}
 
 	// Create new HTTP request with JSON body
-	endpoint := ""
-	if base := os.Getenv("DEEPSEEK_BASE_URL"); base != "" {
-		endpoint = base
-	} else {
-		return "", fmt.Errorf("DEEPSEEK_BASE_URL environment variable not set")
-	}
-	endpoint += "/chat/completions"
+	endpoint := c.baseURL + "/chat/completions"
 
 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(jsonBody))
 	if err != nil {

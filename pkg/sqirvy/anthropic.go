@@ -9,42 +9,49 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/anthropics/anthropic-sdk-go"
 )
 
-// AnthropicClient implements the Client interface for Anthropic's API
+// AnthropicClient implements the Client interface for Anthropic's API.
+// It provides methods for querying Anthropic's language models through
+// their official API client.
 type AnthropicClient struct {
 	client *anthropic.Client // Anthropic API client
 }
 
-func (c *AnthropicClient) QueryText(prompt string, model string, options Options) (string, error) {
-	// test for ANTHROPIC_API_KEY in environment
-	if os.Getenv("ANTHROPIC_API_KEY") == "" {
-		return "", fmt.Errorf("ANTHROPIC_API_KEY environment variable not set")
-	}
+// Ensure AnthropicClient implements the Client interface
+var _ Client = (*AnthropicClient)(nil)
 
+// NewAnthropicClient creates a new instance of AnthropicClient.
+// It returns an error if the required ANTHROPIC_API_KEY environment variable is not set.
+func NewAnthropicClient() (*AnthropicClient, error) {
+	if os.Getenv("ANTHROPIC_API_KEY") == "" {
+		return nil, fmt.Errorf("ANTHROPIC_API_KEY environment variable not set")
+	}
+	return &AnthropicClient{
+		client: anthropic.NewClient(),
+	}, nil
+}
+
+// QueryText sends a text query to the specified Anthropic model and returns the response.
+// It accepts a prompt string, model identifier, and query options.
+// Returns the model's response as a string or an error if the query fails.
+func (c *AnthropicClient) QueryText(prompt string, model string, options Options) (string, error) {
 	if prompt == "" {
 		return "", fmt.Errorf("prompt cannot be empty for text query")
 	}
 
-	// Initialize client if not already done
-	if c.client == nil {
-		c.client = anthropic.NewClient()
+	// set default and validate temperature
+	if options.Temperature < MinTemperature {
+		options.Temperature = MinTemperature
 	}
-
-	// set default for initial value
-	if options.Temperature < 0.0 {
-		options.Temperature = 0.0
-	}
-	if options.Temperature > 100.0 {
-		return "", fmt.Errorf("temperature must be between 1 and 100")
+	if options.Temperature > MaxTemperature {
+		return "", fmt.Errorf("temperature must be between %.1f and %.1f", MinTemperature, MaxTemperature)
 	}
 	// scale temperature for Claude 0..1.0
-	options.Temperature /= 100.0
-
-	// Build response string
-	answer := ""
+	options.Temperature /= MaxTemperature
 
 	// Set default max tokens if not specified
 	maxTokens := options.MaxTokens
@@ -70,9 +77,10 @@ func (c *AnthropicClient) QueryText(prompt string, model string, options Options
 		return "", fmt.Errorf("no content in response")
 	}
 
-	// Concatenate all text blocks from the response
+	// Build response using strings.Builder for better performance
+	var answer strings.Builder
 	for _, content := range message.Content {
-		answer += fmt.Sprintf("%v", string(content.Text))
+		answer.WriteString(content.Text)
 	}
-	return answer, nil
+	return answer.String(), nil
 }

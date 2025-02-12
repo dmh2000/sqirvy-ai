@@ -14,9 +14,45 @@ import (
 	"github.com/tmc/langchaingo/llms/openai"
 )
 
-// LlamaClient implements the Client interface for Meta's Llama models
+const (
+	// LlamaTempScale is the scaling factor for Llama's 0-2 temperature range
+	LlamaTempScale = 2.0
+)
+
+// LlamaClient implements the Client interface for Meta's Llama models.
+// It provides methods for querying Llama language models through
+// an OpenAI-compatible interface.
 type LlamaClient struct {
 	llm llms.Model // OpenAI-compatible LLM client
+}
+
+// Ensure LlamaClient implements the Client interface
+var _ Client = (*LlamaClient)(nil)
+
+// NewLlamaClient creates a new instance of LlamaClient.
+// It returns an error if the required environment variables are not set.
+func NewLlamaClient() (*LlamaClient, error) {
+	apiKey := os.Getenv("LLAMA_API_KEY")
+	if apiKey == "" {
+		return nil, fmt.Errorf("LLAMA_API_KEY environment variable not set")
+	}
+
+	baseURL := os.Getenv("LLAMA_BASE_URL")
+	if baseURL == "" {
+		return nil, fmt.Errorf("LLAMA_BASE_URL environment variable not set")
+	}
+
+	llm, err := openai.New(
+		openai.WithBaseURL(baseURL),
+		openai.WithToken(apiKey),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create Llama client: %w", err)
+	}
+
+	return &LlamaClient{
+		llm: llm,
+	}, nil
 }
 
 func (c *LlamaClient) QueryText(prompt string, model string, options Options) (string, error) {
@@ -24,42 +60,24 @@ func (c *LlamaClient) QueryText(prompt string, model string, options Options) (s
 		return "", fmt.Errorf("prompt cannot be empty for text query")
 	}
 
-	// validate temperature
-	if options.Temperature < 0.0 {
-		options.Temperature = 0.0
+	// Set default and validate temperature
+	if options.Temperature < MinTemperature {
+		options.Temperature = MinTemperature
 	}
-	if options.Temperature > 100.0 {
-		return "", fmt.Errorf("temperature must be between 1 and 100")
+	if options.Temperature > MaxTemperature {
+		return "", fmt.Errorf("temperature must be between %.1f and %.1f", MinTemperature, MaxTemperature)
 	}
-	// scale Temperature for openai 0..2.0
-	options.Temperature = (options.Temperature * 2.0) / 100.0
-
-	// Initialize LLM if not already done
-	if c.llm == nil {
-		apiKey := os.Getenv("LLAMA_API_KEY")
-		if apiKey == "" {
-			return "", fmt.Errorf("LLAMA_API_KEY environment variable not set")
-		}
-
-		baseURL := os.Getenv("LLAMA_BASE_URL")
-		if baseURL == "" {
-			// baseurl must be provided for Llama models
-			return "", fmt.Errorf("LLAMA_BASE_URL environment variable not set")
-		}
-
-		llm, err := openai.New(
-			openai.WithBaseURL(os.Getenv("LLAMA_BASE_URL")),
-			openai.WithToken(apiKey),
-			openai.WithModel(model),
-		)
-		if err != nil {
-			return "", fmt.Errorf("failed to create Together client: %w", err)
-		}
-		c.llm = llm
-	}
+	// Scale temperature for Llama's 0-2 range
+	options.Temperature = (options.Temperature * LlamaTempScale) / MaxTemperature
 
 	// Call the LLM with the prompt
-	completion, err := llms.GenerateFromSinglePrompt(context.Background(), c.llm, prompt, llms.WithTemperature(float64(options.Temperature)))
+	completion, err := llms.GenerateFromSinglePrompt(
+		context.Background(),
+		c.llm,
+		prompt,
+		llms.WithTemperature(float64(options.Temperature)),
+		llms.WithModel(model),
+	)
 	if err != nil {
 		return "", fmt.Errorf("failed to generate completion: %w", err)
 	}
