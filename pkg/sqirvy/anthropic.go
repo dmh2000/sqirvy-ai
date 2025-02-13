@@ -38,7 +38,7 @@ func NewAnthropicClient() (*AnthropicClient, error) {
 // QueryText sends a text query to the specified Anthropic model and returns the response.
 // It accepts a prompt string, model identifier, and query options.
 // Returns the model's response as a string or an error if the query fails.
-func (c *AnthropicClient) QueryText(prompt string, model string, options Options) (string, error) {
+func (c *AnthropicClient) QueryText(ctx context.Context, prompt string, model string, options Options) (string, error) {
 	if prompt == "" {
 		return "", fmt.Errorf("prompt cannot be empty for text query")
 	}
@@ -60,7 +60,7 @@ func (c *AnthropicClient) QueryText(prompt string, model string, options Options
 	}
 
 	// Create new message request with the provided prompt and temperature
-	message, err := c.client.Messages.New(context.TODO(), anthropic.MessageNewParams{
+	message, err := c.client.Messages.New(ctx, anthropic.MessageNewParams{
 		Model:       anthropic.F(model),                        // Specify which model to use
 		MaxTokens:   anthropic.F(maxTokens),                    // Limit response length
 		Temperature: anthropic.F(float64(options.Temperature)), // Set temperature

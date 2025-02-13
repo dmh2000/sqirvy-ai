@@ -1,6 +1,7 @@
 package sqirvy
 
 import (
+	"context"
 	"os"
 	"strings"
 	"testing"
@@ -12,7 +13,10 @@ func TestAnthropicClient_QueryText(t *testing.T) {
 		t.Skip("ANTHROPIC_API_KEY not set")
 	}
 
-	client := &AnthropicClient{}
+	client, err := NewAnthropicClient()
+	if err != nil {
+		t.Errorf("new client failed")
+	}
 
 	tests := []struct {
 		name   string
@@ -30,7 +34,8 @@ func TestAnthropicClient_QueryText(t *testing.T) {
 
 	tt := tests[0]
 	t.Run(tt.name, func(t *testing.T) {
-		got, err := client.QueryText(tt.prompt, "claude-3-5-sonnet-latest", Options{})
+		ctx := context.Background()
+		got, err := client.QueryText(ctx, tt.prompt, "claude-3-5-sonnet-latest", Options{})
 		if err != nil {
 			t.Errorf("AnthropicClient.QueryText() error = %v", err)
 			return
@@ -42,7 +47,7 @@ func TestAnthropicClient_QueryText(t *testing.T) {
 
 	tt = tests[1]
 	t.Run(tt.name, func(t *testing.T) {
-		_, err := client.QueryText(tt.prompt, "claude-3-5-sonnet-latest", Options{})
+		_, err := client.QueryText(context.Background(), tt.prompt, "claude-3-5-sonnet-latest", Options{})
 		if err == nil {
 			t.Errorf("AnthropicClient.QueryText() empty prompt should have failed")
 			return

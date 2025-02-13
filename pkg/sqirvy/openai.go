@@ -7,6 +7,7 @@ package sqirvy
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -73,7 +74,7 @@ type openAIResponse struct {
 	} `json:"choices"`
 }
 
-func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (string, error) {
+func (c *OpenAIClient) QueryText(ctx context.Context, prompt string, model string, options Options) (string, error) {
 	if prompt == "" {
 		return "", fmt.Errorf("prompt cannot be empty for text query")
 	}
@@ -105,10 +106,10 @@ func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (
 	}
 
 	// Send request and return response
-	return c.makeRequest(reqBody)
+	return c.makeRequest(ctx, reqBody)
 }
 
-func (c *OpenAIClient) makeRequest(reqBody openAIRequest) (string, error) {
+func (c *OpenAIClient) makeRequest(ctx context.Context, reqBody openAIRequest) (string, error) {
 	// update the endpoing if OPENAI_BASE_URL is set
 	endpoint := c.baseURL + "/v1/chat/completions"
 
@@ -129,7 +130,7 @@ func (c *OpenAIClient) makeRequest(reqBody openAIRequest) (string, error) {
 	req.Header.Set("Authorization", "Bearer "+c.apiKey)
 
 	// Send the request
-	resp, err := c.client.Do(req)
+	resp, err := c.client.Do(req.WithContext(ctx))
 	if err != nil {
 		return "", fmt.Errorf("failed to make request: %w", err)
 	}

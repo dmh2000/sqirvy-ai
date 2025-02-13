@@ -55,7 +55,7 @@ func NewLlamaClient() (*LlamaClient, error) {
 	}, nil
 }
 
-func (c *LlamaClient) QueryText(prompt string, model string, options Options) (string, error) {
+func (c *LlamaClient) QueryText(ctx context.Context, prompt string, model string, options Options) (string, error) {
 	if prompt == "" {
 		return "", fmt.Errorf("prompt cannot be empty for text query")
 	}
@@ -72,7 +72,7 @@ func (c *LlamaClient) QueryText(prompt string, model string, options Options) (s
 
 	// Call the LLM with the prompt
 	completion, err := llms.GenerateFromSinglePrompt(
-		context.Background(),
+		ctx,
 		c.llm,
 		prompt,
 		llms.WithTemperature(float64(options.Temperature)),

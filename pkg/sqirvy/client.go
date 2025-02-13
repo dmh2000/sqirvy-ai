@@ -10,6 +10,7 @@
 package sqirvy
 
 import (
+	"context"
 	"fmt"
 )
 
@@ -47,22 +48,42 @@ type Options struct {
 // It abstracts away provider-specific implementations behind a common interface
 // for making text and JSON queries to AI models.
 type Client interface {
-	QueryText(prompt string, model string, options Options) (string, error)
+	QueryText(ctx context.Context, prompt string, model string, options Options) (string, error)
 }
 
 // NewClient creates a new AI client for the specified provider
 func NewClient(provider Provider) (Client, error) {
 	switch provider {
 	case Anthropic:
-		return NewAnthropicClient()
+		client, err := NewAnthropicClient()
+		if err != nil {
+			return nil, err
+		}
+		return client, nil
 	case DeepSeek:
-		return NewDeepSeekClient()
+		client, err := NewDeepSeekClient()
+		if err != nil {
+			return nil, err
+		}
+		return client, nil
 	case Gemini:
-		return NewGeminiClient()
+		client, err := NewGeminiClient()
+		if err != nil {
+			return nil, err
+		}
+		return client, nil
 	case OpenAI:
-		return NewOpenAIClient()
+		client, err := NewOpenAIClient()
+		if err != nil {
+			return nil, err
+		}
+		return client, nil
 	case MetaLlama:
-		return NewLlamaClient()
+		client, err := NewLlamaClient()
+		if err != nil {
+			return nil, err
+		}
+		return client, nil
 	default:
 		return nil, fmt.Errorf("unsupported provider: %s", provider)
 	}

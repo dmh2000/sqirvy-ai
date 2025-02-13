@@ -1,6 +1,7 @@
 package sqirvy
 
 import (
+	"context"
 	"os"
 	"testing"
 )
@@ -26,8 +27,11 @@ func TestGeminiClient_QueryText(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			client := &GeminiClient{}
-			got, err := client.QueryText(tt.prompt, "gemini-1.5-flash", Options{Temperature: 0.5, MaxTokens: 4096})
+			client, err := NewGeminiClient()
+			if err != nil {
+				t.Errorf("new client failed")
+			}
+			got, err := client.QueryText(context.Background(), tt.prompt, "gemini-1.5-flash", Options{Temperature: 0.5, MaxTokens: 4096})
 			if err != nil {
 				t.Errorf("GeminiClient.QueryText() error = %v", err)
 				return

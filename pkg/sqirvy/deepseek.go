@@ -7,6 +7,7 @@ package sqirvy
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -73,7 +74,7 @@ type deepseekResponse struct {
 	} `json:"choices"`
 }
 
-func (c *DeepSeekClient) QueryText(prompt string, model string, options Options) (string, error) {
+func (c *DeepSeekClient) QueryText(ctx context.Context, prompt string, model string, options Options) (string, error) {
 	if prompt == "" {
 		return "", fmt.Errorf("prompt cannot be empty for text query")
 	}
@@ -105,10 +106,10 @@ func (c *DeepSeekClient) QueryText(prompt string, model string, options Options)
 	}
 
 	// Send request and return response
-	return c.makeRequest(reqBody)
+	return c.makeRequest(ctx, reqBody)
 }
 
-func (c *DeepSeekClient) makeRequest(reqBody deepseekRequest) (string, error) {
+func (c *DeepSeekClient) makeRequest(ctx context.Context, reqBody deepseekRequest) (string, error) {
 	// Convert request body to JSON
 	jsonBody, err := json.Marshal(reqBody)
 	if err != nil {
@@ -128,7 +129,7 @@ func (c *DeepSeekClient) makeRequest(reqBody deepseekRequest) (string, error) {
 	req.Header.Set("Authorization", "Bearer "+c.apiKey)
 
 	// Send the request
-	resp, err := c.client.Do(req)
+	resp, err := c.client.Do(req.WithContext(ctx))
 	if err != nil {
 		return "", fmt.Errorf("failed to make request: %w", err)
 	}

@@ -6,6 +6,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	sqirvy "sqirvy-ai/pkg/sqirvy"
@@ -42,7 +43,7 @@ func main() {
 	}
 
 	// Make the query
-	response, err := client.QueryText(prompt, model, sqirvy.Options{})
+	response, err := client.QueryText(context.Background(), prompt, model, sqirvy.Options{})
 	if err != nil {
 		log.Fatal(err)
 	}

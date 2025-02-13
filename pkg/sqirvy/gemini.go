@@ -51,13 +51,10 @@ func NewGeminiClient() (*GeminiClient, error) {
 	}, nil
 }
 
-func (c *GeminiClient) QueryText(prompt string, model string, options Options) (string, error) {
+func (c *GeminiClient) QueryText(ctx context.Context, prompt string, model string, options Options) (string, error) {
 	if prompt == "" {
 		return "", fmt.Errorf("prompt cannot be empty for text query")
 	}
-
-	// Ensure client is closed after we're done
-	defer c.client.Close()
 
 	// Create a generative model instance with the specified model name
 	genModel := c.client.GenerativeModel(model)
@@ -76,7 +73,7 @@ func (c *GeminiClient) QueryText(prompt string, model string, options Options) (
 	genModel.Temperature = &options.Temperature
 
 	// Generate content from the prompt
-	resp, err := genModel.GenerateContent(c.ctx, genai.Text(prompt))
+	resp, err := genModel.GenerateContent(ctx, genai.Text(prompt))
 	if err != nil {
 		return "", fmt.Errorf("failed to generate content: %w", err)
 	}

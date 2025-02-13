@@ -13,6 +13,7 @@
 package main
 
 import (
+	"context"
 	_ "embed"
 	"flag"
 	"fmt"
@@ -101,7 +102,8 @@ func main() {
 
 	// Make the query
 	options := sqirvy.Options{Temperature: float32(f_temperature), MaxTokens: sqirvy.GetMaxTokens(model)}
-	response, err := client.QueryText(prompt, model, options)
+	ctx := context.Background()
+	response, err := client.QueryText(ctx, prompt, model, options)
 	if err != nil {
 		log.Fatal(fmt.Errorf("error querying model %s: %v", model, err))
 	}

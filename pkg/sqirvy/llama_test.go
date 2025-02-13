@@ -1,6 +1,7 @@
 package sqirvy
 
 import (
+	"context"
 	"os"
 	"testing"
 )
@@ -37,7 +38,7 @@ func TestMetaLlamaClient_QueryText(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := client.QueryText(tt.prompt, "llama3.3-70b", Options{})
+			got, err := client.QueryText(context.Background(), tt.prompt, "llama3.3-70b", Options{})
 			if tt.wantErr {
 				if err == nil {
 					t.Errorf("MetaLlamaClient.QueryText() error = %v, wantErr %v", err, tt.wantErr)

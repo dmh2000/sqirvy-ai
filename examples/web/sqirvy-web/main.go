@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -48,7 +49,7 @@ func handleQuery(w http.ResponseWriter, r *http.Request) {
 
 	// Query Anthropic
 	if client, err := sqirvy.NewClient(sqirvy.Anthropic); err == nil {
-		if result, err := client.QueryText(prompt, "claude-3-5-sonnet-latest", sqirvy.Options{}); err == nil {
+		if result, err := client.QueryText(context.Background(), prompt, "claude-3-5-sonnet-latest", sqirvy.Options{}); err == nil {
 			response.Anthropic.Result = result
 		} else {
 			response.Anthropic.Error = err.Error()
@@ -59,7 +60,7 @@ func handleQuery(w http.ResponseWriter, r *http.Request) {
 
 	// Query OpenAI
 	if client, err := sqirvy.NewClient(sqirvy.OpenAI); err == nil {
-		if result, err := client.QueryText(prompt, "gpt-4-turbo", sqirvy.Options{MaxTokens: 4096}); err == nil {
+		if result, err := client.QueryText(context.Background(), prompt, "gpt-4-turbo", sqirvy.Options{MaxTokens: 4096}); err == nil {
 			response.OpenAI.Result = result
 		} else {
 			response.OpenAI.Error = err.Error()
@@ -70,7 +71,7 @@ func handleQuery(w http.ResponseWriter, r *http.Request) {
 
 	// Query Gemini
 	if client, err := sqirvy.NewClient(sqirvy.Gemini); err == nil {
-		if result, err := client.QueryText(prompt, "gemini-2.0-flash-exp", sqirvy.Options{}); err == nil {
+		if result, err := client.QueryText(context.Background(), prompt, "gemini-2.0-flash-exp", sqirvy.Options{}); err == nil {
 			response.Gemini.Result = result
 		} else {
 			response.Gemini.Error = err.Error()

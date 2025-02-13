@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	sqirvy "sqirvy-ai/pkg/sqirvy"
@@ -14,7 +15,7 @@ func main() {
 	}
 
 	// Make the query
-	response, err := client.QueryText("say hello world", "gpt-4-turbo", sqirvy.Options{MaxTokens: 4096})
+	response, err := client.QueryText(context.Background(), "say hello world", "gpt-4-turbo", sqirvy.Options{MaxTokens: 4096})
 	if err != nil {
 		log.Fatalf("Query failed: %v", err)
 	}
