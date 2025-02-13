@@ -49,6 +49,7 @@ type Options struct {
 // for making text and JSON queries to AI models.
 type Client interface {
 	QueryText(ctx context.Context, prompt string, model string, options Options) (string, error)
+	Close() error
 }
 
 // NewClient creates a new AI client for the specified provider

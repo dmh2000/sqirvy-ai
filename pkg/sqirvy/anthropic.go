@@ -84,3 +84,8 @@ func (c *AnthropicClient) QueryText(ctx context.Context, prompt string, model st
 	}
 	return answer.String(), nil
 }
+
+// Close implements the Close method for the Client interface.
+func (c *AnthropicClient) Close() error {
+	return nil
+}

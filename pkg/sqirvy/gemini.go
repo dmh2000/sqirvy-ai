@@ -90,3 +90,8 @@ func (c *GeminiClient) QueryText(ctx context.Context, prompt string, model strin
 
 	return result.String(), nil
 }
+
+// Close implements the Close method for the Client interface.
+func (c *GeminiClient) Close() error {
+	return c.client.Close()
+}

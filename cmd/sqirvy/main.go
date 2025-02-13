@@ -99,6 +99,7 @@ func main() {
 	if err != nil {
 		log.Fatal(fmt.Errorf("error creating client for provider %s: %v", provider, err))
 	}
+	defer client.Close()
 
 	// Make the query
 	options := sqirvy.Options{Temperature: float32(f_temperature), MaxTokens: sqirvy.GetMaxTokens(model)}

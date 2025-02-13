@@ -160,3 +160,9 @@ func (c *DeepSeekClient) makeRequest(ctx context.Context, reqBody deepseekReques
 	// Return the content of the first choice
 	return deepseekResp.Choices[0].Message.Content, nil
 }
+
+// Close implements the Close method for the Client interface.
+func (c *DeepSeekClient) Close() error {
+	c.client.CloseIdleConnections()
+	return nil
+}

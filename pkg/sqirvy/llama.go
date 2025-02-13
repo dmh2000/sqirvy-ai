@@ -84,3 +84,8 @@ func (c *LlamaClient) QueryText(ctx context.Context, prompt string, model string
 
 	return completion, nil
 }
+
+// Close implements the Close method for the Client interface.
+func (c *LlamaClient) Close() error {
+	return nil
+}

@@ -161,3 +161,9 @@ func (c *OpenAIClient) makeRequest(ctx context.Context, reqBody openAIRequest) (
 	// Return the content of the first choice
 	return openAIResp.Choices[0].Message.Content, nil
 }
+
+// Close implements the Close method for the Client interface.
+func (c *OpenAIClient) Close() error {
+	c.client.CloseIdleConnections()
+	return nil
+}
