@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	sqirvy "sqirvy-ai/pkg/sqirvy"
 )
@@ -34,11 +35,11 @@ var queryPrompt string
 //go:embed prompts/plan.md
 var planPrompt string
 
-//go:embed prompts/review.md
-var reviewPrompt string
-
 //go:embed prompts/code.md
 var codePrompt string
+
+//go:embed prompts/review.md
+var reviewPrompt string
 
 //go:embed prompts/scrape.md
 var scrapePrompt string
@@ -47,8 +48,8 @@ var scrapePrompt string
 var prompts = map[string]string{
 	"query":  queryPrompt,
 	"plan":   planPrompt,
-	"review": reviewPrompt,
 	"code":   codePrompt,
+	"review": reviewPrompt,
 	"scrape": scrapePrompt,
 }
 
@@ -68,14 +69,15 @@ func main() {
 	}
 
 	// start with system prompt
-	prompt := systemPrompt
+	var promptBuilder strings.Builder
+	promptBuilder.WriteString(systemPrompt)
 
 	// get the function prompt
 	if _, ok := prompts[f_function]; !ok {
 		flag.Usage()
 		log.Fatal(fmt.Errorf("invalid function: %s", f_function))
 	}
-	prompt += prompts[f_function]
+	promptBuilder.WriteString(prompts[f_function])
 
 	// read additional prompt from stdin and flags
 	p, err := ReadPrompt(args)
@@ -83,7 +85,8 @@ func main() {
 		flag.Usage()
 		log.Fatal(fmt.Errorf("error reading prompt: %v", err))
 	}
-	prompt = prompt + "\n\n" + p
+	promptBuilder.WriteString("\n\n")
+	promptBuilder.WriteString(p)
 
 	// Use default model if none specified
 	model := f_model
@@ -104,7 +107,7 @@ func main() {
 	// Make the query
 	options := sqirvy.Options{Temperature: float32(f_temperature), MaxTokens: sqirvy.GetMaxTokens(model)}
 	ctx := context.Background()
-	response, err := client.QueryText(ctx, prompt, model, options)
+	response, err := client.QueryText(ctx, promptBuilder.String(), model, options)
 	if err != nil {
 		log.Fatal(fmt.Errorf("error querying model %s: %v", model, err))
 	}

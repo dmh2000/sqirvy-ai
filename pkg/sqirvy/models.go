@@ -20,14 +20,16 @@ var ModelToProvider = map[string]string{
 	// google gemini models
 	// gemini-2.0-pro-exp-02-05
 	// gemini-2.0-flash-thinking-exp-01-21
-	"gemini-2.0-flash": "gemini",
-	"gemini-1.5-flash": "gemini",
-	"gemini-1.5-pro":   "gemini",
+	"gemini-2.0-flash":              "gemini",
+	"gemini-1.5-flash":              "gemini",
+	"gemini-1.5-pro":                "gemini",
+	"gemini-2.0-flash-thinking-exp": "gemini",
 	// openai models
 	"gpt-4o":      "openai",
 	"gpt-4o-mini": "openai",
 	"gpt-4-turbo": "openai",
 	"o1-mini":     "openai",
+	"o3-mini":     "openai",
 	// llama models
 	"llama3.3-70b": "llama",
 }
