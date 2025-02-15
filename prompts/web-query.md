@@ -7,3 +7,11 @@ It took three prompts to get the web app working The code was generate using Aid
   be compared side by side.
 
 - in web/query, the html page was not modified to support the new layout. can you fix that
+
+
+- in directory examples/web/compare, create a web server that allows users to query a language model using a prompt. 
+- the web app server will written in Go. 
+- the web app should have two API endpoints. 
+  - One endpoint to request a list of available models. It can use the functions in pkg/sqirvy/models.go to get the list of models and providers. 
+  - The second endpoint should receive a prompt and a model name, and return the result of the query to the user. This endpoint should use the sqirvy.ModelToProvider function to get the appropriate Client, then use sqirvy.QueryText function for the appropriate provider to get the result.
+- the web app server will also server static files from the static directory.
