@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/sqirvy-ai/pkg/sqirvy"
+	"sqirvy-ai/pkg/sqirvy"
 )
 
 func main() {
