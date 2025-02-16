@@ -37,7 +37,6 @@ func main() {
 }
 
 func handleHome(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 	log.Printf("Handling home request from %s", r.RemoteAddr)
 	if r.URL.Path != "/" {
 		log.Printf("404 for path: %s", r.URL.Path)
@@ -54,7 +53,6 @@ func handleHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleAbout(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 	log.Printf("Handling about request from %s", r.RemoteAddr)
 	if err := templates.ExecuteTemplate(w, "layout.html", map[string]interface{}{
 		"Template": "about.html",
