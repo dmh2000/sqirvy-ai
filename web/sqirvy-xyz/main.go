@@ -16,7 +16,7 @@ func main() {
 
 	// Parse templates
 	var err error
-	templates, err = template.ParseGlob("templates/*.html")
+	templates, err = template.ParseGlob("web/sqirvy-xyz/templates/*.html")
 	if err != nil {
 		log.Fatalf("Failed to parse templates: %v", err)
 	}
