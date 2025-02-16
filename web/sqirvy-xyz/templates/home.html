@@ -1,0 +1,26 @@
+{{define "content"}}
+<div class="container">
+    <div class="prompt-section">
+        <textarea id="prompt" placeholder="Enter your prompt here..."></textarea>
+        <button id="submit">Compare Models</button>
+    </div>
+
+    <div class="results-grid">
+        <div class="result-box">
+            <h2>Model 1</h2>
+            <select class="model-select"></select>
+            <textarea class="result" readonly></textarea>
+        </div>
+        <div class="result-box">
+            <h2>Model 2</h2>
+            <select class="model-select"></select>
+            <textarea class="result" readonly></textarea>
+        </div>
+        <div class="result-box">
+            <h2>Model 3</h2>
+            <select class="model-select"></select>
+            <textarea class="result" readonly></textarea>
+        </div>
+    </div>
+</div>
+{{end}}
