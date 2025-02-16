@@ -27,7 +27,9 @@ func main() {
 }
 
 func handleModels(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Handling models request from %s", r.RemoteAddr)
 	if r.Method != http.MethodGet {
+		log.Printf("Method not allowed: %s", r.Method)
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -53,7 +55,9 @@ func handleModels(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleQuery(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Handling query request from %s", r.RemoteAddr)
 	if r.Method != http.MethodPost {
+		log.Printf("Method not allowed: %s", r.Method)
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
