@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sort"
 
 	"sqirvy-ai/pkg/sqirvy"
 )
@@ -46,17 +47,23 @@ func handleModels(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Create response with models and their providers
+	// Create response with sorted models and their providers
 	response := ModelsResponse{
 		Models: make([]ModelInfo, 0, len(sqirvy.ModelToProvider)),
 	}
 
+	// First collect all models
 	for model, provider := range sqirvy.ModelToProvider {
 		response.Models = append(response.Models, ModelInfo{
 			Name:     model,
 			Provider: provider,
 		})
 	}
+
+	// Sort models by name
+	sort.Slice(response.Models, func(i, j int) bool {
+		return response.Models[i].Name < response.Models[j].Name
+	})
 
 	// Send JSON response
 	w.Header().Set("Content-Type", "application/json")
