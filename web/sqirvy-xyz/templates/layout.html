@@ -15,7 +15,11 @@
         </nav>
     </header>
     <main>
-        {{template "content" .}}
+        {{if eq .Template "home.html"}}
+            {{template "content" .}}
+        {{else}}
+            {{template "content" .}}
+        {{end}}
     </main>
     <script src="/static/script.js"></script>
 </body>
