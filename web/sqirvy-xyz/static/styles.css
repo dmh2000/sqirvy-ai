@@ -86,6 +86,7 @@ button:hover {
 .result-box h2 {
     margin-top: 0;
     color: var(--primary-color);
+    text-align: center;
 }
 
 .model-select {
