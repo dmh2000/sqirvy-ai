@@ -2,7 +2,7 @@
 //
 // This file contains model-to-provider mappings and utility functions for
 // working with different AI models across supported providers.
-package api
+package sqirvy
 
 import "fmt"
 
@@ -20,14 +20,16 @@ var ModelToProvider = map[string]string{
 	// google gemini models
 	// gemini-2.0-pro-exp-02-05
 	// gemini-2.0-flash-thinking-exp-01-21
-	"gemini-2.0-flash": "gemini",
-	"gemini-1.5-flash": "gemini",
-	"gemini-1.5-pro":   "gemini",
+	"gemini-2.0-flash":              "gemini",
+	"gemini-1.5-flash":              "gemini",
+	"gemini-1.5-pro":                "gemini",
+	"gemini-2.0-flash-thinking-exp": "gemini",
 	// openai models
 	"gpt-4o":      "openai",
 	"gpt-4o-mini": "openai",
 	"gpt-4-turbo": "openai",
 	"o1-mini":     "openai",
+	"o3-mini":     "openai",
 	// llama models
 	"llama3.3-70b": "llama",
 }
@@ -47,8 +49,8 @@ var ModelToMaxTokens = map[string]int64{
 	"gemini-1.5-flash": MaxTokensDefault,
 	"gemini-1.5-pro":   MaxTokensDefault,
 	// openai models
-	"gpt-4o":      MaxTokensDefault,
-	"gpt-4o-mini": MaxTokensDefault,
+	"gpt-4o":      4096,
+	"gpt-4o-mini": 4096,
 	"gpt-4-turbo": 4096,
 	"o1-mini":     MaxTokensDefault,
 	// llama models

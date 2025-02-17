@@ -1,6 +1,7 @@
-package api
+package sqirvy
 
 import (
+	"context"
 	"os"
 	"testing"
 )
@@ -10,7 +11,10 @@ func TestOpenAIClient_QueryText(t *testing.T) {
 		t.Skip("OPENAI_API_KEY not set")
 	}
 
-	client := &OpenAIClient{}
+	client, err := NewOpenAIClient()
+	if err != nil {
+		t.Errorf("new client failed")
+	}
 
 	tests := []struct {
 		name    string
@@ -31,7 +35,7 @@ func TestOpenAIClient_QueryText(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := client.QueryText(tt.prompt, "gpt-4-turbo", Options{MaxTokens: GetMaxTokens("gpt-4-turbo")})
+			got, err := client.QueryText(context.Background(), tt.prompt, "gpt-4-turbo", Options{MaxTokens: GetMaxTokens("gpt-4-turbo")})
 			if tt.wantErr {
 				if err == nil {
 					t.Errorf("OpenAIClient.QueryText() error = %v, wantErr %v", err, tt.wantErr)

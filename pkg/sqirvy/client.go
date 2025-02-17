@@ -7,13 +7,21 @@
 //
 // It provides a consistent interface for making text and JSON queries while handling
 // provider-specific implementation details internally.
-package api
+package sqirvy
 
 import (
+	"context"
 	"fmt"
 )
 
-const MaxTokensDefault = 8192
+const (
+	// MaxTokensDefault is the default maximum number of tokens in responses
+	MaxTokensDefault = 4096
+
+	// Temperature limits for model queries (0-100 scale)
+	MinTemperature = 0.0
+	MaxTemperature = 100.0
+)
 
 // Provider represents supported AI providers.
 // Currently supports Anthropic, DeepSeek, Gemini, and OpenAI.
@@ -40,22 +48,43 @@ type Options struct {
 // It abstracts away provider-specific implementations behind a common interface
 // for making text and JSON queries to AI models.
 type Client interface {
-	QueryText(prompt string, model string, options Options) (string, error)
+	QueryText(ctx context.Context, prompt string, model string, options Options) (string, error)
+	Close() error
 }
 
 // NewClient creates a new AI client for the specified provider
 func NewClient(provider Provider) (Client, error) {
 	switch provider {
 	case Anthropic:
-		return &AnthropicClient{}, nil
+		client, err := NewAnthropicClient()
+		if err != nil {
+			return nil, err
+		}
+		return client, nil
 	case DeepSeek:
-		return &DeepSeekClient{}, nil
+		client, err := NewDeepSeekClient()
+		if err != nil {
+			return nil, err
+		}
+		return client, nil
 	case Gemini:
-		return &GeminiClient{}, nil
+		client, err := NewGeminiClient()
+		if err != nil {
+			return nil, err
+		}
+		return client, nil
 	case OpenAI:
-		return &OpenAIClient{}, nil
+		client, err := NewOpenAIClient()
+		if err != nil {
+			return nil, err
+		}
+		return client, nil
 	case MetaLlama:
-		return &LlamaClient{}, nil
+		client, err := NewLlamaClient()
+		if err != nil {
+			return nil, err
+		}
+		return client, nil
 	default:
 		return nil, fmt.Errorf("unsupported provider: %s", provider)
 	}

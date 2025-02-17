@@ -1,6 +1,6 @@
 .PHONY: build test clean
 
-SUBDIRS = sqirvy-web
+SUBDIRS = sqirvy-api sqirvy-xyz
 
 build:
 	@for dir in $(SUBDIRS); do \
@@ -16,3 +16,4 @@ clean:
 	@for dir in $(SUBDIRS); do \
 		$(MAKE) -s  -C $$dir clean; \
 	done
+	-rm -rf bin

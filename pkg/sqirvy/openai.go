@@ -3,10 +3,11 @@
 // This file implements the Client interface for OpenAI's API, supporting
 // both text and JSON queries to GPT models. It handles authentication,
 // request formatting, and response parsing specific to OpenAI's requirements.
-package api
+package sqirvy
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -14,11 +15,41 @@ import (
 	"os"
 )
 
-// OpenAIClient implements the Client interface for OpenAI's API
+const (
+	// OpenAITempScale is the scaling factor for OpenAI's 0-2 temperature range
+	OpenAITempScale = 2.0
+)
+
+// OpenAIClient implements the Client interface for OpenAI's API.
+// It provides methods for querying OpenAI's language models through
+// their HTTP API.
 type OpenAIClient struct {
 	apiKey  string       // OpenAI API authentication key
 	baseURL string       // OpenAI API base URL
 	client  *http.Client // HTTP client for making API requests
+}
+
+// Ensure OpenAIClient implements the Client interface
+var _ Client = (*OpenAIClient)(nil)
+
+// NewOpenAIClient creates a new instance of OpenAIClient.
+// It returns an error if the required OPENAI_API_KEY environment variable is not set.
+func NewOpenAIClient() (*OpenAIClient, error) {
+	apiKey := os.Getenv("OPENAI_API_KEY")
+	if apiKey == "" {
+		return nil, fmt.Errorf("OPENAI_API_KEY environment variable not set")
+	}
+
+	baseURL := os.Getenv("OPENAI_BASE_URL")
+	if baseURL == "" {
+		baseURL = "https://api.openai.com" // Default OpenAI base URL
+	}
+
+	return &OpenAIClient{
+		apiKey:  apiKey,
+		baseURL: baseURL,
+		client:  &http.Client{},
+	}, nil
 }
 
 // openAIRequest represents the structure of a request to OpenAI's chat completion API
@@ -43,36 +74,20 @@ type openAIResponse struct {
 	} `json:"choices"`
 }
 
-func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (string, error) {
+func (c *OpenAIClient) QueryText(ctx context.Context, prompt string, model string, options Options) (string, error) {
 	if prompt == "" {
 		return "", fmt.Errorf("prompt cannot be empty for text query")
 	}
 
-	// Initialize HTTP client and API key if not already done
-	if c.client == nil {
-		c.client = &http.Client{}
-		// Get API key from environment variable
-		c.apiKey = os.Getenv("OPENAI_API_KEY")
-		if c.apiKey == "" {
-			return "", fmt.Errorf("OPENAI_API_KEY environment variable not set")
-		}
-
-		// Get base URL from environment variable, or use default
-		c.baseURL = os.Getenv("OPENAI_BASE_URL")
-		if c.baseURL == "" {
-			c.baseURL = "https://api.openai.com" // Default OpenAI base URL
-		}
+	// Set default and validate temperature
+	if options.Temperature < MinTemperature {
+		options.Temperature = MinTemperature
 	}
-
-	// validate temperature
-	if options.Temperature < 0.0 {
-		options.Temperature = 0.0
+	if options.Temperature > MaxTemperature {
+		return "", fmt.Errorf("temperature must be between %.1f and %.1f", MinTemperature, MaxTemperature)
 	}
-	if options.Temperature > 100.0 {
-		return "", fmt.Errorf("temperature must be between 1 and 100")
-	}
-	// scale Temperature for openai 0..2.0
-	options.Temperature = (options.Temperature * 2) / 100.0
+	// Scale temperature for OpenAI's 0-2 range
+	options.Temperature = (options.Temperature * OpenAITempScale) / MaxTemperature
 
 	// Set default max tokens if not specified
 	maxTokens := options.MaxTokens
@@ -91,10 +106,10 @@ func (c *OpenAIClient) QueryText(prompt string, model string, options Options) (
 	}
 
 	// Send request and return response
-	return c.makeRequest(reqBody)
+	return c.makeRequest(ctx, reqBody)
 }
 
-func (c *OpenAIClient) makeRequest(reqBody openAIRequest) (string, error) {
+func (c *OpenAIClient) makeRequest(ctx context.Context, reqBody openAIRequest) (string, error) {
 	// update the endpoing if OPENAI_BASE_URL is set
 	endpoint := c.baseURL + "/v1/chat/completions"
 
@@ -115,7 +130,7 @@ func (c *OpenAIClient) makeRequest(reqBody openAIRequest) (string, error) {
 	req.Header.Set("Authorization", "Bearer "+c.apiKey)
 
 	// Send the request
-	resp, err := c.client.Do(req)
+	resp, err := c.client.Do(req.WithContext(ctx))
 	if err != nil {
 		return "", fmt.Errorf("failed to make request: %w", err)
 	}
@@ -145,4 +160,10 @@ func (c *OpenAIClient) makeRequest(reqBody openAIRequest) (string, error) {
 
 	// Return the content of the first choice
 	return openAIResp.Choices[0].Message.Content, nil
+}
+
+// Close implements the Close method for the Client interface.
+func (c *OpenAIClient) Close() error {
+	c.client.CloseIdleConnections()
+	return nil
 }

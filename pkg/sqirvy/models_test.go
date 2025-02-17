@@ -1,6 +1,7 @@
-package api
+package sqirvy
 
 import (
+	"context"
 	"os"
 	"testing"
 )
@@ -62,7 +63,8 @@ func TestAllModels(t *testing.T) {
 		t.Run(model+"_QueryText", func(t *testing.T) {
 			for _, tt := range tests {
 				t.Run(tt.name, func(t *testing.T) {
-					got, err := client.QueryText(tt.prompt, model, Options{MaxTokens: GetMaxTokens(model)})
+					ctx := context.Background()
+					got, err := client.QueryText(ctx, tt.prompt, model, Options{MaxTokens: GetMaxTokens(model), Temperature: 50})
 					if tt.wantErr {
 						if err == nil {
 							t.Errorf("QueryText() error = nil, wantErr %v", tt.wantErr)
@@ -79,6 +81,5 @@ func TestAllModels(t *testing.T) {
 				})
 			}
 		})
-
 	}
 }
