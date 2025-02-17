@@ -16,7 +16,7 @@ import (
 
 const (
 	// MaxTokensDefault is the default maximum number of tokens in responses
-	MaxTokensDefault = 8192
+	MaxTokensDefault = 4096
 
 	// Temperature limits for model queries (0-100 scale)
 	MinTemperature = 0.0

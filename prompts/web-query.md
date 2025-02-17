@@ -9,9 +9,34 @@ It took three prompts to get the web app working The code was generate using Aid
 - in web/query, the html page was not modified to support the new layout. can you fix that
 
 
-- in directory examples/web/compare, create a web server that allows users to query a language model using a prompt. 
-- the web app server will written in Go. 
+- in directory web/sqirvy-api, create a web server that allows users to query a language model using a prompt. 
+- the web app server will written in Go using the net/http package. 
 - the web app should have two API endpoints. 
   - One endpoint to request a list of available models. It can use the functions in pkg/sqirvy/models.go to get the list of models and providers. 
-  - The second endpoint should receive a prompt and a model name, and return the result of the query to the user. This endpoint should use the sqirvy.ModelToProvider function to get the appropriate Client, then use sqirvy.QueryText function for the appropriate provider to get the result.
-- the web app server will also server static files from the static directory.
+  - The second endpoint should receive a prompt and a model name from the caller, and return the result of the query to the user. This endpoint should use the sqirvy.ModelToProvider function to find the Provider, then create the appropriate Client, then use sqirvy.QueryText function from the Client to get the result.
+- endpoints should use JSON for requests and responses
+- the server does not need authentication
+- the server should take a command line argument for the listen address and port. The default should be ":8080"
+- the server should import the local package ""sqirvy-ai/pkg/sqirvy" for the required functions
+
+/add
+ pkg/sqirvy/models.go
+ pkg/sqirvy/anthropic.go
+ pkg/sqirvy/openai.go
+ pkg/sqirvy/deepseek.go
+ pkg/sqirvy/gemini.go
+ pkg/sqirvy/llama.go
+ pkg/sqirvy/client.go
+
+
+in web/sqirvy-api, add tests using the go test framework. the tests should assume the api 
+endpoint is a localhost:8080. the tests should cover requesting the list of models and
+performing queries using the Anthropic, Gemini and Openai modeles. the tests should be table driven.
+
+in directory web/sqirvy-xyz, create a web application that allows users to query three different ai models and compare the results. there should be a single text box to enter a prompt and a button to submit requests. the results should be displayed in separate areas. each of these areas should have a title, a drop down list to select a model, and a text box to display the results. 
+When the page is loaded, the home page should populate the drop down lists with the available models using the web/sqirvy-api/models endpoint. the user should be able to select any available model in any of the three areas.
+when the user selects three models and clicks the submit button, the app should use the web/sqirvy-api request endpoing to execute the query for the selected model and display the results. the web app should use the go net/http package. The web page should be clean, simple and modern. It should have a label at the top of the page called "sqiryv.xyz". the web app should also have an 'about' page that has a description of the app. the home page should have a button to access the 'about' page. it should have a web server that serves the static. files. 
+
+  
+                
+

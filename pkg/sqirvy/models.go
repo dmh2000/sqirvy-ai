@@ -49,8 +49,8 @@ var ModelToMaxTokens = map[string]int64{
 	"gemini-1.5-flash": MaxTokensDefault,
 	"gemini-1.5-pro":   MaxTokensDefault,
 	// openai models
-	"gpt-4o":      MaxTokensDefault,
-	"gpt-4o-mini": MaxTokensDefault,
+	"gpt-4o":      4096,
+	"gpt-4o-mini": 4096,
 	"gpt-4-turbo": 4096,
 	"o1-mini":     MaxTokensDefault,
 	// llama models

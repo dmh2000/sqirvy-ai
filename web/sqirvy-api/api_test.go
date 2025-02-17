@@ -40,8 +40,8 @@ func TestModelsEndpoint(t *testing.T) {
 	// Check for expected models
 	expectedModels := map[string]string{
 		"claude-3-5-sonnet-latest": "anthropic",
-		"gemini-1.5-pro":          "gemini",
-		"gpt-4-turbo":             "openai",
+		"gemini-1.5-pro":           "gemini",
+		"gpt-4-turbo":              "openai",
 	}
 
 	for model, provider := range expectedModels {
@@ -143,6 +143,8 @@ func TestQueryEndpoint(t *testing.T) {
 			}
 
 			// Make POST request
+			s := string(body)
+			t.Log(s)
 			resp, err := http.Post(ts.URL, "application/json", bytes.NewBuffer(body))
 			if err != nil {
 				t.Fatalf("Failed to make request: %v", err)
@@ -158,7 +160,7 @@ func TestQueryEndpoint(t *testing.T) {
 			if !tt.wantErr {
 				var response QueryResponse
 				if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-					t.Fatalf("Failed to decode response: %v", err)
+					t.Fatalf("Failed to decode response: %v:%v", s, err)
 				}
 
 				if response.Result == "" {
