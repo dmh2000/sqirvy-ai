@@ -43,9 +43,7 @@ func handleHome(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	if err := templates.ExecuteTemplate(w, "layout.html", map[string]interface{}{
-		"Template": "home.html",
-	}); err != nil {
+	if err := templates.ExecuteTemplate(w, "home.html", nil); err != nil {
 		log.Printf("Error executing home template: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
