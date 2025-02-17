@@ -55,7 +55,7 @@ func handleHome(w http.ResponseWriter, r *http.Request) {
 func handleAbout(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Handling about request from %s", r.RemoteAddr)
 	if err := templates.ExecuteTemplate(w, "layout.html", map[string]interface{}{
-		"Template": "about.html",
+		"Content": "about.html",
 	}); err != nil {
 		log.Printf("Error executing about template: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
