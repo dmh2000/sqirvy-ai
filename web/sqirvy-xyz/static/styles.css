@@ -89,6 +89,13 @@ button:hover {
     text-align: center;
 }
 
+.provider-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
 .model-select {
     width: 100%;
     padding: 0.5rem;
