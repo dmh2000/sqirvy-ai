@@ -10,12 +10,27 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             // Populate model select dropdowns
-            modelSelects.forEach(select => {
+            modelSelects.forEach((select, index) => {
+                const providerName = select.closest('.result-box').querySelector('.provider-name');
+                
                 data.models.forEach(model => {
                     const option = document.createElement('option');
                     option.value = model.name;
                     option.textContent = `${model.name} (${model.provider})`;
+                    option.dataset.provider = model.provider;
                     select.appendChild(option);
+                });
+
+                // Set initial provider name
+                const selectedOption = select.options[0];
+                if (selectedOption) {
+                    providerName.textContent = selectedOption.dataset.provider;
+                }
+
+                // Update provider name when selection changes
+                select.addEventListener('change', function() {
+                    const selectedOption = this.options[this.selectedIndex];
+                    providerName.textContent = selectedOption.dataset.provider;
                 });
             });
         })
