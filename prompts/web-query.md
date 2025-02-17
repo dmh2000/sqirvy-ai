@@ -27,6 +27,9 @@ It took three prompts to get the web app working The code was generate using Aid
  pkg/sqirvy/gemini.go
  pkg/sqirvy/llama.go
  pkg/sqirvy/client.go
+ web/sqirvy-api/main.go
+ web/sqirvy-xyz/main.go
+ web/sqirvy-api/types.go
 
 
 in web/sqirvy-api, add tests using the go test framework. the tests should assume the api 
@@ -37,6 +40,6 @@ in directory web/sqirvy-xyz, create a web application that allows users to query
 When the page is loaded, the home page should populate the drop down lists with the available models using the web/sqirvy-api/models endpoint. the user should be able to select any available model in any of the three areas.
 when the user selects three models and clicks the submit button, the app should use the web/sqirvy-api request endpoing to execute the query for the selected model and display the results. the web app should use the go net/http package. The web page should be clean, simple and modern. It should have a label at the top of the page called "sqiryv.xyz". the web app should also have an 'about' page that has a description of the app. the home page should have a button to access the 'about' page. it should have a web server that serves the static. files. 
 
-  
+
                 
 
