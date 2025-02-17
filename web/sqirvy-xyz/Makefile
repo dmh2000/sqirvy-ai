@@ -5,3 +5,6 @@ build:
 
 clean:
 	rm -f ../../bin/sqirvy-xyz
+
+test:
+	@echo "no tests in sqirvy-xyz"

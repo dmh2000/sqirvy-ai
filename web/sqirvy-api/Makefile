@@ -5,3 +5,6 @@ build:
 
 clean:
 	rm -f ../../bin/sqirvy-api
+
+test:
+	go test ./...

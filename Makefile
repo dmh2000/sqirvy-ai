@@ -1,6 +1,6 @@
 .PHONY: build test clean
 
-SUBDIRS = cmd examples pkg web/sqirvy-api web/sqirvy-xyz
+SUBDIRS = cmd examples pkg web
 PKG_SOURCES := $(shell find pkg -type f -name '*.go')
 CMD_SOURCES := $(shell find cmd -type f -name '*.go')
 SOURCES:= $(PKG_SOURCES) $(CMD_SOURCES)
