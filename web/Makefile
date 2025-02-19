@@ -1,19 +1,27 @@
-.PHONY: build test clean
+.PHONY: debug release test clean
 
 SUBDIRS = sqirvy-api sqirvy-xyz
 
-build:
+export BINDIR=$(CURDIR)/build
+
+debug:
 	@for dir in $(SUBDIRS); do \
-		$(MAKE) -s  -C $$dir build; \
+		$(MAKE) $(SILENT)  -C $$dir debug; \
+	done
+
+release:
+	@for dir in $(SUBDIRS); do \
+		$(MAKE) $(SILENT)  -C $$dir release; \
 	done
 
 test:
 	@for dir in $(SUBDIRS); do \
-		$(MAKE) -s  -C $$dir test; \
+		echo "Testing $$dir"; \
+		$(MAKE) $(SILENT)  -C $$dir test; \
 	done
 
 clean:
 	@for dir in $(SUBDIRS); do \
-		$(MAKE) -s  -C $$dir clean; \
+		$(MAKE) $(SILENT)  -C $$dir clean; \
 	done
-	-rm -rf bin
+	rm -rf build

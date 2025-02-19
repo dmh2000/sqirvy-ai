@@ -1,10 +1,17 @@
-.PHONY: build clean
+.PHONY: debug release test clean
 
-build:
-	go build -o ../../bin/sqirvy-xyz
+debug:
+	staticcheck ./...
+	go build -o sqirvy-xyz .
 
-clean:
-	rm -f ../../bin/sqirvy-xyz
+release:
+	staticcheck ./...
+	mkdir -p $(BINDIR)
+	go build -ldflags="-s -w" -o $(BINDIR)/sqirvy-xyz .
 
 test:
 	@echo "no tests in sqirvy-xyz"
+
+clean:
+	rm -f sqirvy-xyz
+	rm -f $(BINDIR)/sqirvy-xyz
