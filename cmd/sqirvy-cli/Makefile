@@ -22,17 +22,20 @@ endif
 
 debug: 
 	staticcheck ./...
+	go vet ./...
 	GOOS=$(arch) GOARCH=amd64 go build -o $(PROJECT) .
 
 release: 
 	staticcheck ./...
+	go vet ./...
 	mkdir -p $(BINDIR)
 	GOOS=$(arch) GOARCH=amd64 go build -licflags="-s -w" -o $(BINDIR)/$(PROJECT) .
 
 test:
-	@echo "sqirvy-cli no tests"
+	@./test.sh 
+	@echo "Tests passed"
 	
 clean:
 	rm -rf $(PROJECT)
 	rm -rf $(BINDIR)
-	rm -rf ./tmp
+	rm -rf ./test

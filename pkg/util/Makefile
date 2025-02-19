@@ -1,7 +1,14 @@
-.PHONY: build test clean
+.PHONY: debug release test clean
 
-build:
+debug:
 	staticcheck ./...
+	go vet ./...
+
+
+release:
+	staticcheck ./...
+	go vet ./...
+
 
 test:
 	@echo "Testing pkg/util"

@@ -38,8 +38,7 @@ check_return_code() {
 # Build latest
 export BINDIR=./bin
 mkdir -p $BINDIR
-make -s build
-
+make -s debug
 for item in "${models[@]}"
 do
 	echo "------ $item ------"

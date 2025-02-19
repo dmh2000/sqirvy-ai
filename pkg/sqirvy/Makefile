@@ -1,6 +1,10 @@
-.PHONY: build test clean
+.PHONY: debug release  test clean
 
-build:
+debug:
+	staticcheck ./...
+	go vet ./...
+
+release:
 	staticcheck ./...
 
 test:

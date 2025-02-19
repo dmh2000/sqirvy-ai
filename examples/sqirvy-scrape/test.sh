@@ -32,8 +32,7 @@ scrape="scrape this url and create a single html file containing html,css and js
 # Build latest
 export BINDIR=./bin
 mkdir -p $BINDIR
-make -s build
-
+make -s debug
 echo "-------------------------------"
 echo "$BINDIR/sqirvy-scrape (should fail)" 
 ignore_return_code go run . >/dev/null

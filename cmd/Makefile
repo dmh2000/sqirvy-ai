@@ -1,4 +1,4 @@
-.PHONY: build test clean
+.PHONY: debug release test clean
 
 BINDIR=../bin
 SUBDIRS = sqirvy sqirvy-cli
