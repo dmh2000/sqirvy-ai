@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 )
@@ -23,15 +24,13 @@ The prompt is constructed in this order:
 	Input from stdin
 	Any number of filename or url arguments	`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(cmd.Flags().Args())
-		fmt.Println(cmd.Flag("model").Value)
-		fmt.Println(cmd.Flag("temperature").Value)
-		data, err := ReadPrompt(planPrompt, args)
+		response, err := executeQuery(cmd, planPrompt, args)
 		if err != nil {
-			fmt.Println(fmt.Errorf("error reading prompt: \n%v", err))
-			return
+			log.Fatal(err)
 		}
-		fmt.Println(data)
+		// Print response to stdout
+		fmt.Print(response)
+		fmt.Println()
 	},
 }
 

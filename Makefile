@@ -8,12 +8,17 @@ SOURCES:= $(PKG_SOURCES) $(CMD_SOURCES)
 # silence make output. remove -s to see make output
 export SILENT=-s
 
-build:
+debug:
 	@for dir in $(SUBDIRS); do \
-		$(MAKE) $(SILENT) -C $$dir build; \
+		$(MAKE) $(SILENT) -C $$dir debug; \
 	done
 
-test: build
+release:
+	@for dir in $(SUBDIRS); do \
+		$(MAKE) $(SILENT) -C $$dir release; \
+	done
+
+test: debug
 	@for dir in $(SUBDIRS); do \
 		$(MAKE)  $(SILENT) -C $$dir test; \
 	done
@@ -25,9 +30,9 @@ clean:
 	done
 	-rm -rf bin
 
-review:	build
+review:	debug
 	bin/sqirvy-review -m claude-3-5-haiku-latest  $(SOURCES) >REVIEW.md
 
-deploy: clean build test review
+deploy: clean release test review
 	git add .
 	# git commit -m "Auto commit : clean, build, test, review"

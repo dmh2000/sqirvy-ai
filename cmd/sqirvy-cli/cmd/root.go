@@ -50,7 +50,7 @@ func init() {
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/sqirvy-cli.yaml)")
-	rootCmd.PersistentFlags().StringP("model", "m", "gpt-3.5-turbo", "LLM model to use")
+	rootCmd.PersistentFlags().StringP("model", "m", "gpt-4-turbo", "LLM model to use")
 	rootCmd.PersistentFlags().IntP("temperature", "t", 50, "LLM temperature to use (0..100)")
 }
 

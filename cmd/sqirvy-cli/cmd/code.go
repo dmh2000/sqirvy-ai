@@ -6,8 +6,7 @@ package cmd
 import (
 	_ "embed"
 	"fmt"
-
-	// sqirvy "sqirvy-ai/pkg/sqirvy"
+	"log"
 
 	"github.com/spf13/cobra"
 )
@@ -24,18 +23,13 @@ The prompt is constructed in this order:
 	Any number of filename or url arguments	
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("code called")
-		fmt.Println(cmd.Flags().Args())
-		fmt.Println(cmd.Flag("model").Value)
-		fmt.Println(cmd.Flag("temperature").Value)
-		// fmt.Println(codePrompt)
-
-		data, err := ReadPrompt(codePrompt, args)
+		response, err := executeQuery(cmd, codePrompt, args)
 		if err != nil {
-			fmt.Println(fmt.Errorf("error reading prompt: \n%v", err))
-			return
+			log.Fatal(err)
 		}
-		fmt.Println(data)
+		// Print response to stdout
+		fmt.Print(response)
+		fmt.Println()
 	},
 }
 

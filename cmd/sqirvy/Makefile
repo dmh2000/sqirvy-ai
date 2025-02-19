@@ -1,4 +1,4 @@
-.PHONY: build test clean
+.PHONY: debug release test clean
 
 PROJECT=sqirvy
 BINDIR=../../bin
@@ -20,15 +20,20 @@ else
 	endif
 endif
 
-build: 
+debug: 
+	staticcheck ./...
+	GOOS=$(arch) GOARCH=amd64 go build -o $(PROJECT) .
+
+release: 
 	staticcheck ./...
 	mkdir -p $(BINDIR)
-	GOOS=$(arch) GOARCH=amd64 go build -o $(BINDIR)/$(PROJECT) .
+	GOOS=$(arch) GOARCH=amd64 go build -licflags="-s -w" -o $(BINDIR)/$(PROJECT) .
 
 test:
 	@./test.sh 
 	@echo "Tests passed"
 	
 clean:
+	rm -rf $(PROJECT)
 	rm -rf $(BINDIR)
 	rm -rf ./tmp
