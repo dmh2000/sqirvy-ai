@@ -1,11 +1,17 @@
-.PHONY: build test clean
+.PHONY: debug release test clean
 
-build:
+debug:
 	staticcheck ./...
-	go build -o $(BINDIR)/anthropic .
+	go build -o anthropic .
+
+release:
+	staticcheck ./...
+	mkdir -p $(BINDIR)
+	go build -ldflags="-s -w" -o $(BINDIR)/anthropic .
 	
 test:
 	go run . >/dev/null
 
 clean:
+	rm -f anthropic
 	rm -f $(BINDIR)/anthropic

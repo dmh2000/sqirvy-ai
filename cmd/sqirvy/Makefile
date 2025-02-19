@@ -1,7 +1,8 @@
-.PHONY: build test clean
+.PHONY: debug release test clean
 
 PROJECT=sqirvy
 BINDIR=../../bin
+TESTDIR=./test
 
 # detect variants of Windows
 ifeq ($(filter Windows%, $(OS)),Windows)
@@ -20,15 +21,22 @@ else
 	endif
 endif
 
-build: 
+debug: 
 	staticcheck ./...
+	go vet ./...
+	GOOS=$(arch) GOARCH=amd64 go build -o $(PROJECT) .
+
+release: 
+	staticcheck ./...
+	go vet ./...
 	mkdir -p $(BINDIR)
-	GOOS=$(arch) GOARCH=amd64 go build -o $(BINDIR)/$(PROJECT) .
+	GOOS=$(arch) GOARCH=amd64 go build -licflags="-s -w" -o $(BINDIR)/$(PROJECT) .
 
 test:
 	@./test.sh 
 	@echo "Tests passed"
 	
 clean:
+	rm -rf $(PROJECT)
 	rm -rf $(BINDIR)
-	rm -rf ./tmp
+	rm -rf $(TESTDIR)

@@ -1,11 +1,17 @@
-.PHONY: build test clean
+.PHONY: debug release test clean
 
-build:
+debug:
 	staticcheck ./...
-	go build -o $(BINDIR)/gemini .
+	go build -o gemini .
+
+release:
+	staticcheck ./...
+	mkdir -p $(BINDIR)
+	go build -ldflags="-s -w" -o $(BINDIR)/gemini .
 
 test:
 	go run . >/dev/null
 
 clean:
+	rm -f gemini
 	rm -f $(BINDIR)/gemini

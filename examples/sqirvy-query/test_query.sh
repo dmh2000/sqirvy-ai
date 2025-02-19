@@ -26,8 +26,7 @@ ignore_return_code() {
 # Build latest
 export BINDIR=./bin
 mkdir -p $BINDIR
-make -s build
-
+make -s debug
 make build 
 echo "-------------------------------"
 echo "sqiry-query (should fail)"

@@ -1,10 +1,15 @@
-.PHONY: build test clean
+.PHONY: debug release test clean
 
 SUBDIRS = sqirvy util
 
-build:
+debug:
 	@for dir in $(SUBDIRS); do \
-		$(MAKE) -s  -C $$dir build; \
+		$(MAKE) -s  -C $$dir debug; \
+	done
+
+release:
+	@for dir in $(SUBDIRS); do \
+		$(MAKE) -s  -C $$dir release; \
 	done
 
 test:

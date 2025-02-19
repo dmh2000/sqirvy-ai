@@ -1,6 +1,8 @@
 #!/bin/bash
 
 BINDIR=../../bin
+TARGET=./sqirvy
+TESTDIR=./test
 
 # rebuild the binaries
 make
@@ -47,27 +49,27 @@ code="create a simple webpage with a counter and buttons to increment and decrem
 
 query="what is the sum of 1 + 2 + 3"   
 
-mkdir -p tmp
+mkdir -p $TESTDIR
 
 echo "-------------------------------"
 echo "sqirvy no flags or args"
-check_return_code               $BINDIR/sqirvy                                               >tmp/no-flags-or-args.md
+check_return_code               $TARGET                                               >$TESTDIR/no-flags-or-args.md
 echo "-------------------------------"
 echo "sqirvy -h"
-check_return_code                $BINDIR/sqirvy -h                                           2>tmp/help.md
+check_return_code                $TARGET -h                                          2>$TESTDIR/help.md
 echo "-------------------------------"
 echo "sqirvy https://sqirvy.xyz"
-check_return_code echo $scrape  | $BINDIR/sqirvy -f scrape https://sqirvy.xyz                >tmp/scrape.html
+check_return_code echo $scrape  | $TARGET -f scrape https://sqirvy.xyz                >$TESTDIR/scrape.html
 echo "-------------------------------"
 echo "sqirvy -f code"
-check_return_code echo $code |    $BINDIR/sqirvy -f code                                      >tmp/code.html
+check_return_code echo $code |    $TARGET -f code                                     >$TESTDIR/code.html
 echo "-------------------------------"
 echo "sqirvy -f review"
-check_return_code                 $BINDIR/sqirvy -m gemini-1.5-flash -f review main.go     >tmp/review.md
+check_return_code                 $TARGET -m gemini-1.5-flash -f review main.go       >$TESTDIR/review.md
 echo "-------------------------------"
 echo "sqirvy -f query"
-check_return_code echo $query |   $BINDIR/sqirvy -m gpt-4-turbo          -f query main.go      >tmp/query1.md
+check_return_code echo $query |   $TARGET -m gpt-4-turbo      -f query main.go        >$TESTDIR/query1.md
 echo "-------------------------------"
 echo "sqirvy -f query (default if no -f)"
-check_return_code echo $query |   $BINDIR/sqirvy -m llama3.3-70b >tmp/query2.md
+check_return_code echo $query |   $TARGET -m llama3.3-70b                             >$TESTDIR/query2.md
 echo "-------------------------------"
