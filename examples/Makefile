@@ -1,6 +1,6 @@
 .PHONY: debug release test clean
 
-SUBDIRS = sqirvy-review sqirvy-code sqirvy-scrape anthropic gemini openai
+SUBDIRS = sqirvy-review sqirvy-code sqirvy-scrape anthropic gemini openai llama
 
 export BINDIR=$(CURDIR)/build
 
@@ -10,7 +10,9 @@ debug:
 	done
 
 release:
-	@echo "no release builds"
+	@for dir in $(SUBDIRS); do \
+		$(MAKE) $(SILENT)  -C $$dir release; \
+	done
 
 test:
 	@for dir in $(SUBDIRS); do \
