@@ -19,7 +19,7 @@ It will not add internal prompts or context. The prompt to the LLM will consist 
 any input from stdint, and then any filename or url arguments, in the order specified.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		response, err := executeQuery(cmd, []string{queryPrompt}, args)
+		response, err := executeQuery(cmd, queryPrompt, args)
 		if err != nil {
 			log.Fatal(err)
 		}

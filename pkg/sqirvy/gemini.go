@@ -73,7 +73,7 @@ func (c *GeminiClient) QueryText(ctx context.Context, prompts []string, model st
 	genModel.Temperature = &options.Temperature
 
 	// Generate content from the prompt
-	resp, err := genModel.GenerateContent(ctx, genai.Text(prompt))
+	resp, err := genModel.GenerateContent(ctx, genai.Text(prompts[0]))
 	if err != nil {
 		return "", fmt.Errorf("failed to generate content: %w", err)
 	}

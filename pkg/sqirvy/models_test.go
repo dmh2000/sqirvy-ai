@@ -10,22 +10,22 @@ func TestAllModels(t *testing.T) {
 	// Test cases for both QueryText and QueryJSON
 	tests := []struct {
 		name    string
-		prompt  string
+		prompt  []string
 		wantErr bool
 	}{
 		{
 			name:    "Basic prompt",
-			prompt:  "Say 'Hello, World!'",
+			prompt:  []string{"Say 'Hello, World!'"},
 			wantErr: false,
 		},
 		{
 			name:    "JSON request",
-			prompt:  "Return a JSON object with a greeting field containing 'Hello, World!'",
+			prompt:  []string{"Return a JSON object with a greeting field containing 'Hello, World!'"},
 			wantErr: false,
 		},
 		{
 			name:    "Empty prompt",
-			prompt:  "",
+			prompt:  []string{""},
 			wantErr: true,
 		},
 	}

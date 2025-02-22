@@ -83,7 +83,7 @@ func main() {
 	p, err := ReadPrompt(args)
 	if err != nil {
 		flag.Usage()
-		log.Fatal(fmt.Errorf("error reading prompt: %v", err))
+		log.Fatal(fmt.Errorf("error reading prompt:[]string{%v", err))
 	}
 	promptBuilder.WriteString("\n\n")
 	promptBuilder.WriteString(p)

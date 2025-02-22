@@ -13,15 +13,15 @@ func TestGeminiClient_QueryText(t *testing.T) {
 
 	tests := []struct {
 		name   string
-		prompt string
+		prompt []string
 	}{
 		{
 			name:   "Basic prompt",
-			prompt: "Say 'Hello, World!'",
+			prompt: []string{"Say 'Hello, World!'"},
 		},
 		{
 			name:   "Empty prompt",
-			prompt: "hello world",
+			prompt: []string{"hello world"},
 		},
 	}
 

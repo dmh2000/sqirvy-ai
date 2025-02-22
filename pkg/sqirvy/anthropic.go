@@ -65,7 +65,7 @@ func (c *AnthropicClient) QueryText(ctx context.Context, prompts []string, model
 		MaxTokens:   anthropic.F(maxTokens),                    // Limit response length
 		Temperature: anthropic.F(float64(options.Temperature)), // Set temperature
 		Messages: anthropic.F([]anthropic.MessageParam{
-			anthropic.NewUserMessage(anthropic.NewTextBlock(prompt)), // Create user message
+			anthropic.NewUserMessage(anthropic.NewTextBlock(prompts[0])), // create user message
 		}),
 	})
 	if err != nil {

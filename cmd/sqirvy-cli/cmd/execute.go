@@ -26,7 +26,7 @@ func executeQuery(cmd *cobra.Command, sysprompt string, args []string) (string, 
 
 	prompt, err := ReadPrompt(sysprompt, args)
 	if err != nil {
-		return "", fmt.Errorf("error reading prompt: \n%v", err)
+		return "", fmt.Errorf("error reading prompt:[]string{\n%v", err)
 	}
 	provider, err := sqirvy.GetProviderName(model)
 	if err != nil {

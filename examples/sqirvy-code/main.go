@@ -69,7 +69,7 @@ func main() {
 	}
 
 	// Make the query
-	response, err := client.QueryText(context.Background(), prompt, model, sqirvy.Options{})
+	response, err := client.QueryText(context.Background(), []string{prompt}, model, sqirvy.Options{})
 	if err != nil {
 		log.Fatal(err)
 	}

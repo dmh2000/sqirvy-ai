@@ -74,7 +74,7 @@ func (c *LlamaClient) QueryText(ctx context.Context, prompts []string, model str
 	completion, err := llms.GenerateFromSinglePrompt(
 		ctx,
 		c.llm,
-		prompt,
+		prompts[0],
 		llms.WithTemperature(float64(options.Temperature)),
 		llms.WithModel(model),
 	)

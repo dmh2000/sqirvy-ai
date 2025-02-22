@@ -18,17 +18,17 @@ func TestOpenAIClient_QueryText(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		prompt  string
+		prompt  []string
 		wantErr bool
 	}{
 		{
 			name:    "Basic prompt",
-			prompt:  "Say 'Hello, World!'",
+			prompt:  []string{"Say 'Hello, World!'"},
 			wantErr: false,
 		},
 		{
 			name:    "Empty prompt",
-			prompt:  "",
+			prompt:  []string{""},
 			wantErr: true,
 		},
 	}

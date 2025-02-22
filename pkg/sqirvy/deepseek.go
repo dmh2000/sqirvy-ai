@@ -99,7 +99,7 @@ func (c *DeepSeekClient) QueryText(ctx context.Context, prompts []string, model 
 	reqBody := deepseekRequest{
 		Model: model,
 		Messages: []deepseekMessage{
-			{Role: "user", Content: prompt},
+			{Role: "user", Content: prompts[0]},
 		},
 		MaxTokens:   int(maxTokens),      // Limit response length
 		Temperature: options.Temperature, // Set temperature

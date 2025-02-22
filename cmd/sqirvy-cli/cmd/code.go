@@ -23,7 +23,7 @@ The prompt is constructed in this order:
 	Any number of filename or url arguments	
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
-		response, err := executeQuery(cmd, []string{codePrompt}, args)
+		response, err := executeQuery(cmd, codePrompt, args)
 		if err != nil {
 			log.Fatal(err)
 		}

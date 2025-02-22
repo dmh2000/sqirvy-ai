@@ -99,7 +99,7 @@ func (c *OpenAIClient) QueryText(ctx context.Context, prompts []string, model st
 	reqBody := openAIRequest{
 		Model: model,
 		Messages: []openAIMessage{
-			{Role: "user", Content: prompt},
+			{Role: "user", Content: prompts[0]},
 		},
 		MaxTokens:   int(maxTokens),      // Limit response length
 		Temperature: options.Temperature, // Set temperature
