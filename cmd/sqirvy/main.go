@@ -107,7 +107,7 @@ func main() {
 	// Make the query
 	options := sqirvy.Options{Temperature: float32(f_temperature), MaxTokens: sqirvy.GetMaxTokens(model)}
 	ctx := context.Background()
-	response, err := client.QueryText(ctx, promptBuilder.String(), model, options)
+	response, err := client.QueryText(ctx, []string{promptBuilder.String()}, model, options)
 	if err != nil {
 		log.Fatal(fmt.Errorf("error querying model %s: %v", model, err))
 	}

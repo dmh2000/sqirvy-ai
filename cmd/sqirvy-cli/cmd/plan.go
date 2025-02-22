@@ -24,7 +24,7 @@ The prompt is constructed in this order:
 	Input from stdin
 	Any number of filename or url arguments	`,
 	Run: func(cmd *cobra.Command, args []string) {
-		response, err := executeQuery(cmd, planPrompt, args)
+		response, err := executeQuery(cmd, []string{planPrompt}, args)
 		if err != nil {
 			log.Fatal(err)
 		}

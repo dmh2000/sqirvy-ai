@@ -43,7 +43,7 @@ func executeQuery(cmd *cobra.Command, sysprompt string, args []string) (string, 
 	// Make the query
 	options := sqirvy.Options{Temperature: float32(temperature), MaxTokens: sqirvy.GetMaxTokens(model)}
 	ctx := context.Background()
-	response, err := client.QueryText(ctx, prompt, model, options)
+	response, err := client.QueryText(ctx, []string{prompt}, model, options)
 	if err != nil {
 		return "", fmt.Errorf("error querying model %s: %v", model, err)
 	}
