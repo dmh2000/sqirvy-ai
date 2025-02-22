@@ -48,7 +48,7 @@ type Options struct {
 // It abstracts away provider-specific implementations behind a common interface
 // for making text and JSON queries to AI models.
 type Client interface {
-	QueryText(ctx context.Context, prompt string, model string, options Options) (string, error)
+	QueryText(ctx context.Context, prompts []string, model string, options Options) (string, error)
 	Close() error
 }
 

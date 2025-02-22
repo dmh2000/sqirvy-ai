@@ -55,9 +55,9 @@ func NewLlamaClient() (*LlamaClient, error) {
 	}, nil
 }
 
-func (c *LlamaClient) QueryText(ctx context.Context, prompt string, model string, options Options) (string, error) {
-	if prompt == "" {
-		return "", fmt.Errorf("prompt cannot be empty for text query")
+func (c *LlamaClient) QueryText(ctx context.Context, prompts []string, model string, options Options) (string, error) {
+	if len(prompts) == 0 {
+		return "", fmt.Errorf("prompts cannot be empty for text query")
 	}
 
 	// Set default and validate temperature

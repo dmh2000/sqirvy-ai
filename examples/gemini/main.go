@@ -15,7 +15,7 @@ func main() {
 	}
 
 	// Make the query
-	response, err := client.QueryText(context.Background(), "say hello world", "gemini-2.0-flash-exp", sqirvy.Options{})
+	response, err := client.QueryText(context.Background(), []string{"say hello world"}, "gemini-2.0-flash-exp", sqirvy.Options{})
 	if err != nil {
 		log.Fatalf("Query failed: %v", err)
 	}

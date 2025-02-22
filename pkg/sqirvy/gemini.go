@@ -51,9 +51,9 @@ func NewGeminiClient() (*GeminiClient, error) {
 	}, nil
 }
 
-func (c *GeminiClient) QueryText(ctx context.Context, prompt string, model string, options Options) (string, error) {
-	if prompt == "" {
-		return "", fmt.Errorf("prompt cannot be empty for text query")
+func (c *GeminiClient) QueryText(ctx context.Context, prompts []string, model string, options Options) (string, error) {
+	if len(prompts) == 0 {
+		return "", fmt.Errorf("prompts cannot be empty for text query")
 	}
 
 	// Create a generative model instance with the specified model name
