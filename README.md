@@ -1,6 +1,6 @@
 # Sqirvy-AI : Command Line Agents
 
-**VERSION 0.0.1-alpha**
+**VERSION 0.0.1-alpha is under active development and will change frequently** 
 
 ## Table of Contents
 1.  [What is Sqirvy-AI?](#what-is-sqirvy-ai)
