@@ -37,7 +37,7 @@ func TestGeminiClient_QueryText(t *testing.T) {
 			if err != nil {
 				t.Errorf("new client failed")
 			}
-			got, err := client.QueryText(context.Background(), tt.prompt, "gemini-1.5-flash", Options{Temperature: 0.5, MaxTokens: 4096})
+			got, err := client.QueryText(context.Background(), "You are a helpful AI assistant.", tt.prompt, "gemini-1.5-flash", Options{Temperature: 0.5, MaxTokens: 4096})
 			if tt.wantErr {
 				if err == nil {
 					t.Errorf("Gemini.QueryText() error = %v, wantErr %v", err, tt.wantErr)

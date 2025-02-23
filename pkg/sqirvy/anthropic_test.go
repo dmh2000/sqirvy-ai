@@ -38,7 +38,7 @@ func TestAnthropicClient_QueryText(t *testing.T) {
 	tt := tests[0]
 	t.Run(tt.name, func(t *testing.T) {
 		ctx := context.Background()
-		got, err := client.QueryText(ctx, tt.prompt, "claude-3-5-sonnet-latest", Options{})
+		got, err := client.QueryText(ctx, "You are a helpful AI assistant.", tt.prompt, "claude-3-5-sonnet-latest", Options{})
 		if err != nil {
 			t.Errorf("AnthropicClient.QueryText() error = %v", err)
 			return
