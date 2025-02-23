@@ -56,6 +56,9 @@ func (c *GeminiClient) QueryText(ctx context.Context, prompts []string, model st
 		return "", fmt.Errorf("prompts cannot be empty for text query")
 	}
 
+	// TEMPORARY : concatenate the prompts into a single string
+	prompts = compressPrompts(prompts)
+
 	// Create a generative model instance with the specified model name
 	genModel := c.client.GenerativeModel(model)
 	// Set response type to plain text

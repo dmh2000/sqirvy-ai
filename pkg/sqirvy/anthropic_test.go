@@ -19,16 +19,19 @@ func TestAnthropicClient_QueryText(t *testing.T) {
 	}
 
 	tests := []struct {
-		name   string
-		prompt []string
+		name    string
+		prompt  []string
+		wantErr bool
 	}{
 		{
-			name:   "Basic prompt",
-			prompt: []string{"Say 'Hello, World!'"},
+			name:    "Basic prompt",
+			prompt:  []string{"Say 'Hello, World!'"},
+			wantErr: false,
 		},
 		{
-			name:   "Empty prompt",
-			prompt: []string{""},
+			name:    "Empty prompt",
+			prompt:  []string{},
+			wantErr: true,
 		},
 	}
 
@@ -47,10 +50,11 @@ func TestAnthropicClient_QueryText(t *testing.T) {
 
 	tt = tests[1]
 	t.Run(tt.name, func(t *testing.T) {
-		_, err := client.QueryText(context.Background(), tt.prompt, "claude-3-5-sonnet-latest", Options{})
+		response, err := client.QueryText(context.Background(), tt.prompt, "claude-3-5-sonnet-latest", Options{})
 		if err == nil {
 			t.Errorf("AnthropicClient.QueryText() empty prompt should have failed")
 			return
 		}
+		t.Log(response)
 	})
 }

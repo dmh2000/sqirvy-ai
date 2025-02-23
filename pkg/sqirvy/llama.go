@@ -70,11 +70,19 @@ func (c *LlamaClient) QueryText(ctx context.Context, prompts []string, model str
 	// Scale temperature for Llama's 0-2 range
 	options.Temperature = (options.Temperature * LlamaTempScale) / MaxTemperature
 
-	// Call the LLM with the prompt
-	completion, err := llms.GenerateFromSinglePrompt(
-		ctx,
-		c.llm,
-		prompts[0],
+	// first message is a system message
+	content := []llms.MessageContent{
+		llms.TextParts(llms.ChatMessageTypeSystem, prompts[0]),
+	}
+
+	// subsequent messages are human messages
+	for i := 1; i < len(prompts); i++ {
+		content = append(content, llms.TextParts(llms.ChatMessageTypeHuman, prompts[i]))
+	}
+
+	// generate completion
+	completion, err := c.llm.GenerateContent(
+		ctx, content,
 		llms.WithTemperature(float64(options.Temperature)),
 		llms.WithModel(model),
 	)
@@ -82,7 +90,12 @@ func (c *LlamaClient) QueryText(ctx context.Context, prompts []string, model str
 		return "", fmt.Errorf("failed to generate completion: %w", err)
 	}
 
-	return completion, nil
+	response := ""
+	for _, part := range completion.Choices {
+		response += part.Content
+	}
+
+	return response, nil
 }
 
 // Close implements the Close method for the Client interface.

@@ -79,6 +79,9 @@ func (c *DeepSeekClient) QueryText(ctx context.Context, prompts []string, model 
 		return "", fmt.Errorf("prompts cannot be empty for text query")
 	}
 
+	// TEMPORARY : concatenate the prompts into a single string
+	prompts = compressPrompts(prompts)
+
 	// Set default and validate temperature
 	if options.Temperature < MinTemperature {
 		options.Temperature = MinTemperature

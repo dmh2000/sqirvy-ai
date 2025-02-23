@@ -28,7 +28,7 @@ func TestOpenAIClient_QueryText(t *testing.T) {
 		},
 		{
 			name:    "Empty prompt",
-			prompt:  []string{""},
+			prompt:  []string{},
 			wantErr: true,
 		},
 	}

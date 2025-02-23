@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestMetaLlamaClient_QueryText(t *testing.T) {
+func TestLlamaClient_QueryText(t *testing.T) {
 	if os.Getenv("LLAMA_API_KEY") == "" {
 		t.Skip("LLAMA_API_KEY not set")
 	}
@@ -31,7 +31,7 @@ func TestMetaLlamaClient_QueryText(t *testing.T) {
 		},
 		{
 			name:    "Empty prompt",
-			prompt:  []string{""},
+			prompt:  []string{},
 			wantErr: true,
 		},
 	}
@@ -41,16 +41,16 @@ func TestMetaLlamaClient_QueryText(t *testing.T) {
 			got, err := client.QueryText(context.Background(), tt.prompt, "llama3.3-70b", Options{})
 			if tt.wantErr {
 				if err == nil {
-					t.Errorf("MetaLlamaClient.QueryText() error = %v, wantErr %v", err, tt.wantErr)
+					t.Errorf("LlamaClient.QueryText() error = %v, wantErr %v", err, tt.wantErr)
 				}
 				return
 			}
 			if err != nil {
-				t.Errorf("MetaLlamaClient.QueryText() error = %v", err)
+				t.Errorf("LlamaClient.QueryText() error = %v", err)
 				return
 			}
 			if len(got) == 0 {
-				t.Error("MetaLlamaClient.QueryText() returned empty response")
+				t.Error("LlamaClient.QueryText() returned empty response")
 			}
 		})
 	}

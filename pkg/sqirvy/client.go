@@ -12,6 +12,7 @@ package sqirvy
 import (
 	"context"
 	"fmt"
+	"strings"
 )
 
 const (
@@ -48,7 +49,7 @@ type Options struct {
 // It abstracts away provider-specific implementations behind a common interface
 // for making text and JSON queries to AI models.
 type Client interface {
-	QueryText(ctx context.Context, prompts []string, model string, options Options) (string, error)
+	QueryText(ctx context.Context, system string, prompts []string, model string, options Options) (string, error)
 	Close() error
 }
 
@@ -88,4 +89,17 @@ func NewClient(provider Provider) (Client, error) {
 	default:
 		return nil, fmt.Errorf("unsupported provider: %s", provider)
 	}
+}
+
+func compressPrompts(prompts []string) []string {
+	// TEMPORARY : concatenate the prompts into a single string
+	// Wraps each prompt in code blocks for better formatting
+	var builder strings.Builder
+	for _, prompt := range prompts {
+		builder.WriteString("```")
+		builder.WriteString(prompt)
+		builder.WriteString("\n")
+		builder.WriteString("```")
+	}
+	return []string{builder.String()}
 }

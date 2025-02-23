@@ -59,14 +59,30 @@ func (c *AnthropicClient) QueryText(ctx context.Context, prompts []string, model
 		maxTokens = MaxTokensDefault
 	}
 
+	// first prompt is system prompt
+
+	system := []anthropic.TextBlockParam{
+		anthropic.NewTextBlock(prompts[0]),
+	}
+
+	// addtional prompts are user messages
+	messages := make([]anthropic.MessageParam, 0, len(prompts))
+	for i := 1; i < len(prompts); i++ {
+		messages = append(messages, anthropic.NewUserMessage(anthropic.NewTextBlock(prompts[i])))
+	}
+	if len(messages) == 0 {
+		messages = append(messages, anthropic.NewUserMessage(anthropic.NewTextBlock("i am a user")))
+	}
+
 	// Create new message request with the provided prompt and temperature
 	message, err := c.client.Messages.New(ctx, anthropic.MessageNewParams{
 		Model:       anthropic.F(model),                        // Specify which model to use
 		MaxTokens:   anthropic.F(maxTokens),                    // Limit response length
 		Temperature: anthropic.F(float64(options.Temperature)), // Set temperature
-		Messages: anthropic.F([]anthropic.MessageParam{
-			anthropic.NewUserMessage(anthropic.NewTextBlock(prompts[0])), // create user message
-		}),
+		System:      anthropic.F(system),
+		Messages: anthropic.F(
+			messages,
+		),
 	})
 	if err != nil {
 		return "", err

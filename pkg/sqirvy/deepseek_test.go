@@ -31,7 +31,7 @@ func TestDeepSeekClient_Query_R1(t *testing.T) {
 		},
 		{
 			name:    "Empty prompt",
-			prompt:  []string{""},
+			prompt:  []string{},
 			wantErr: true,
 		},
 	}
