@@ -55,6 +55,8 @@ func NewLlamaClient() (*LlamaClient, error) {
 	}, nil
 }
 
+// LlamaClient.QueryText implements the QueryText method for the Client interface.
+// It sends a text query to Meta's Llama models and returns the generated text response.
 func (c *LlamaClient) QueryText(ctx context.Context, system string, prompts []string, model string, options Options) (string, error) {
 	if len(prompts) == 0 {
 		return "", fmt.Errorf("prompts cannot be empty for text query")

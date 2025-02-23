@@ -51,13 +51,12 @@ func NewGeminiClient() (*GeminiClient, error) {
 	}, nil
 }
 
+// GeminiClient.QueryText implements the QueryText method for the Client interface.
+// It sends a text query to Google's Gemini API and returns the generated text response.
 func (c *GeminiClient) QueryText(ctx context.Context, system string, prompts []string, model string, options Options) (string, error) {
 	if len(prompts) == 0 {
 		return "", fmt.Errorf("prompts cannot be empty for text query")
 	}
-
-	// TEMPORARY : concatenate the prompts into a single string
-	prompts = compressPrompts(prompts)
 
 	// Create a generative model instance with the specified model name
 	genModel := c.client.GenerativeModel(model)

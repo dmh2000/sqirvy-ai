@@ -1,9 +1,11 @@
-// Package api provides a unified interface for interacting with various AI language models.
+// Package sqirvy provides a unified interface for interacting with various AI language models.
 //
 // The package supports multiple AI providers including:
 // - Anthropic (Claude models)
 // - Google (Gemini models)
 // - OpenAI (GPT models)
+// - Meta (Llama models)
+// - DeepSeek (DeepSeek models)
 //
 // It provides a consistent interface for making text and JSON queries while handling
 // provider-specific implementation details internally.
@@ -12,7 +14,6 @@ package sqirvy
 import (
 	"context"
 	"fmt"
-	"strings"
 )
 
 const (
@@ -89,17 +90,4 @@ func NewClient(provider Provider) (Client, error) {
 	default:
 		return nil, fmt.Errorf("unsupported provider: %s", provider)
 	}
-}
-
-func compressPrompts(prompts []string) []string {
-	// TEMPORARY : concatenate the prompts into a single string
-	// Wraps each prompt in code blocks for better formatting
-	var builder strings.Builder
-	for _, prompt := range prompts {
-		builder.WriteString("```")
-		builder.WriteString(prompt)
-		builder.WriteString("\n")
-		builder.WriteString("```")
-	}
-	return []string{builder.String()}
 }
