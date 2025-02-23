@@ -48,7 +48,7 @@ func main() {
 	}
 
 	// prepend the system prompt and codegen instructions
-	prompt = systemPrompt + "\n\n" + codePrompt + "\n\n" + prompt
+	prompt = codePrompt + "\n\n" + prompt
 
 	// Use default model if none specified
 	model := DEFAULT_MODEL
@@ -69,7 +69,7 @@ func main() {
 	}
 
 	// Make the query
-	response, err := client.QueryText(context.Background(), prompt, model, sqirvy.Options{})
+	response, err := client.QueryText(context.Background(), systemPrompt, []string{prompt}, model, sqirvy.Options{})
 	if err != nil {
 		log.Fatal(err)
 	}

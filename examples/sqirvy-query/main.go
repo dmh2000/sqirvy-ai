@@ -20,6 +20,8 @@ import (
 	sqirvy "sqirvy-ai/pkg/sqirvy"
 )
 
+const assistant = "you are a helpful assistant"
+
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
@@ -51,7 +53,7 @@ func main() {
 	}
 
 	// Make the query
-	response, err := client.QueryText(context.Background(), prompt, model, sqirvy.Options{})
+	response, err := client.QueryText(context.Background(), assistant, []string{prompt}, model, sqirvy.Options{})
 	if err != nil {
 		log.Fatal(err)
 	}

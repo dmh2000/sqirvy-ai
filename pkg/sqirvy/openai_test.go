@@ -18,24 +18,24 @@ func TestOpenAIClient_QueryText(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		prompt  string
+		prompt  []string
 		wantErr bool
 	}{
 		{
 			name:    "Basic prompt",
-			prompt:  "Say 'Hello, World!'",
+			prompt:  []string{"Say 'Hello, World!'"},
 			wantErr: false,
 		},
 		{
 			name:    "Empty prompt",
-			prompt:  "",
+			prompt:  []string{},
 			wantErr: true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := client.QueryText(context.Background(), tt.prompt, "gpt-4-turbo", Options{MaxTokens: GetMaxTokens("gpt-4-turbo")})
+			got, err := client.QueryText(context.Background(), assistant, tt.prompt, "gpt-4-turbo", Options{MaxTokens: GetMaxTokens("gpt-4-turbo")})
 			if tt.wantErr {
 				if err == nil {
 					t.Errorf("OpenAIClient.QueryText() error = %v, wantErr %v", err, tt.wantErr)

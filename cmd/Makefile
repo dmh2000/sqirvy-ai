@@ -1,7 +1,7 @@
 .PHONY: debug release test clean
 
 BINDIR=../bin
-SUBDIRS = sqirvy sqirvy-cli
+SUBDIRS = sqirvy-cli
 
 debug:
 	@for dir in $(SUBDIRS); do \

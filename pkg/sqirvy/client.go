@@ -1,9 +1,11 @@
-// Package api provides a unified interface for interacting with various AI language models.
+// Package sqirvy provides a unified interface for interacting with various AI language models.
 //
 // The package supports multiple AI providers including:
 // - Anthropic (Claude models)
 // - Google (Gemini models)
 // - OpenAI (GPT models)
+// - Meta (Llama models)
+// - DeepSeek (DeepSeek models)
 //
 // It provides a consistent interface for making text and JSON queries while handling
 // provider-specific implementation details internally.
@@ -48,7 +50,7 @@ type Options struct {
 // It abstracts away provider-specific implementations behind a common interface
 // for making text and JSON queries to AI models.
 type Client interface {
-	QueryText(ctx context.Context, prompt string, model string, options Options) (string, error)
+	QueryText(ctx context.Context, system string, prompts []string, model string, options Options) (string, error)
 	Close() error
 }
 

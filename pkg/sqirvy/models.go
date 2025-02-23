@@ -29,7 +29,7 @@ var ModelToProvider = map[string]string{
 	"gpt-4o-mini": "openai",
 	"gpt-4-turbo": "openai",
 	"o1-mini":     "openai",
-	"o3-mini":     "openai",
+	// "o3-mini":     "openai",
 	// llama models
 	"llama3.3-70b": "llama",
 }

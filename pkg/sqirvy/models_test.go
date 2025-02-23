@@ -10,22 +10,22 @@ func TestAllModels(t *testing.T) {
 	// Test cases for both QueryText and QueryJSON
 	tests := []struct {
 		name    string
-		prompt  string
+		prompt  []string
 		wantErr bool
 	}{
 		{
 			name:    "Basic prompt",
-			prompt:  "Say 'Hello, World!'",
+			prompt:  []string{"Say 'Hello, World!'"},
 			wantErr: false,
 		},
 		{
 			name:    "JSON request",
-			prompt:  "Return a JSON object with a greeting field containing 'Hello, World!'",
+			prompt:  []string{"Return a JSON object with a greeting field containing 'Hello, World!'"},
 			wantErr: false,
 		},
 		{
 			name:    "Empty prompt",
-			prompt:  "",
+			prompt:  []string{},
 			wantErr: true,
 		},
 	}
@@ -64,7 +64,7 @@ func TestAllModels(t *testing.T) {
 			for _, tt := range tests {
 				t.Run(tt.name, func(t *testing.T) {
 					ctx := context.Background()
-					got, err := client.QueryText(ctx, tt.prompt, model, Options{MaxTokens: GetMaxTokens(model), Temperature: 50})
+					got, err := client.QueryText(ctx, assistant, tt.prompt, model, Options{MaxTokens: GetMaxTokens(model), Temperature: 50})
 					if tt.wantErr {
 						if err == nil {
 							t.Errorf("QueryText() error = nil, wantErr %v", tt.wantErr)

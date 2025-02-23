@@ -74,9 +74,11 @@ type openAIResponse struct {
 	} `json:"choices"`
 }
 
-func (c *OpenAIClient) QueryText(ctx context.Context, prompt string, model string, options Options) (string, error) {
-	if prompt == "" {
-		return "", fmt.Errorf("prompt cannot be empty for text query")
+// OpenAIClient.QueryText implements the QueryText method for the Client interface.
+// It sends a text query to OpenAI's API and returns the generated text response.
+func (c *OpenAIClient) QueryText(ctx context.Context, system string, prompts []string, model string, options Options) (string, error) {
+	if len(prompts) == 0 {
+		return "", fmt.Errorf("prompts cannot be empty for text query")
 	}
 
 	// Set default and validate temperature
@@ -95,12 +97,17 @@ func (c *OpenAIClient) QueryText(ctx context.Context, prompt string, model strin
 		maxTokens = MaxTokensDefault
 	}
 
+	// create the slice of prompts
+	messages := make([]openAIMessage, 0, len(prompts))
+	messages = append(messages, openAIMessage{Role: "system", Content: system})
+	for _, prompt := range prompts {
+		messages = append(messages, openAIMessage{Role: "user", Content: prompt})
+	}
+
 	// Construct the request body with the prompt as a user message
 	reqBody := openAIRequest{
-		Model: model,
-		Messages: []openAIMessage{
-			{Role: "user", Content: prompt},
-		},
+		Model:       model,
+		Messages:    messages,
 		MaxTokens:   int(maxTokens),      // Limit response length
 		Temperature: options.Temperature, // Set temperature
 	}

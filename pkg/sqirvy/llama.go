@@ -55,9 +55,11 @@ func NewLlamaClient() (*LlamaClient, error) {
 	}, nil
 }
 
-func (c *LlamaClient) QueryText(ctx context.Context, prompt string, model string, options Options) (string, error) {
-	if prompt == "" {
-		return "", fmt.Errorf("prompt cannot be empty for text query")
+// LlamaClient.QueryText implements the QueryText method for the Client interface.
+// It sends a text query to Meta's Llama models and returns the generated text response.
+func (c *LlamaClient) QueryText(ctx context.Context, system string, prompts []string, model string, options Options) (string, error) {
+	if len(prompts) == 0 {
+		return "", fmt.Errorf("prompts cannot be empty for text query")
 	}
 
 	// Set default and validate temperature
@@ -70,11 +72,19 @@ func (c *LlamaClient) QueryText(ctx context.Context, prompt string, model string
 	// Scale temperature for Llama's 0-2 range
 	options.Temperature = (options.Temperature * LlamaTempScale) / MaxTemperature
 
-	// Call the LLM with the prompt
-	completion, err := llms.GenerateFromSinglePrompt(
-		ctx,
-		c.llm,
-		prompt,
+	// system prompt
+	content := []llms.MessageContent{
+		llms.TextParts(llms.ChatMessageTypeSystem, system),
+	}
+
+	// query prompts
+	for _, prompt := range prompts {
+		content = append(content, llms.TextParts(llms.ChatMessageTypeHuman, prompt))
+	}
+
+	// generate completion
+	completion, err := c.llm.GenerateContent(
+		ctx, content,
 		llms.WithTemperature(float64(options.Temperature)),
 		llms.WithModel(model),
 	)
@@ -82,7 +92,12 @@ func (c *LlamaClient) QueryText(ctx context.Context, prompt string, model string
 		return "", fmt.Errorf("failed to generate completion: %w", err)
 	}
 
-	return completion, nil
+	response := ""
+	for _, part := range completion.Choices {
+		response += part.Content
+	}
+
+	return response, nil
 }
 
 // Close implements the Close method for the Client interface.

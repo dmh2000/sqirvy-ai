@@ -38,9 +38,9 @@ func NewAnthropicClient() (*AnthropicClient, error) {
 // QueryText sends a text query to the specified Anthropic model and returns the response.
 // It accepts a prompt string, model identifier, and query options.
 // Returns the model's response as a string or an error if the query fails.
-func (c *AnthropicClient) QueryText(ctx context.Context, prompt string, model string, options Options) (string, error) {
-	if prompt == "" {
-		return "", fmt.Errorf("prompt cannot be empty for text query")
+func (c *AnthropicClient) QueryText(ctx context.Context, system string, prompts []string, model string, options Options) (string, error) {
+	if len(prompts) == 0 {
+		return "", fmt.Errorf("prompts cannot be empty for text query")
 	}
 
 	// set default and validate temperature
@@ -59,14 +59,30 @@ func (c *AnthropicClient) QueryText(ctx context.Context, prompt string, model st
 		maxTokens = MaxTokensDefault
 	}
 
+	// first prompt is system prompt
+
+	systemPrompt := []anthropic.TextBlockParam{
+		anthropic.NewTextBlock(prompts[0]),
+	}
+
+	// addtional prompts are user messages
+	messages := make([]anthropic.MessageParam, 0, len(prompts))
+	for i := 1; i < len(prompts); i++ {
+		messages = append(messages, anthropic.NewUserMessage(anthropic.NewTextBlock(prompts[i])))
+	}
+	if len(messages) == 0 {
+		messages = append(messages, anthropic.NewUserMessage(anthropic.NewTextBlock("i am a user")))
+	}
+
 	// Create new message request with the provided prompt and temperature
 	message, err := c.client.Messages.New(ctx, anthropic.MessageNewParams{
 		Model:       anthropic.F(model),                        // Specify which model to use
 		MaxTokens:   anthropic.F(maxTokens),                    // Limit response length
 		Temperature: anthropic.F(float64(options.Temperature)), // Set temperature
-		Messages: anthropic.F([]anthropic.MessageParam{
-			anthropic.NewUserMessage(anthropic.NewTextBlock(prompt)), // Create user message
-		}),
+		System:      anthropic.F(systemPrompt),
+		Messages: anthropic.F(
+			messages,
+		),
 	})
 	if err != nil {
 		return "", err

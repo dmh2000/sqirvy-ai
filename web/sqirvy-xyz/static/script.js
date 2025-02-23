@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     body: JSON.stringify({
                         model: model,
-                        prompt: prompt,
+                        prompt:[]string{prompt,
                         temperature: 50
                     }),
                 });

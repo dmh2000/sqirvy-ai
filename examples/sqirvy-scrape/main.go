@@ -14,6 +14,8 @@ import (
 
 var DEFAULT_MODEL = "claude-3-5-haiku-latest"
 
+const assistant = "you are a helpful assistant"
+
 func main() {
 	// Process command line arguments
 	prompt, modelFlag, err := processCommandLine()
@@ -43,7 +45,7 @@ func main() {
 	}
 
 	// Make the query
-	response, err := client.QueryText(context.Background(), prompt, model, sqirvy.Options{})
+	response, err := client.QueryText(context.Background(), assistant, []string{prompt}, model, sqirvy.Options{})
 	if err != nil {
 		log.Fatal(err)
 	}

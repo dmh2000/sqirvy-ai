@@ -1,3 +1,5 @@
+// Package cmd implements command-line interface functionality for the sqirvy-cli tool.
+// It provides commands for handling various types of prompts and input processing.
 package cmd
 
 import (
@@ -5,69 +7,95 @@ import (
 	"fmt"
 	"net/url"
 	util "sqirvy-ai/pkg/util"
-	"strings"
 )
 
+// queryPrompt contains the embedded content of the query.md file,
+// which defines the system prompt for query operations.
+//
 //go:embed prompts/query.md
 var queryPrompt string
 
+// planPrompt contains the embedded content of the plan.md file,
+// which defines the system prompt for planning operations.
+//
 //go:embed prompts/plan.md
 var planPrompt string
 
+// codePrompt contains the embedded content of the code.md file,
+// which defines the system prompt for code generation operations.
+//
 //go:embed prompts/code.md
 var codePrompt string
 
+// reviewPrompt contains the embedded content of the review.md file,
+// which defines the system prompt for code review operations.
+//
 //go:embed prompts/review.md
 var reviewPrompt string
 
-func ReadPrompt(prompt string, args []string) (string, error) {
-	var builder strings.Builder
+// ReadPrompt processes input from multiple sources and combines them into a slice of prompts.
+// It handles input from:
+//   - A base system prompt
+//   - Standard input (stdin)
+//   - URLs (which are scraped for content)
+//   - Local files
+//
+// The function ensures that the total size of all inputs does not exceed MaxInputTotalBytes.
+//
+// Parameters:
+//   - prompt: The initial system prompt to use
+//   - args: A slice of strings that can be either URLs or file paths
+//
+// Returns:
+//   - []string: A slice containing all processed prompts
+//   - error: An error if any operation fails or if size limits are exceeded
+func ReadPrompt(args []string) ([]string, error) {
 
-	// start with the system prompt
-	builder.WriteString(prompt)
-	if builder.Len() > MaxInputTotalBytes {
-		return "", fmt.Errorf("total size would exceed limit of %d bytes (prompt)", MaxInputTotalBytes)
-	}
+	var prompts []string
+	var length int64
 
-	// STDIN
+	// Process standard input and check size limit
 	var stdinData string
 	stdinData, _, err := util.ReadStdin(MaxInputTotalBytes)
 	if err != nil {
-		return "", fmt.Errorf("error reading from stdin: %w", err)
+		return []string{""}, fmt.Errorf("error reading from stdin: %w", err)
 	}
-	builder.WriteString(string(stdinData))
-	if builder.Len() > MaxInputTotalBytes {
-		return "", fmt.Errorf("total size would exceed limit of %d bytes (stdin)", MaxInputTotalBytes)
+	prompts = append(prompts, stdinData)
+	length += int64(len(stdinData))
+	if length > MaxInputTotalBytes {
+		return []string{""}, fmt.Errorf("total size would exceed limit of %d bytes (stdin)", MaxInputTotalBytes)
 	}
 
+	// Process each argument which can be either a URL or a file path
 	for _, arg := range args {
-		// Check if it's a URL
+		// Attempt to parse argument as URL
 		_, err := url.ParseRequestURI(arg)
 		if err == nil {
+			// Handle URL content
 			content, err := util.ScrapeURL(arg)
 			if err != nil {
-				return "", fmt.Errorf("failed to scrape URL %s: %w", arg, err)
+				return []string{""}, fmt.Errorf("failed to scrape URL %s: %w", arg, err)
 			}
-			builder.WriteString(content)
-			builder.WriteString("\n\n")
-			if builder.Len() > MaxInputTotalBytes {
-				return "", fmt.Errorf("total size would exceed limit of %d bytes (urls)", MaxInputTotalBytes)
+			content += "\n\n"
+			prompts = append(prompts, content)
+			length += int64(len(content))
+			if length > MaxInputTotalBytes {
+				return []string{""}, fmt.Errorf("total size would exceed limit of %d bytes (urls)", MaxInputTotalBytes)
 			}
 			continue
 		}
 
-		// If not a URL, try to read as file
+		// Handle file content if not a URL
 		fileData, _, err := util.ReadFile(arg, MaxInputTotalBytes)
 		if err != nil {
-			return "", fmt.Errorf("failed to read file %s: %w", arg, err)
+			return []string{""}, fmt.Errorf("failed to read file %s: %w", arg, err)
 		}
-
-		builder.Write(fileData)
-		builder.WriteString("\n\n")
-		if builder.Len() > MaxInputTotalBytes {
-			return "", fmt.Errorf("total size would exceed limit of %d bytes (files)", MaxInputTotalBytes)
+		prompts = append(prompts, string(fileData))
+		length += int64(len(fileData))
+		if length > MaxInputTotalBytes {
+			return []string{""}, fmt.Errorf("total size would exceed limit of %d bytes (files)", MaxInputTotalBytes)
 		}
 	}
 
-	return builder.String(), nil
+	return prompts, nil
 }
