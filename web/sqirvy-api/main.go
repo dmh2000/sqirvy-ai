@@ -73,6 +73,8 @@ func handleModels(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+const webSystem = "you are an experienced web developer using the Go language"
+
 func handleQuery(w http.ResponseWriter, r *http.Request) {
 	// Set CORS headers
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -122,7 +124,7 @@ func handleQuery(w http.ResponseWriter, r *http.Request) {
 	defer client.Close()
 
 	// Query the model
-	result, err := client.QueryText(r.Context(), []string{req.Prompt}, req.Model, sqirvy.Options{
+	result, err := client.QueryText(r.Context(), webSystem, []string{req.Prompt}, req.Model, sqirvy.Options{
 		Temperature: req.Temperature,
 	})
 	if err != nil {

@@ -49,17 +49,10 @@ var reviewPrompt string
 // Returns:
 //   - []string: A slice containing all processed prompts
 //   - error: An error if any operation fails or if size limits are exceeded
-func ReadPrompt(prompt string, args []string) ([]string, error) {
+func ReadPrompt(args []string) ([]string, error) {
 
 	var prompts []string
 	var length int64
-
-	// Initialize with the system prompt and check size limit
-	prompts = append(prompts, prompt)
-	length += int64(len(prompt))
-	if length > MaxInputTotalBytes {
-		return []string{""}, fmt.Errorf("total size would exceed limit of %d bytes (prompt)", MaxInputTotalBytes)
-	}
 
 	// Process standard input and check size limit
 	var stdinData string

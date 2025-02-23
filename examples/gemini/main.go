@@ -7,6 +7,8 @@ import (
 	sqirvy "sqirvy-ai/pkg/sqirvy"
 )
 
+const assistant = "you are a helpful assistant"
+
 func main() {
 	// Create a new Gemini client
 	client, err := sqirvy.NewClient(sqirvy.Gemini)
@@ -15,7 +17,7 @@ func main() {
 	}
 
 	// Make the query
-	response, err := client.QueryText(context.Background(), []string{"say hello world"}, "gemini-2.0-flash-exp", sqirvy.Options{})
+	response, err := client.QueryText(context.Background(), assistant, []string{"say hello world"}, "gemini-2.0-flash-exp", sqirvy.Options{})
 	if err != nil {
 		log.Fatalf("Query failed: %v", err)
 	}

@@ -74,7 +74,7 @@ type deepseekResponse struct {
 	} `json:"choices"`
 }
 
-func (c *DeepSeekClient) QueryText(ctx context.Context, prompts []string, model string, options Options) (string, error) {
+func (c *DeepSeekClient) QueryText(ctx context.Context, system string, prompts []string, model string, options Options) (string, error) {
 	if len(prompts) == 0 {
 		return "", fmt.Errorf("prompts cannot be empty for text query")
 	}
@@ -98,12 +98,17 @@ func (c *DeepSeekClient) QueryText(ctx context.Context, prompts []string, model 
 		maxTokens = MaxTokensDefault
 	}
 
+	messages := make([]deepseekMessage, 0, len(prompts))
+	// First prompt is system prompt
+	messages = append(messages, deepseekMessage{Role: "system", Content: system})
+	for i := 1; i < len(prompts); i++ {
+		messages = append(messages, deepseekMessage{Role: "user", Content: prompts[i]})
+	}
+
 	// Construct the request body with the prompt as a user message
 	reqBody := deepseekRequest{
-		Model: model,
-		Messages: []deepseekMessage{
-			{Role: "user", Content: prompts[0]},
-		},
+		Model:       model,
+		Messages:    messages,
 		MaxTokens:   int(maxTokens),      // Limit response length
 		Temperature: options.Temperature, // Set temperature
 	}

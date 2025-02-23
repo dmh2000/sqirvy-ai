@@ -24,7 +24,7 @@ import (
 // Returns:
 //   - string: The model's response text
 //   - error: Any error encountered during execution
-func executeQuery(cmd *cobra.Command, sysprompt string, args []string) (string, error) {
+func executeQuery(cmd *cobra.Command, system string, args []string) (string, error) {
 	// Extract model name from command flags
 	model, err := cmd.Flags().GetString("model")
 	if err != nil {
@@ -37,7 +37,7 @@ func executeQuery(cmd *cobra.Command, sysprompt string, args []string) (string, 
 	}
 
 	// Process system prompt and arguments into query prompts
-	prompts, err := ReadPrompt(sysprompt, args)
+	prompts, err := ReadPrompt(args)
 	if err != nil {
 		return "", fmt.Errorf("error reading prompt:[]string{\n%v", err)
 	}
@@ -57,7 +57,7 @@ func executeQuery(cmd *cobra.Command, sysprompt string, args []string) (string, 
 	// Configure query options and execute the query
 	options := sqirvy.Options{Temperature: float32(temperature), MaxTokens: sqirvy.GetMaxTokens(model)}
 	ctx := context.Background()
-	response, err := client.QueryText(ctx, prompts, model, options)
+	response, err := client.QueryText(ctx, system, prompts, model, options)
 	if err != nil {
 		return "", fmt.Errorf("error querying model %s: %v", model, err)
 	}

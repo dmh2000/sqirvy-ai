@@ -51,7 +51,7 @@ func NewGeminiClient() (*GeminiClient, error) {
 	}, nil
 }
 
-func (c *GeminiClient) QueryText(ctx context.Context, prompts []string, model string, options Options) (string, error) {
+func (c *GeminiClient) QueryText(ctx context.Context, system string, prompts []string, model string, options Options) (string, error) {
 	if len(prompts) == 0 {
 		return "", fmt.Errorf("prompts cannot be empty for text query")
 	}
@@ -75,8 +75,13 @@ func (c *GeminiClient) QueryText(ctx context.Context, prompts []string, model st
 	options.Temperature = (options.Temperature * GeminiTempScale) / MaxTemperature
 	genModel.Temperature = &options.Temperature
 
+	parts := make([]genai.Part, 0, len(prompts))
+	for _, prompt := range prompts {
+		parts = append(parts, genai.Text(prompt))
+	}
+
 	// Generate content from the prompt
-	resp, err := genModel.GenerateContent(ctx, genai.Text(prompts[0]))
+	resp, err := genModel.GenerateContent(ctx, parts...)
 	if err != nil {
 		return "", fmt.Errorf("failed to generate content: %w", err)
 	}

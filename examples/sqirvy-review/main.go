@@ -30,7 +30,7 @@ import (
 // build the system prompt and review requirements into the binary
 
 //go:embed system.md
-var systemPrompt string
+var system string
 
 //go:embed review.md
 var reviewPrompt string
@@ -54,9 +54,6 @@ func main() {
 		log.Fatal("no prompt provided")
 	}
 
-	// prepend the system prompt and review instructions
-	prompt = systemPrompt + "\n\n" + reviewPrompt + "\n\n" + prompt
-
 	// Use default model if none specified
 	model := DEFAULT_MODEL
 	if modelFlag != "" {
@@ -76,7 +73,7 @@ func main() {
 	}
 
 	// Make the query
-	response, err := client.QueryText(context.Background(), []string{prompt}, model, sqirvy.Options{})
+	response, err := client.QueryText(context.Background(), system, []string{reviewPrompt, prompt}, model, sqirvy.Options{})
 	if err != nil {
 		log.Fatal(err)
 	}

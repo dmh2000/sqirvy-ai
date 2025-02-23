@@ -55,7 +55,7 @@ func NewLlamaClient() (*LlamaClient, error) {
 	}, nil
 }
 
-func (c *LlamaClient) QueryText(ctx context.Context, prompts []string, model string, options Options) (string, error) {
+func (c *LlamaClient) QueryText(ctx context.Context, system string, prompts []string, model string, options Options) (string, error) {
 	if len(prompts) == 0 {
 		return "", fmt.Errorf("prompts cannot be empty for text query")
 	}
@@ -70,14 +70,14 @@ func (c *LlamaClient) QueryText(ctx context.Context, prompts []string, model str
 	// Scale temperature for Llama's 0-2 range
 	options.Temperature = (options.Temperature * LlamaTempScale) / MaxTemperature
 
-	// first message is a system message
+	// system prompt
 	content := []llms.MessageContent{
-		llms.TextParts(llms.ChatMessageTypeSystem, prompts[0]),
+		llms.TextParts(llms.ChatMessageTypeSystem, system),
 	}
 
-	// subsequent messages are human messages
-	for i := 1; i < len(prompts); i++ {
-		content = append(content, llms.TextParts(llms.ChatMessageTypeHuman, prompts[i]))
+	// query prompts
+	for _, prompt := range prompts {
+		content = append(content, llms.TextParts(llms.ChatMessageTypeHuman, prompt))
 	}
 
 	// generate completion

@@ -74,7 +74,7 @@ type openAIResponse struct {
 	} `json:"choices"`
 }
 
-func (c *OpenAIClient) QueryText(ctx context.Context, prompts []string, model string, options Options) (string, error) {
+func (c *OpenAIClient) QueryText(ctx context.Context, system string, prompts []string, model string, options Options) (string, error) {
 	if len(prompts) == 0 {
 		return "", fmt.Errorf("prompts cannot be empty for text query")
 	}
@@ -98,12 +98,17 @@ func (c *OpenAIClient) QueryText(ctx context.Context, prompts []string, model st
 		maxTokens = MaxTokensDefault
 	}
 
+	// create the slice of prompts
+	messages := make([]openAIMessage, 0, len(prompts))
+	messages = append(messages, openAIMessage{Role: "system", Content: system})
+	for _, prompt := range prompts {
+		messages = append(messages, openAIMessage{Role: "user", Content: prompt})
+	}
+
 	// Construct the request body with the prompt as a user message
 	reqBody := openAIRequest{
-		Model: model,
-		Messages: []openAIMessage{
-			{Role: "user", Content: prompts[0]},
-		},
+		Model:       model,
+		Messages:    messages,
 		MaxTokens:   int(maxTokens),      // Limit response length
 		Temperature: options.Temperature, // Set temperature
 	}
