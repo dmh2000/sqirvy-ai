@@ -15,22 +15,24 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "sqirvy-cli",
+	Use:   "sqirvy-cli [command] [flags] [files| urls]",
 	Short: "A command line tool to interact with Large Language Models",
 	Long: `Sqirvy-cli is a command line tool to interact with Large Language Models (LLMs).
-It provides a simple interface to send prompts to the LLM and receive responses.
-Sqirvy-cli commands receive prompt input from stdin and any filename args. Output is sent to stdout.
-The output is determined by the command and the input prompt.
-The "query" command is used to send an arbitrary query to the LLM.
-The "plan" command is used to send a prompt to the LLM and receive a plan in response.
-The "code" command is used to send a prompt to the LLM and receive source code in response.
-The "review" command is used to send a prompt to the LLM and receive a code review in response.
-Sqirvy-cli is designed to support terminal command pipelines. 
-It can receive input from stdin and/or command line arguments, and writes results to stdout. 
+   - It provides a simple interface to send prompts to the LLM and receive responses.
+   - Sqirvy-cli commands receive prompt input from stdin, filenames and URL args. Output is sent to stdout.
+   - The output is determined by the command and the input prompt.
+   - The "query" command is used to send an arbitrary query to the LLM.
+   - The "plan" command is used to send a prompt to the LLM and receive a plan in response.
+   - The "code" command is used to send a prompt to the LLM and receive source code in response.
+   - The "review" command is used to send a prompt to the LLM and receive a code review in response.
+   - Sqirvy-cli is designed to support terminal command pipelines. 
 	`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+
+	Run: func(cmd *cobra.Command, args []string) {
+		// execute Query
+		cmd.SetArgs(append([]string{"query"}, args...))
+		cmd.Execute()
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

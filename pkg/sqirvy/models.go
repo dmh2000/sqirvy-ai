@@ -11,6 +11,7 @@ import "fmt"
 // requests for a given model.
 var ModelToProvider = map[string]string{
 	// anthropic models
+	"claude-3-7-sonnet-latest": "anthropic",
 	"claude-3-5-sonnet-latest": "anthropic",
 	"claude-3-5-haiku-latest":  "anthropic",
 	"claude-3-opus-latest":     "anthropic",
@@ -38,6 +39,7 @@ var ModelToProvider = map[string]string{
 // If a model is not in this map, MaxTokensDefault will be used.
 var ModelToMaxTokens = map[string]int64{
 	// anthropic models
+	"claude-3-7-sonnet-latest": MaxTokensDefault,
 	"claude-3-5-sonnet-latest": MaxTokensDefault,
 	"claude-3-5-haiku-latest":  MaxTokensDefault,
 	"claude-3-opus-latest":     4096,
