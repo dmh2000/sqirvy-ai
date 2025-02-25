@@ -47,7 +47,7 @@ func TestModelsEndpoint(t *testing.T) {
 	for model, provider := range expectedModels {
 		found := false
 		for _, m := range response.Models {
-			if m.Name == model && m.Provider == provider {
+			if m.Model == model && m.Provider == provider {
 				found = true
 				break
 			}

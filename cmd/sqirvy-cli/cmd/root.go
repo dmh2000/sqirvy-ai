@@ -12,7 +12,10 @@ import (
 )
 
 var cfgFile string
-var defaultPrompt string = "Hello"
+var defaultPrompt = "Hello"
+
+const defaultModel = "gpt-4-turbo"
+const defaultTemperature = 50
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -39,8 +42,6 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	fmt.Fprintln(os.Stderr, "Using model :", viper.GetString("model"))
-
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
@@ -54,9 +55,9 @@ func init() {
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/sqirvy-cli/config.yaml)")
 	rootCmd.PersistentFlags().StringVar(&defaultPrompt, "default-prompt", "Hello", "default prompt to use")
 	viper.BindPFlag("default-prompt", rootCmd.PersistentFlags().Lookup("default-prompt"))
-	rootCmd.PersistentFlags().StringP("model", "m", "gpt-4-turbo", "LLM model to use")
+	rootCmd.PersistentFlags().StringP("model", "m", defaultModel, "LLM model to use")
 	viper.BindPFlag("model", rootCmd.PersistentFlags().Lookup("model"))
-	rootCmd.PersistentFlags().IntP("temperature", "t", 50, "LLM temperature to use (0..100)")
+	rootCmd.PersistentFlags().IntP("temperature", "t", defaultTemperature, "LLM temperature to use (0..100)")
 }
 
 // print config filename only once

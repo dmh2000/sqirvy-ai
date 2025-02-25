@@ -40,10 +40,7 @@ func helpMessage() {
 	fmt.Println("  -m    AI model to use (default: claude-3-5-sonnet-latest)")
 	fmt.Println("")
 	fmt.Println("Supported models:")
-	keys := make([]string, 0, len(sqirvy.ModelToProvider))
-	for key := range sqirvy.ModelToProvider {
-		keys = append(keys, key)
-	}
+	keys := sqirvy.GetModelList()
 	sort.Strings(keys)
 	for _, key := range keys {
 		fmt.Printf("  %s\n", key)

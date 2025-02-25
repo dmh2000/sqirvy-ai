@@ -11,7 +11,7 @@ const assistant = "you are a helpful assistant"
 
 func main() {
 	// Create a new Anthropic client
-	client, err := sqirvy.NewClient(sqirvy.MetaLlama)
+	client, err := sqirvy.NewClient(sqirvy.Llama)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
 	}

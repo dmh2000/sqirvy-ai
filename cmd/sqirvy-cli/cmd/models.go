@@ -21,15 +21,19 @@ var modelsCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var models []string
 		var length int
-		for _, v := range sqirvy.ModelToProvider {
+		models = sqirvy.GetModelList()
+		for _, v := range models {
 			length = max(length, len(v))
 		}
 		fmt.Println("Supported Providers and Models:")
-		for k, v := range sqirvy.ModelToProvider {
-			models = append(models, fmt.Sprintf("   %-*s: %s\n", length, v, k))
+
+		var mptext []string
+		var mplist []sqirvy.ModelProvider = sqirvy.GetModelProviderList()
+		for _, v := range mplist {
+			mptext = append(mptext, fmt.Sprintf("  %-10s: %s\n", v.Provider, v.Model))
 		}
-		sort.Strings(models)
-		for _, m := range models {
+		sort.Strings(mptext)
+		for _, m := range mptext {
 			fmt.Print(m)
 		}
 		fmt.Println()

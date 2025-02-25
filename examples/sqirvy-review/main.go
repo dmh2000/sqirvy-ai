@@ -67,7 +67,7 @@ func main() {
 	}
 
 	// Create client for the provider
-	client, err := sqirvy.NewClient(sqirvy.Provider(provider))
+	client, err := sqirvy.NewClient(provider)
 	if err != nil {
 		log.Fatal(err)
 	}

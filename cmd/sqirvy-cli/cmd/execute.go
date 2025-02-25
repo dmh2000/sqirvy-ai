@@ -7,6 +7,7 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
+	"os"
 
 	sqirvy "sqirvy-ai/pkg/sqirvy"
 
@@ -29,6 +30,12 @@ func executeQuery(cmd *cobra.Command, system string, args []string) (string, err
 	// Extract model name from command flags
 	model := viper.GetString("model")
 
+	// check if it has an alias
+	model = sqirvy.GetModelAlias(model)
+
+	// Print the selected model to stderr
+	fmt.Fprintln(os.Stderr, "Using model :", model)
+
 	// Extract temperature setting from command flags
 	temperature, err := cmd.Flags().GetInt("temperature")
 	if err != nil {
@@ -48,7 +55,7 @@ func executeQuery(cmd *cobra.Command, system string, args []string) (string, err
 	}
 
 	// Create client for the provider
-	client, err := sqirvy.NewClient(sqirvy.Provider(provider))
+	client, err := sqirvy.NewClient(provider)
 	if err != nil {
 		return "", fmt.Errorf("error: creating client for provider %s: %v", provider, err)
 	}

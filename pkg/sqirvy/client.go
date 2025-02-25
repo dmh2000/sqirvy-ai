@@ -30,15 +30,6 @@ const (
 // Provider identifies which AI service provider to use
 type Provider string
 
-// Supported AI providers
-const (
-	Anthropic Provider = "anthropic" // Anthropic's Claude models
-	DeepSeek  Provider = "deepseek"  // DeepSeek's models
-	Gemini    Provider = "gemini"    // Google's Gemini models
-	OpenAI    Provider = "openai"    // OpenAI's GPT models
-	MetaLlama Provider = "llama"     // Meta's Llama models
-)
-
 // Options combines all provider-specific options into a single structure.
 // This allows for provider-specific configuration while maintaining a unified interface.
 type Options struct {
@@ -55,7 +46,7 @@ type Client interface {
 }
 
 // NewClient creates a new AI client for the specified provider
-func NewClient(provider Provider) (Client, error) {
+func NewClient(provider string) (Client, error) {
 	switch provider {
 	case Anthropic:
 		client, err := NewAnthropicClient()
@@ -81,7 +72,7 @@ func NewClient(provider Provider) (Client, error) {
 			return nil, err
 		}
 		return client, nil
-	case MetaLlama:
+	case Llama:
 		client, err := NewLlamaClient()
 		if err != nil {
 			return nil, err

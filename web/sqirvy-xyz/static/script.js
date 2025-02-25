@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Get references to DOM elements
     const modelSelects = document.querySelectorAll('.model-select');
     const promptInput = document.getElementById('prompt');
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Populate model select dropdowns
             modelSelects.forEach((select, index) => {
                 const providerName = select.closest('.result-box').querySelector('.provider-name');
-                
+
                 data.models.forEach(model => {
                     const option = document.createElement('option');
                     option.value = model.name;
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 // Update provider name when selection changes
-                select.addEventListener('change', function() {
+                select.addEventListener('change', function () {
                     const selectedOption = this.options[this.selectedIndex];
                     providerName.textContent = selectedOption.dataset.provider;
                 });
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error('Error fetching models:', error));
 
     // Handle form submission
-    submitButton.addEventListener('click', async function() {
+    submitButton.addEventListener('click', async function () {
         const prompt = promptInput.value.trim();
         if (!prompt) {
             alert('Please enter a prompt');
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     body: JSON.stringify({
                         model: model,
-                        prompt:[]string{prompt,
+                        prompt: prompt,
                         temperature: 50
                     }),
                 });

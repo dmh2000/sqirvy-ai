@@ -14,7 +14,7 @@ func TestLlamaClient_QueryText(t *testing.T) {
 		t.Skip("LLAMA_BASE_URL not set")
 	}
 
-	client, err := NewClient(Provider("llama"))
+	client, err := NewClient("llama")
 	if err != nil {
 		t.Fatalf("Failed to create client: %v", err)
 	}

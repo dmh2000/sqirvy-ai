@@ -31,9 +31,9 @@ func TestAllModels(t *testing.T) {
 	}
 
 	// Test each model from ModelToProvider
-	for model, provider := range ModelToProvider {
+	for model, provider := range modelToProvider {
 		// Create client for this provider
-		client, err := NewClient(Provider(provider))
+		client, err := NewClient(provider)
 		if err != nil {
 			t.Errorf("Failed to create client for provider %s: %v", provider, err)
 			continue

@@ -49,20 +49,23 @@ func handleModels(w http.ResponseWriter, r *http.Request) {
 
 	// Create response with sorted models and their providers
 	response := ModelsResponse{
-		Models: make([]ModelInfo, 0, len(sqirvy.ModelToProvider)),
+		Models: make([]ModelInfo, 0, 32),
 	}
 
+	// get list of models and providers
+	mplist := sqirvy.GetModelProviderList()
+
 	// First collect all models
-	for model, provider := range sqirvy.ModelToProvider {
+	for _, mp := range mplist {
 		response.Models = append(response.Models, ModelInfo{
-			Name:     model,
-			Provider: provider,
+			Model:    mp.Model,
+			Provider: mp.Provider,
 		})
 	}
 
 	// Sort models by name
 	sort.Slice(response.Models, func(i, j int) bool {
-		return response.Models[i].Name < response.Models[j].Name
+		return response.Models[i].Model < response.Models[j].Model
 	})
 
 	// Send JSON response
@@ -116,7 +119,7 @@ func handleQuery(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create client for the provider
-	client, err := sqirvy.NewClient(sqirvy.Provider(provider))
+	client, err := sqirvy.NewClient(provider)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to create client: %v", err), http.StatusInternalServerError)
 		return

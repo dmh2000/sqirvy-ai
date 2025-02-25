@@ -7,7 +7,7 @@ type ModelsResponse struct {
 
 // ModelInfo contains information about a single model
 type ModelInfo struct {
-	Name     string `json:"name"`
+	Model    string `json:"name"`
 	Provider string `json:"provider"`
 }
 
