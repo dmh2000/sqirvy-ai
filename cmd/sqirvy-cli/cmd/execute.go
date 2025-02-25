@@ -11,6 +11,7 @@ import (
 	sqirvy "sqirvy-ai/pkg/sqirvy"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // executeQuery processes and executes an AI model query with the given system prompt and arguments.
@@ -26,31 +27,30 @@ import (
 //   - error: Any error encountered during execution
 func executeQuery(cmd *cobra.Command, system string, args []string) (string, error) {
 	// Extract model name from command flags
-	model, err := cmd.Flags().GetString("model")
-	if err != nil {
-		return "", fmt.Errorf("error getting model: %v", err)
-	}
+	model := viper.GetString("model")
+
 	// Extract temperature setting from command flags
 	temperature, err := cmd.Flags().GetInt("temperature")
 	if err != nil {
-		return "", fmt.Errorf("error getting temperature: %v", err)
+		return "", fmt.Errorf("error: getting temperature: %v", err)
 	}
 
 	// Process system prompt and arguments into query prompts
 	prompts, err := ReadPrompt(args)
 	if err != nil {
-		return "", fmt.Errorf("error reading prompt:[]string{\n%v", err)
+		return "", fmt.Errorf("error: reading prompt:[]string{\n%v", err)
 	}
+
 	// Determine the AI provider based on the selected model
 	provider, err := sqirvy.GetProviderName(model)
 	if err != nil {
-		return "", fmt.Errorf("error getting provider for model %s: %v", model, err)
+		return "", fmt.Errorf("error: model is not supported %s: %v", model, err)
 	}
 
 	// Create client for the provider
 	client, err := sqirvy.NewClient(sqirvy.Provider(provider))
 	if err != nil {
-		return "", fmt.Errorf("error creating client for provider %s: %v", provider, err)
+		return "", fmt.Errorf("error: creating client for provider %s: %v", provider, err)
 	}
 	defer client.Close()
 
@@ -59,7 +59,7 @@ func executeQuery(cmd *cobra.Command, system string, args []string) (string, err
 	ctx := context.Background()
 	response, err := client.QueryText(ctx, system, prompts, model, options)
 	if err != nil {
-		return "", fmt.Errorf("error querying model %s: %v", model, err)
+		return "", fmt.Errorf("error: querying model %s: %v", model, err)
 	}
 
 	return response, nil
