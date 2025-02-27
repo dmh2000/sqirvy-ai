@@ -14,6 +14,7 @@ package sqirvy
 import (
 	"context"
 	"fmt"
+	"time"
 )
 
 const (
@@ -23,6 +24,9 @@ const (
 	// Temperature limits for model queries (0-100 scale)
 	MinTemperature = 0.0
 	MaxTemperature = 100.0
+
+	// request timeout in seconds
+	RequestTimeout = time.Second * 15
 )
 
 // Provider represents supported AI providers.
@@ -51,31 +55,31 @@ func NewClient(provider string) (Client, error) {
 	case Anthropic:
 		client, err := NewAnthropicClient()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to create Anthropic client: %w", err)
 		}
 		return client, nil
 	case DeepSeek:
 		client, err := NewDeepSeekClient()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to create DeepSeek client: %w", err)
 		}
 		return client, nil
 	case Gemini:
 		client, err := NewGeminiClient()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to create Geminip client: %w", err)
 		}
 		return client, nil
 	case OpenAI:
 		client, err := NewOpenAIClient()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to create OpenAI client: %w", err)
 		}
 		return client, nil
 	case Llama:
 		client, err := NewLlamaClient()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to create Llama client: %w", err)
 		}
 		return client, nil
 	default:

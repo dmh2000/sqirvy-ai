@@ -24,8 +24,7 @@ const (
 // It provides methods for querying Google's Gemini language models through
 // their official API client.
 type GeminiClient struct {
-	client *genai.Client   // Google Gemini API client
-	ctx    context.Context // Context for API requests
+	client *genai.Client // Google Gemini API client
 }
 
 // Ensure GeminiClient implements the Client interface
@@ -39,21 +38,23 @@ func NewGeminiClient() (*GeminiClient, error) {
 		return nil, fmt.Errorf("GEMINI_API_KEY environment variable not set")
 	}
 
-	ctx := context.Background()
-	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
+	client, err := genai.NewClient(context.Background(), option.WithAPIKey(apiKey))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create client: %w", err)
 	}
 
 	return &GeminiClient{
 		client: client,
-		ctx:    ctx,
 	}, nil
 }
 
 // GeminiClient.QueryText implements the QueryText method for the Client interface.
 // It sends a text query to Google's Gemini API and returns the generated text response.
 func (c *GeminiClient) QueryText(ctx context.Context, system string, prompts []string, model string, options Options) (string, error) {
+	if ctx.Err() != nil {
+		return "", fmt.Errorf("request context error %w", ctx.Err())
+	}
+
 	if len(prompts) == 0 {
 		return "", fmt.Errorf("prompts cannot be empty for text query")
 	}
@@ -75,6 +76,9 @@ func (c *GeminiClient) QueryText(ctx context.Context, system string, prompts []s
 	genModel.Temperature = &options.Temperature
 
 	parts := make([]genai.Part, 0, len(prompts))
+	// First prompt is system prompt
+	parts = append(parts, genai.Text(system))
+	// rest of prompts
 	for _, prompt := range prompts {
 		parts = append(parts, genai.Text(prompt))
 	}
@@ -86,16 +90,16 @@ func (c *GeminiClient) QueryText(ctx context.Context, system string, prompts []s
 	}
 
 	// Build response using strings.Builder for better performance
-	var result strings.Builder
+	var response strings.Builder
 	for _, candidate := range resp.Candidates {
 		for _, part := range candidate.Content.Parts {
 			if textValue, ok := part.(genai.Text); ok {
-				result.WriteString(string(textValue))
+				response.WriteString(string(textValue))
 			}
 		}
 	}
 
-	return result.String(), nil
+	return response.String(), nil
 }
 
 // Close implements the Close method for the Client interface.

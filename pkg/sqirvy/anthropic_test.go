@@ -17,7 +17,7 @@ func TestAnthropicClient_QueryText(t *testing.T) {
 
 	client, err := NewAnthropicClient()
 	if err != nil {
-		t.Errorf("new client failed")
+		t.Errorf("new client failed: %v", err)
 	}
 
 	tests := []struct {
@@ -42,7 +42,7 @@ func TestAnthropicClient_QueryText(t *testing.T) {
 		ctx := context.Background()
 		got, err := client.QueryText(ctx, assistant, tt.prompt, "claude-3-5-sonnet-latest", Options{})
 		if err != nil {
-			t.Errorf("AnthropicClient.QueryText() error = %v", err)
+			t.Errorf("AnthropicClient.QueryText(): %v", err)
 			return
 		}
 		if !strings.Contains(got, "Hello") {
@@ -54,7 +54,7 @@ func TestAnthropicClient_QueryText(t *testing.T) {
 	t.Run(tt.name, func(t *testing.T) {
 		response, err := client.QueryText(context.Background(), assistant, tt.prompt, "claude-3-5-sonnet-latest", Options{})
 		if err == nil {
-			t.Errorf("AnthropicClient.QueryText() empty prompt should have failed")
+			t.Errorf("AnthropicClient.QueryText() empty prompt should have failed %v", err)
 			return
 		}
 		t.Log(response)

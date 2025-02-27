@@ -13,7 +13,7 @@ func TestOpenAIClient_QueryText(t *testing.T) {
 
 	client, err := NewOpenAIClient()
 	if err != nil {
-		t.Errorf("new client failed")
+		t.Errorf("new client failed: %v", err)
 	}
 
 	tests := []struct {

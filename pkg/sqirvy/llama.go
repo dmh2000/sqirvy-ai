@@ -9,6 +9,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/tmc/langchaingo/llms"
 	"github.com/tmc/langchaingo/llms/openai"
@@ -58,6 +59,10 @@ func NewLlamaClient() (*LlamaClient, error) {
 // LlamaClient.QueryText implements the QueryText method for the Client interface.
 // It sends a text query to Meta's Llama models and returns the generated text response.
 func (c *LlamaClient) QueryText(ctx context.Context, system string, prompts []string, model string, options Options) (string, error) {
+	if ctx.Err() != nil {
+		return "", fmt.Errorf("request context error %w", ctx.Err())
+	}
+
 	if len(prompts) == 0 {
 		return "", fmt.Errorf("prompts cannot be empty for text query")
 	}
@@ -92,15 +97,16 @@ func (c *LlamaClient) QueryText(ctx context.Context, system string, prompts []st
 		return "", fmt.Errorf("failed to generate completion: %w", err)
 	}
 
-	response := ""
+	var response strings.Builder
 	for _, part := range completion.Choices {
-		response += part.Content
+		response.WriteString(part.Content)
 	}
 
-	return response, nil
+	return response.String(), nil
 }
 
 // Close implements the Close method for the Client interface.
 func (c *LlamaClient) Close() error {
+	// the langchain llm does not require explicit close
 	return nil
 }

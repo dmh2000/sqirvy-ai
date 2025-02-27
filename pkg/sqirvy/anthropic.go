@@ -39,6 +39,10 @@ func NewAnthropicClient() (*AnthropicClient, error) {
 // It accepts a prompt string, model identifier, and query options.
 // Returns the model's response as a string or an error if the query fails.
 func (c *AnthropicClient) QueryText(ctx context.Context, system string, prompts []string, model string, options Options) (string, error) {
+	if ctx.Err() != nil {
+		return "", fmt.Errorf("request context error %w", ctx.Err())
+	}
+
 	if len(prompts) == 0 {
 		return "", fmt.Errorf("prompts cannot be empty for text query")
 	}
@@ -62,16 +66,13 @@ func (c *AnthropicClient) QueryText(ctx context.Context, system string, prompts 
 	// first prompt is system prompt
 
 	systemPrompt := []anthropic.TextBlockParam{
-		anthropic.NewTextBlock(prompts[0]),
+		anthropic.NewTextBlock(system),
 	}
 
 	// addtional prompts are user messages
 	messages := make([]anthropic.MessageParam, 0, len(prompts))
-	for i := 1; i < len(prompts); i++ {
-		messages = append(messages, anthropic.NewUserMessage(anthropic.NewTextBlock(prompts[i])))
-	}
-	if len(messages) == 0 {
-		messages = append(messages, anthropic.NewUserMessage(anthropic.NewTextBlock("i am a user")))
+	for _, p := range prompts {
+		messages = append(messages, anthropic.NewUserMessage(anthropic.NewTextBlock(p)))
 	}
 
 	// Create new message request with the provided prompt and temperature
@@ -85,7 +86,7 @@ func (c *AnthropicClient) QueryText(ctx context.Context, system string, prompts 
 		),
 	})
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to create message: %w", err)
 	}
 
 	// Verify we got a non-empty response
@@ -94,14 +95,15 @@ func (c *AnthropicClient) QueryText(ctx context.Context, system string, prompts 
 	}
 
 	// Build response using strings.Builder for better performance
-	var answer strings.Builder
+	var response strings.Builder
 	for _, content := range message.Content {
-		answer.WriteString(content.Text)
+		response.WriteString(content.Text)
 	}
-	return answer.String(), nil
+	return response.String(), nil
 }
 
 // Close implements the Close method for the Client interface.
 func (c *AnthropicClient) Close() error {
+	// the anthropic client does not require explicit close
 	return nil
 }

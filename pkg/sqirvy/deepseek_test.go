@@ -16,7 +16,7 @@ func TestDeepSeekClient_Query_R1(t *testing.T) {
 
 	client, err := NewDeepSeekClient()
 	if err != nil {
-		t.Errorf("new client failed")
+		t.Errorf("new client failed: %v", err)
 	}
 
 	tests := []struct {

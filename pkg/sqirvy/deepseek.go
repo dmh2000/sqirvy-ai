@@ -75,6 +75,10 @@ type deepseekResponse struct {
 }
 
 func (c *DeepSeekClient) QueryText(ctx context.Context, system string, prompts []string, model string, options Options) (string, error) {
+	if ctx.Err() != nil {
+		return "", fmt.Errorf("request context error %w", ctx.Err())
+	}
+
 	if len(prompts) == 0 {
 		return "", fmt.Errorf("prompts cannot be empty for text query")
 	}
@@ -98,8 +102,8 @@ func (c *DeepSeekClient) QueryText(ctx context.Context, system string, prompts [
 	messages := make([]deepseekMessage, 0, len(prompts))
 	// First prompt is system prompt
 	messages = append(messages, deepseekMessage{Role: "system", Content: system})
-	for i := 1; i < len(prompts); i++ {
-		messages = append(messages, deepseekMessage{Role: "user", Content: prompts[i]})
+	for _, p := range prompts {
+		messages = append(messages, deepseekMessage{Role: "user", Content: p})
 	}
 
 	// Construct the request body with the prompt as a user message
@@ -124,7 +128,10 @@ func (c *DeepSeekClient) makeRequest(ctx context.Context, reqBody deepseekReques
 	// Create new HTTP request with JSON body
 	endpoint := c.baseURL + "/chat/completions"
 
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(jsonBody))
+	ctx, cancel := context.WithTimeout(ctx, RequestTimeout)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, "POST", endpoint, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return "", fmt.Errorf("failed to create request: %w", err)
 	}
@@ -134,7 +141,7 @@ func (c *DeepSeekClient) makeRequest(ctx context.Context, reqBody deepseekReques
 	req.Header.Set("Authorization", "Bearer "+c.apiKey)
 
 	// Send the request
-	resp, err := c.client.Do(req.WithContext(ctx))
+	resp, err := c.client.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("failed to make request: %w", err)
 	}
@@ -168,6 +175,6 @@ func (c *DeepSeekClient) makeRequest(ctx context.Context, reqBody deepseekReques
 
 // Close implements the Close method for the Client interface.
 func (c *DeepSeekClient) Close() error {
-	c.client.CloseIdleConnections()
+	// http.client does not require explicit close
 	return nil
 }

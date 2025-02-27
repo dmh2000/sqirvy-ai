@@ -42,7 +42,7 @@ func NewOpenAIClient() (*OpenAIClient, error) {
 
 	baseURL := os.Getenv("OPENAI_BASE_URL")
 	if baseURL == "" {
-		baseURL = "https://api.openai.com" // Default OpenAI base URL
+		return nil, fmt.Errorf("OPENAI_BASE_URL environment variable not set")
 	}
 
 	return &OpenAIClient{
@@ -77,6 +77,10 @@ type openAIResponse struct {
 // OpenAIClient.QueryText implements the QueryText method for the Client interface.
 // It sends a text query to OpenAI's API and returns the generated text response.
 func (c *OpenAIClient) QueryText(ctx context.Context, system string, prompts []string, model string, options Options) (string, error) {
+	if ctx.Err() != nil {
+		return "", fmt.Errorf("request context error %w", ctx.Err())
+	}
+
 	if len(prompts) == 0 {
 		return "", fmt.Errorf("prompts cannot be empty for text query")
 	}
@@ -126,8 +130,11 @@ func (c *OpenAIClient) makeRequest(ctx context.Context, reqBody openAIRequest) (
 		return "", fmt.Errorf("failed to marshal request: %w", err)
 	}
 
+	ctx, cancel := context.WithTimeout(ctx, RequestTimeout)
+	defer cancel()
+
 	// Create new HTTP request with JSON body
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(jsonBody))
+	req, err := http.NewRequestWithContext(ctx, "POST", endpoint, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return "", fmt.Errorf("failed to create request: %w", err)
 	}
@@ -137,7 +144,7 @@ func (c *OpenAIClient) makeRequest(ctx context.Context, reqBody openAIRequest) (
 	req.Header.Set("Authorization", "Bearer "+c.apiKey)
 
 	// Send the request
-	resp, err := c.client.Do(req.WithContext(ctx))
+	resp, err := c.client.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("failed to make request: %w", err)
 	}
@@ -171,6 +178,6 @@ func (c *OpenAIClient) makeRequest(ctx context.Context, reqBody openAIRequest) (
 
 // Close implements the Close method for the Client interface.
 func (c *OpenAIClient) Close() error {
-	c.client.CloseIdleConnections()
+	// http.client does not require explicit close
 	return nil
 }
