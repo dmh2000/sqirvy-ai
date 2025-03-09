@@ -29,7 +29,7 @@ release:
 	staticcheck ./...
 	go vet ./...
 	mkdir -p $(BINDIR)
-	GOOS=$(arch) GOARCH=amd64 go build -licflags="-s -w" -o $(BINDIR)/$(PROJECT) .
+	GOOS=$(arch) GOARCH=amd64 go build -ldflags="-s -w" -o $(BINDIR)/$(PROJECT) .
 
 test:
 	@./test.sh 

@@ -7,7 +7,7 @@
 2.  [LLMs Supported](#llms-supported)
 3.  [How It Works](#how-it-works)
 4.  [Example Pipeline Script](#example-pipeline-script)
-5.  [Sqirvy-llm Command Line Program](#sqirvy-ai-command-line-programs)
+5.  [Sqirvy-aiCommand Line Program](#sqirvy-ai-command-line-programs)
     *   [Supported Models](#supported-models)
 6.  [SDK Library](#sdk-library)
 7.  [Examples](#example-usage)
@@ -21,7 +21,7 @@
     *   [Llama](#llama)
     *   [DeepSeek](#deepseek)
 
-## What If You Could String Together Some AI Queries To Make Something Happen? And Use A Differet LLM For Each Step? And Do It From The Terminal Instead Of A UI? <a name="what-is-sqirvy-ai"></a>
+## What If You Could String Together Some AI Queries To Make Something Happen? And Use A Differet LLM For Each Step? And Do It From The Terminal Instead Of A UI? <a name=what-is-sqirvy-ai></a>
 
 Imagine you are setting up some DevOps for a project, and you need a simple way to make queries to LLM providers for use in a command line program. You don't want to have to copypasta from a web app or a python script. Or, you want to automate tasks like code review or web scraping using LLMs.
 
@@ -35,21 +35,28 @@ That's what this project is all about.
 
 [GitHub Repo](https://github.com/dmh2000/sqirvy-ai)
 
-## LLMs Supported In This Release <a name="llms-supported"></a>
+## LLMs Supported In This Release <a name=llms-supported></a>
 
 - https://www.anthropic.com/api
-  - claude-3-5-sonnet-latest
-  - claude-3-5-haiku-latest
-  - claude-3-opus-latest
+	- claude-3-7-sonnet-20250219 
+	- claude-3-5-sonnet-20241022 
+	- claude-3-7-sonnet-latest   
+	- claude-3-5-sonnet-latest   
+	- claude-3-5-haiku-latest    
+	- claude-3-haiku-20240307    
+	- claude-3-opus-latest       
+	- claude-3-opus-20240229     
 - https://ai.google.dev/gemini-api/docs
-  - gemini-2.0-flash-exp
-  - gemini-1.5-flash
-  - gemini-1.5-pro
+	gemini-2.0-flash
+	gemini-1.5-flash
+	gemini-1.5-pro
+	gemini-2.0-flash-thinking-exp
 - https://platform.openai.com/docs/overview
   - gpt-4o
   - gpt-4o-mini
   - gpt-4-turbo
   - o1-mini
+  - o3-mini
 - https://docs.llama-api.com/quickstart
 - llama3.3-70b
 - deepseek-r1 (tested with Meta Llama provider)
@@ -60,45 +67,59 @@ The main program is **sqirvy**, which is a command line utility that can perform
 In cases where a query needs multiple inputs, it supports taking file names and urls as arguments and combines them as additional context.
 
 <pre>
-Usage: bin/sqirvy [-h] [-m model] [-f function] [-t temperature] [files and/or urls  ...]
-  -h  print this help message
-  -m  AI model to use (default: claude-3.5-sonnet-latest)
-  -f  AI function to use (default: query)
-    -f query  : execute a generic query
-    -f plan   : generate a plan for further action
-    -f code   : generate code according to input specifications
-    -f review : review code or text
-    -f scrape : scrape a URL for text
-  -t  Temperature setting for the AI model (0-100, default: 50)
-  file1 file2 ...  input files to process
-  URLs can be provided as arguments
-  data from stdin will be read if there is any
+Sqirvy-cli is a command line tool to interact with Large Language Models (LLMs).
+   - It provides a simple interface to send prompts to the LLM and receive responses
+   - Sqirvy-cli commands receive prompt input from stdin, filenames and URLs. Output is sent to stdout.
+   - This architecture makes it simple to pipe from stdin -> query -> stdout -> query -> stdout...
+   - The output is determined by the command and the input prompt.
+   - The "query" command is used to send an arbitrary query to the LLM.
+   - The "plan" command is used to send a prompt to the LLM and receive a plan in response.
+   - The "code" command is used to send a prompt to the LLM and receive source code in response.
+   - The "review" command is used to send a prompt to the LLM and receive a code review in response.
+   - Sqirvy-cli is designed to support terminal command pipelines.
+
+Usage:
+  sqirvy-cli [command] [flags] [files| urls]
+  sqirvy-cli [command]
+
+Available Commands:
+  code        Request the LLM to generate
+  completion  Generate the autocompletion script for the specified shell
+  help        Help about any command
+  models      list the supported models and providers
+  plan        Request the LLM to generate a plan.
+  query       Execute an arbitrary query to the LLM
+  review      Request the LLM to generate a code review .
+
+Flags:
+      --default-prompt string   default prompt to use (default "Hello")
+  -h, --help                    help for sqirvy-cli
+  -m, --model string            LLM model to use (default "gpt-4-turbo")
+  -t, --temperature int         LLM temperature to use (0..100) (default 50)
+
+Use "sqirvy-cli [command] --help" for more information about a command.
+
 </pre>
 
 
-## Example Pipeline Script <a name="example-scripts"></a>
+## Example Pipeline Script <a name=example-scripts></a>
 
 THere is an example bash script that illustrates the type of actions you can take with the **sqirvy** program to perform multi-step operations in a pipeline.
 
 ### scripts/tetris
-<img src="./doc/sqirvy.png" width="80%" style="display: block; margin: 0 auto"/>
+<img src=./doc/sqirvy.png width=80% style=display: block; margin: 0 auto/>
 
 ```bash
 #!/bin/bash
 
-# in scripts/tetris
 # this script does the following:
 # - creates a directory called tetris
-# - echo the design prompt into stdin of sqirvy in plan mode. 
-#   - pipe the plan to stdout
-# - pipe stdin to sqirvy -f plan and gemini-1.5-flash to create a design for a web app
-#   - tee the plan to stdout and to a file
-# - pipe stdin to sqirvy -f code and claude-3-5-sonnet-latest to generate code for the design
-#   - tee the code to stdout and to a file
-# - pipe stin to sqirvy -f review and gpt-4o-mini to review the code
+# - uses gemini-1.5-flash to create a design for a web app
+# - uses claude-3-5-sonnet-latest to generate code for the design
+# - uses  gpt-4o-mini to review the code
 # - starts a web server to serve the generated code
 
-design_prompt="create a design specification for a web project that is a \
+design="create a design specification for a web project that is a \
     simple web app that implements a simple tetris game clone.       \
     the game should include a game board with a grid, a score display, and a reset button \
     Code should be html, css and javascript, in a single file named index.html. \
@@ -108,44 +129,38 @@ export BINDIR=../bin
 make -C ../cmd
 
 rm -rf tetris && mkdir tetris 
-echo $design_prompt | \
-$BINDIR/sqirvy -m gemini-1.5-flash         -f plan    | tee tetris/plan.md    | \
-$BINDIR/sqirvy -m claude-3-5-sonnet-latest -f code    | tee tetris/index.html | \
-$BINDIR/sqirvy -m gpt-4o-mini              -f review  >tetris/review.md   
+echo $design | \
+$BINDIR/sqirvy-cli plan -m gemini-1.5-flash            | tee tetris/plan.md    | \
+$BINDIR/sqirvy-cli code -m claude-3-5-sonnet-latest    | tee tetris/index.html | \
+$BINDIR/sqirvy-cli review -m gpt-4o-mini                     review  >tetris/review.md   
 
 python -m http.server 8080 --directory tetris &
 
-# for Ubuntu. for other platforms just open a browser to this url
 xdg-open http://localhost:8080
+```
+
+## Sqirvy-ai Command Line Program 
+
+The primary executable is **bin/sqirvy-cli**. 
+
+### Build
+
+```bash
+# cd to top level of product
+# ===== Release
+$>make clean
+$>make debug
+$>make test
+$>make release
+
+# ===== Debug and Test
+$>make debug
+$>make test
 
 ```
 
-## Sqirvy-llm Command Line Program <a name="sqirvy-ai-command-line-programs"></a>
 
-**bin/sqirvy is primary command line program
-
-### Supported Models
-
-- Supported models:
-  - Anthropic
-    - claude-3-5-haiku-latest
-    - claude-3-5-sonnet-latest
-    - claude-3-opus-latest
-  - Google Gemini
-    - gemini-1.5-flash
-    - gemini-1.5-pro
-    - gemini-2.0-flash-exp
-  - OpenAI
-    - gpt-4-turbo
-    - gpt-4o
-    - gpt-4o-mini
-    - o1-mini
-  - Meta-Llama
-	  - llama3.3-70b
-  - DeepSeek
-   - deepseek-r1
-
-## SDK Library <a name="sdk-library"></a>
+## SDK Library <a name=sdk-library></a>
 
 SDK Documentation is in pkg/sqirvy/README.md
 
@@ -165,33 +180,33 @@ The SDK is in directory pkg/sqirvy. It is a very simple interface that allows yo
 package main
 
 import (
-	"fmt"
-	"log"
+	fmt
+	log
 
-	sqirvy "sqirvy-ai/pkg/sqirvy"
+	sqirvy sqirvy-ai/pkg/sqirvy
 )
 
 func main() {
 	// Create a new Anthropic client
 	client, err := sqirvy.NewClient(sqirvy.Anthropic)
 	if err != nil {
-		log.Fatalf("Failed to create client: %v", err)
+		log.Fatalf(Failed to create client: %v, err)
 	}
 
 	// Make the query with a prompt, the model name, and any options (nothing supported yet)
-	response, err := client.QueryText("say hello world", "claude-3-5-haiku-lates", sqirvy.Options{})
+	response, err := client.QueryText(say hello world, claude-3-5-haiku-lates, sqirvy.Options{})
 	if err != nil {
-		log.Fatalf("Query failed: %v", err)
+		log.Fatalf(Query failed: %v, err)
 	}
 
-	fmt.Println("Response:", response)
+	fmt.Println(Response:, response)
 }
 ```
 
-## Examples <a name="example-usage"></a>
+## Examples <a name=example-usage></a>
 
 Example code is in directory **examples**.  To use them, first build the binaries.
-### Build The Executables <a name="build-the-executables"></a>
+### Build The Executables <a name=build-the-executables></a>
 - the build system uses GNU 'make'
 - 'make' can be run from top level or from the cmd or web directories
 - build (or default)
@@ -221,20 +236,20 @@ Example code is in directory **examples**.  To use them, first build the binarie
 #### Example web app
 - examples/web : for comparing results of queries from 3 different models
 
-### web/sqirvy-web <a name="websqirvy-web"></a>
+### web/sqirvy-web <a name=websqirvy-web></a>
 
 A simple web app that allows you to query all three providers in parallel and compare the results.
 
-- cd into "web/sqirvy-web"
+- cd into web/sqirvy-web
 - go run .
 - it will start a web server on port 8080.
 
-<img src="webapp.png" alt="Web App" width="600"/>
+<img src=webapp.png alt=Web App width=600/>
 
 The code for the web app was generated using Aider and the claude-3-5-sonnet-latest model.
 
-## CLients <a name="clients"></a>
-### Anthropic <a name="anthropic"></a>
+## CLients <a name=clients></a>
+### Anthropic <a name=anthropic></a>
 
 - [Anthropic](https://github.com/anthropics/anthropic-sdk-go)
 - this SDK is a Go native client for the Anthropic API
@@ -243,32 +258,32 @@ The code for the web app was generated using Aider and the claude-3-5-sonnet-lat
 - Environment Variables Required:
   - export ANTHROPIC_API_KEY=<your api key>
 
-### Gemini <a name="gemini"></a>
+### Gemini <a name=gemini></a>
 
 
 - [	Gemini](github.com/google/generative-ai-go/genai)
 - this is the official Go client for the Gemini API supported by Google
-- **The Gemini SDK requires a "GEMINI_API_KEY" environment variable to authenticate**
+- **The Gemini SDK requires a GEMINI_API_KEY environment variable to authenticate**
 - Environment Variables REquired:
   - export GEMINI_API_KEY=<your api key>
 
-### OpenAI <a name="openai"></a>
+### OpenAI <a name=openai></a>
 
 - [OpenAI](https://platform.openai.com/docs/api-reference)
 - Uses OpenAI HTTP API directly
-- **The OpenAI API HTTP API requires a "OPENAI_API_KEY" environment variable to authenticate**
-- **If you connecting to an OpenAI model to a server besides the official OpenAI servers, you will need to set the "OPENAI_BASE_URL" environment variable to the base URL of the server you are connecting to**
+- **The OpenAI API HTTP API requires a OPENAI_API_KEY environment variable to authenticate**
+- **If you connecting to an OpenAI model to a server besides the official OpenAI servers, you will need to set the OPENAI_BASE_URL environment variable to the base URL of the server you are connecting to**
 - Environment Variables REquired:
   - export OPENAI_API_KEY=<your api key>
   - export OPENAI_BASE_URL=https://api.openai.com/v1/chat/completions
 
-### Llama <a name="metalama"></a>
+### Llama <a name=metalama></a>
 
 - [Meta-LLAMA](github.com/tmc/langchaingo/llms/openai)
 
-### DeepSeek <a name="deepseek"></a>
+### DeepSeek <a name=deepseek></a>
 
 - [DeepSeek](https://platform.openai.com/docs/api-reference)
 - Uses OpenAI HTTP API directly,
-- **The API requires a "DEEPSEEK_API_KEY" and "DEEPSEEK_BASE_URL environment variables to authenticate**
+- **The API requires a DEEPSEEK_API_KEY and DEEPSEEK_BASE_URL environment variables to authenticate**
 - Deepseek was tested using the [LLAMA API Provider](https://console.llamaapi.com/)

@@ -22,8 +22,9 @@ var rootCmd = &cobra.Command{
 	Use:   "sqirvy-cli [command] [flags] [files| urls]",
 	Short: "A command line tool to interact with Large Language Models",
 	Long: `Sqirvy-cli is a command line tool to interact with Large Language Models (LLMs).
-   - It provides a simple interface to send prompts to the LLM and receive responses.
-   - Sqirvy-cli commands receive prompt input from stdin, filenames and URL args. Output is sent to stdout.
+   - It provides a simple interface to send prompts to the LLM and receive responses
+   - Sqirvy-cli commands receive prompt input from stdin, filenames and URLs. Output is sent to stdout.
+   - This architecture makes it simple to pipe from stdin -> query -> stdout -> query -> stdout...
    - The output is determined by the command and the input prompt.
    - The "query" command is used to send an arbitrary query to the LLM.
    - The "plan" command is used to send a prompt to the LLM and receive a plan in response.

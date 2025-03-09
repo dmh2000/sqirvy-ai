@@ -18,9 +18,9 @@ make -C ../cmd
 
 rm -rf tetris && mkdir tetris 
 echo $design | \
-$BINDIR/sqirvy -m gemini-1.5-flash         -f plan    | tee tetris/plan.md    | \
-$BINDIR/sqirvy -m claude-3-5-sonnet-latest -f code    | tee tetris/index.html | \
-$BINDIR/sqirvy -m gpt-4o-mini              -f review  >tetris/review.md   
+$BINDIR/sqirvy-cli plan -m gemini-1.5-flash            | tee tetris/plan.md    | \
+$BINDIR/sqirvy-cli code -m claude-3-5-sonnet-latest    | tee tetris/index.html | \
+$BINDIR/sqirvy-cli review -m gpt-4o-mini                     review  >tetris/review.md   
 
 python -m http.server 8080 --directory tetris &
 
