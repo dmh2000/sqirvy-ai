@@ -29,7 +29,12 @@ release:
 	staticcheck ./...
 	go vet ./...
 	mkdir -p $(BINDIR)
-	GOOS=$(arch) GOARCH=amd64 go build -ldflags="-s -w" -o $(BINDIR)/$(PROJECT) .
+	# build without compression
+	# GOOS=$(arch) GOARCH=amd64 go build . -o $(BINDIR)/$(PROJECT)
+	# build with compression 
+	rm $(BINDIR)/$(PROJECT)
+	GOOS=$(arch) GOARCH=amd64 go build . 
+	upx -1 -o $(BINDIR)/$(PROJECT) $(PROJECT)
 
 test:
 	@./test.sh 
