@@ -29,7 +29,7 @@ How about this: have a set of simple command line programs that perform various 
 
 What if you could chain multiple queries in a shell command or script, and get a single response? 
 
-In addition, this project includes a simple client SDK in **pkg/sqirvy** that can connect to the supported providers and models and execute a query. This SDK can be used to write your own programs that need to connect to AI's with a very simple query function. For more involved interfacing to AI you would probably want to use LangChain, one of the native AI SDK's or a direct HTTP API. But if you just need your program to provide basic AI support, this SDK makes that easy. The SDK provides two functions, **NewClient** and **QueryText** that can access OpenAI, Gemini, Anthropic, LLama DeepSeek. And just for fun (and example), each client implementation (in pkg/sqirvy) uses a different method to execute queries.
+In addition, this project includes a simple client SDK in **pkg/sqirvy** that can connect to the supported providers and models and execute a query. This SDK can be used to write your own programs that need to connect to AI's with a very simple query function. For more involved interfacing to AI you would probably want to use LangChain, one of the native AI SDK's or a direct HTTP API. But if you just need your program to provide basic AI support, this SDK makes that easy. The SDK provides two functions, **NewClient** and **QueryText** that can access for the supported models and provider. And just for fun (and example), each client implementation (in pkg/sqirvy) uses a different method to execute queries. The purpose of that is to illustrate the various methods for accessing an LLM.
 
 That's what this project is all about.
 
@@ -61,7 +61,7 @@ That's what this project is all about.
 - llama3.3-70b
 - deepseek-r1 (tested with Meta Llama provider)
 
-## How It Works
+## Command Line Tool
 
 The main program is **sqirvy**, which is a command line utility that can perform AI queries. **sqirvy** is setup to take prompt input from stdin, perform a query to a specified LLM and send the results to stdout. Because it uses **stdin | sqirvy | stdout**, it is possible to chain together a pipeline, using the same of different models and LLM providers at each step.
 In cases where a query needs multiple inputs, it supports taking file names and urls as arguments and combines them as additional context.
@@ -107,14 +107,14 @@ Use "sqirvy-cli [command] --help" for more information about a command.
 THere is an example bash script that illustrates the type of actions you can take with the **sqirvy** program to perform multi-step operations in a pipeline.
 
 ### scripts/tetris
-<img src=./doc/sqirvy.png width=80% style=display: block; margin: 0 auto/>
+<img src=tetris.png height="300" display="block" margin:auto alt="tetris example"/>
 
 ```bash
 #!/bin/bash
 
 # this script does the following:
 # - creates a directory called tetris
-# - uses gemini-1.5-flash to create a design for a web app
+# - uses gemini-1.5-flash to create a design specification for a web app
 # - uses claude-3-5-sonnet-latest to generate code for the design
 # - uses  gpt-4o-mini to review the code
 # - starts a web server to serve the generated code
@@ -164,7 +164,7 @@ $>make test
 
 SDK Documentation is in pkg/sqirvy/README.md
 
-The SDK is in directory pkg/sqirvy. It is a very simple interface that allows you to query a provider with a prompt and get a response. It supports Anthropic, Gemini, and OpenAI providers through the 'client' interface. Here is an example of how to use the API in a command line program. Examples for the other providers are in the 'cmd' directory.
+The SDK is in directory pkg/sqirvy. It is a very simple interface that allows you to query a provider with a prompt and get a response.  It provides the same simple 'client' interface for any of the selected models and providers. It supports Anthropic, Gemini, and OpenAI providers. Here is an example of how to use the API in a command line program. Examples for the other providers are in the 'cmd' directory.
 
 - Making a query to a provider
   - Create a new client for the provider you want to use
@@ -205,7 +205,7 @@ func main() {
 
 ## Examples <a name=example-usage></a>
 
-Example code is in directory **examples**.  To use them, first build the binaries.
+Example code is in directory **examples**.  To use them, first build the binariePs.
 ### Build The Executables <a name=build-the-executables></a>
 - the build system uses GNU 'make'
 - 'make' can be run from top level or from the cmd or web directories
